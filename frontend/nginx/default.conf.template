@@ -1,0 +1,19 @@
+server {
+    listen 8080;
+    root /usr/share/nginx/html;
+
+    gzip on;
+    gzip_types text/css application/javascript application/json image/svg+xml;
+
+    # /api/jobs goes to the backend as /jobs
+    location /api/ {
+        proxy_pass http://${JOB_API_UPSTREAM}/;
+        # tailoring calls can take a few minutes
+        proxy_read_timeout 15m;
+        client_max_body_size 10m;
+    }
+
+    location / {
+        try_files $uri /index.html;
+    }
+}
