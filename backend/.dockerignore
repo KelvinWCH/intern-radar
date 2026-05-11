@@ -1,0 +1,12 @@
+**
+!Dockerfile
+!pyproject.toml
+!src/
+!src/job_backend/
+!src/job_backend/**
+!embedder/
+!embedder/**
+**/__pycache__/**
+**/*.pyc
+**/.env
+**/.env.*

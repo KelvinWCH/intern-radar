@@ -1,0 +1,49 @@
+# local config and secrets
+.env
+.env.*
+!.env.example
+!.env.*.example
+*.local
+.claude/settings.local.json
+
+# local data, generated resumes, browser profiles
+/data/
+/backend/data/
+/generated-resumes/
+/browser-profiles/
+/storage-state*.json
+*.db
+*.db-journal
+*.db-shm
+*.db-wal
+*.sqlite
+*.sqlite-*
+*.sqlite3
+*.sqlite3-*
+
+# python envs, caches and build output, wherever ruff, pytest or python runs from
+.venv/
+__pycache__/
+*.py[cod]
+*.egg-info/
+.pytest_cache/
+.ruff_cache/
+.coverage
+htmlcov/
+
+# logs and editor stuff
+*.log
+logs/
+.DS_Store
+Thumbs.db
+Desktop.ini
+.idea/
+.history/
+/.tmp/
+
+# keep the shared vscode settings
+.vscode/*
+!.vscode/extensions.json
+!.vscode/settings.json
+!.vscode/tasks.json
+!.vscode/launch.json

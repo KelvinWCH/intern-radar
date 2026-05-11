@@ -1,0 +1,2 @@
+class SourceDataError(ValueError):
+    pass
