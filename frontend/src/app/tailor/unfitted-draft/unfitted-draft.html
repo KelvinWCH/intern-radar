@@ -1,0 +1,41 @@
+<article class="unfitted">
+  <div class="unfitted-head">
+    <h4>{{ resume() ? 'Resume draft' : 'Cover letter draft' }}</h4>
+    <div class="unfitted-tools">
+      @if (resume() && editable()) {
+        <a class="button-secondary" [routerLink]="['/documents', documentId(), 'resume']"
+          ><i class="pi pi-pencil"></i> Trim to one page</a
+        >
+      }
+      <app-document-actions
+        [documentId]="documentId()"
+        [kind]="resume() ? 'resume' : 'cover-letter'"
+        [draft]="true"
+      />
+    </div>
+  </div>
+  <p class="unfitted-note">
+    <i class="pi pi-exclamation-triangle"></i>
+    <span>
+      <strong>Didn't fit one page.</strong>
+      No draft fit on one page{{
+        overflowLines()
+          ? '; this closest one runs about ' + overflowLines() + ' printed lines over'
+          : ''
+      }}. It's kept so you can read it, not as a finished document.
+      {{
+        resume() && editable()
+          ? 'Trim it to one page in the editor to save it as your resume, or tailor again.'
+          : 'Tailor again for a one-page version.'
+      }}
+    </span>
+  </p>
+  <details class="text-preview">
+    <summary>Show the draft text</summary>
+    @if (resume(); as draft) {
+      <app-resume-preview [resume]="draft.document" />
+    } @else if (letter(); as draft) {
+      <app-cover-letter-preview [letter]="draft.document" />
+    }
+  </details>
+</article>
