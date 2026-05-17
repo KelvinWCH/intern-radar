@@ -1,0 +1,131 @@
+h3 {
+  margin: 0;
+  font-size: 1.2rem;
+}
+.intro {
+  color: var(--muted);
+  max-width: 80ch;
+  margin: 0.5rem 0 1.5rem;
+}
+.documents {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 340px), 1fr));
+  gap: 1rem;
+  align-items: start;
+}
+.document-health {
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  padding: 1.25rem;
+  min-width: 0;
+}
+header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+}
+h4 {
+  font-size: 1.05rem;
+  font-weight: 600;
+  margin: 0;
+}
+.page-count {
+  font-size: 0.8rem;
+  color: var(--muted);
+}
+.check-totals {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  margin: 1rem 0;
+  font-size: 0.8rem;
+  color: var(--muted);
+}
+.check-totals span {
+  border-radius: 6px;
+  padding: 0.3rem 0.5rem;
+  background: #f3f5f0;
+}
+.check-totals .passed {
+  color: var(--accent);
+  background: var(--accent-soft);
+}
+.check-totals .warning {
+  color: #845217;
+  background: #fff0da;
+}
+.check-list details {
+  border-top: 1px solid var(--line);
+  padding: 0.7rem 0;
+}
+summary {
+  cursor: pointer;
+}
+.check-list summary {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  gap: 0.8rem;
+  font-size: 0.85rem;
+}
+.check-list summary::before {
+  content: '›';
+  color: var(--muted);
+  font-size: 1rem;
+}
+.check-list details[open] summary::before {
+  transform: rotate(90deg);
+}
+.check-list summary > span:first-of-type {
+  flex: 1;
+}
+.check-status {
+  font-size: 0.75rem;
+  white-space: nowrap;
+  color: var(--muted);
+}
+[data-status='passed'] .check-status {
+  color: var(--accent);
+}
+[data-status='warning'] .check-status {
+  color: #845217;
+  font-weight: 600;
+}
+.check-list p {
+  margin: 0.5rem 0 0;
+  color: var(--muted);
+  font-size: 0.8rem;
+  overflow-wrap: anywhere;
+}
+.skills {
+  font-size: 0.85rem;
+  border-top: 1px solid var(--line);
+  padding-top: 1rem;
+}
+.evidence-gap {
+  font-size: 0.8rem;
+  background: #fff7e9;
+  border-radius: 8px;
+  padding: 0.85rem;
+}
+.evidence-gap p {
+  margin: 0.4rem 0;
+  font-weight: 600;
+}
+.evidence-gap span {
+  color: #725b36;
+}
+.extracted-text {
+  font-size: 0.85rem;
+  margin-top: 1rem;
+}
+pre {
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+  max-height: 350px;
+  overflow: auto;
+  padding: 0.75rem;
+  background: #f6f7f3;
+  font-size: 0.8rem;
+}
