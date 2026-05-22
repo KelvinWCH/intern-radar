@@ -1,0 +1,80 @@
+@let listing = job();
+<article
+  class="job-row"
+  [class.prestige]="listing.prestige"
+  [class.tech]="listing.companyTier === 'tech'"
+>
+  <span class="company-mark">{{ listing.company.slice(0, 1).toUpperCase() }}</span>
+  <div class="job-content">
+    <p class="company-name">
+      {{ listing.company }}
+    </p>
+    <h3 [id]="'job-' + listing.id">
+      @if (listing.applicationUrl; as url) {
+        <a [href]="url" target="_blank" rel="noopener noreferrer">{{ listing.title }}</a>
+      } @else {
+        {{ listing.title }}
+      }
+    </h3>
+    @if (listing.summary) {
+      <p class="job-summary">{{ listing.summary }}</p>
+    }
+    <div class="job-meta">
+      <span class="location">
+        <i class="pi pi-map-marker"></i>
+        {{ listing.locations.length ? listing.locations.join(' · ') : 'Location not listed' }}
+      </span>
+      <app-posted-date [timestamp]="listing.details?.date_posted" />
+      <span class="discovery-time">Found {{ listing.firstSeenAt * 1000 | date: 'h:mm a' }}</span>
+    </div>
+    <div class="job-badges">
+      <app-source-badge [source]="listing.sourceType" />
+      @if (listing.prestige) {
+        <span class="prestige-badge" title="On your curated list of recognizable employers">
+          <i class="pi pi-star-fill"></i>
+          {{ listing.companyTier === 'tech' ? 'Tech' : 'Known name' }}
+        </span>
+      }
+      @if (listing.user.status !== 'new') {
+        <span class="application-status" [attr.data-status]="listing.user.status">
+          <i class="pi pi-check-circle"></i>
+          {{ listing.user.status }}
+        </span>
+      }
+      @for (term of listing.terms; track $index) {
+        <span class="term">{{ term }}</span>
+      }
+      @if (listing.reviewReason) {
+        <span class="review-badge" title="Security challenge — review the source posting"
+          ><i class="pi pi-flag"></i> Flagged</span
+        >
+      }
+    </div>
+    <app-duplicated-jobs [duplicates]="listing.duplicatedJobs" />
+    @if (listing.cleanedDescription ?? listing.rawDescription) {
+      <details class="job-description">
+        <summary>View description</summary>
+        <p>{{ listing.cleanedDescription ?? listing.rawDescription }}</p>
+      </details>
+    }
+  </div>
+  <div class="job-actions">
+    <a class="job-action primary" [routerLink]="['/jobs', listing.id]"
+      ><i class="pi pi-file-edit"></i>
+      {{
+        (listing.cleanedDescription ?? listing.rawDescription) ? 'View & tailor' : 'View details'
+      }}</a
+    >
+    <app-quick-generate [job]="listing" />
+    @if (listing.applyUrl ?? listing.applicationUrl; as url) {
+      <a
+        class="job-action job-link"
+        title="Open posting"
+        [href]="url"
+        target="_blank"
+        rel="noopener noreferrer"
+        ><i class="pi pi-external-link"></i>
+      </a>
+    }
+  </div>
+</article>
