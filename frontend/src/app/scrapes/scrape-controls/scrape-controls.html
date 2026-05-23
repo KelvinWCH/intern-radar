@@ -1,0 +1,276 @@
+<section
+  class="workspace-page panel scrape-panel"
+  [attr.data-panel-state]="activity()?.busy || active() || pending() ? 'running' : null"
+>
+  <header>
+    <div>
+      <h2>Run a <em>scrape.</em><span class="heading-spark">✳</span></h2>
+    </div>
+    <a class="button-secondary button-sm" routerLink="/scrapes"
+      ><i class="pi pi-history"></i> History</a
+    >
+  </header>
+  @if (loading()) {}
+  @if (external()) {
+    <div class="current-run importer-activity">
+      @for (run of activity()?.runs ?? []; track run.id) {
+        <strong>{{ scrapeTriggerLabel(run.trigger) }} scrape running</strong>
+        <p class="hint">
+          {{ run.source }} · {{ scrapeStageLabels[run.phase ?? ''] ?? run.phase ?? 'Starting' }} ·
+          {{ duration(run.elapsed_seconds) }}
+        </p>
+        @if (run.items_total !== null) {
+          <p class="hint">{{ run.items_done ?? 0 }} / {{ run.items_total }} postings checked</p>
+        }
+      } @empty {
+        <app-loading-indicator [compact]="true" label="Importer starting or switching sources" />
+      }
+      <p class="hint">Manual scrapes become available when this importer finishes.</p>
+    </div>
+  }
+  <form #controls="ngForm" (ngSubmit)="start()">
+    <fieldset [disabled]="loading() || blocked() || pending()">
+      <div class="field-grid">
+        <div class="field">
+          <label for="scrape-group">Source group</label
+          ><select id="scrape-group" name="group" [(ngModel)]="group">
+            <option value="github">GitHub job feeds</option>
+            <option value="company">Company boards</option>
+          </select>
+        </div>
+        <div class="field">
+          <label for="scrape-filter">Find a source</label
+          ><input
+            id="scrape-filter"
+            name="filter"
+            [(ngModel)]="filter"
+            placeholder="Search sources"
+          />
+        </div>
+      </div>
+      <div class="source-toolbar">
+        <span
+          >{{ allSelected() ? 'Full scrape selected · ' : '' }}{{ selected().size }} selected</span
+        ><button type="button" (click)="selectVisible()">Select visible</button
+        ><button type="button" title="Select every source in every group" (click)="selectAll()">
+          Select all</button
+        ><button type="button" (click)="clear()">Clear</button>
+      </div>
+      <div class="source-list">
+        @if (loading() && !visible().length) {
+          <div class="source-skeleton">
+            @for (row of [1, 2, 3, 4]; track row) {
+              <span></span>
+            }
+          </div>
+        }
+        @for (source of visible(); track source.id) {
+          <label [class.unavailable]="!source.enabled"
+            ><input
+              type="checkbox"
+              [checked]="selected().has(source.id)"
+              [disabled]="!source.enabled || blocked() || pending()"
+              (change)="toggle(source.id)"
+            /><span
+              >{{ source.name }}
+              @if (source.reason) {
+                <small>{{ source.reason }}</small>
+              }
+            </span></label
+          >
+        } @empty {
+          @if (!loading()) {
+            <p class="hint">No matching sources.</p>
+          }
+        }
+      </div>
+      <label class="ai-choice" for="scrape-use-ai">
+        <input id="scrape-use-ai" name="useAi" type="checkbox" [(ngModel)]="useAi" />
+        <span
+          ><strong>Use AI enrichment</strong>
+          <small>Uses AI tokens. Off by default.</small>
+        </span>
+      </label>
+      <details class="advanced">
+        <summary>Run settings</summary>
+        <label class="ai-choice" for="scrape-older-postings">
+          <input
+            id="scrape-older-postings"
+            name="includeOlderPostings"
+            type="checkbox"
+            [(ngModel)]="includeOlderPostings"
+          />
+          <span
+            ><strong>Include older postings</strong
+            ><small
+              >Remove the posting-age cutoff, including undated GitHub postings. Time and download
+              limits still apply.</small
+            ></span
+          >
+        </label>
+        <div class="field-grid">
+          <div class="field">
+            <label for="scrape-runtime">Time limit · minutes</label
+            ><input
+              id="scrape-runtime"
+              name="runtime"
+              type="number"
+              min="1"
+              max="120"
+              required
+              [(ngModel)]="runtime"
+            />
+          </div>
+          <div class="field">
+            <label for="scrape-age">Posting age · days</label
+            ><input
+              id="scrape-age"
+              name="age"
+              type="number"
+              min="1"
+              max="30"
+              required
+              [(ngModel)]="age"
+              [disabled]="includeOlderPostings"
+            />
+          </div>
+          @if (useAi) {
+            <div class="field">
+              <label for="scrape-calls">AI call cap / source</label
+              ><input
+                id="scrape-calls"
+                name="calls"
+                type="number"
+                min="1"
+                max="100"
+                required
+                [(ngModel)]="calls"
+              />
+            </div>
+          }
+          <div class="field">
+            <label for="scrape-downloads">Download cap / source</label
+            ><input
+              id="scrape-downloads"
+              name="downloads"
+              type="number"
+              min="1"
+              max="100"
+              required
+              [(ngModel)]="downloads"
+            />
+          </div>
+        </div>
+        <p class="hint">AI and download caps are per source.</p>
+      </details>
+      <button
+        class="button-primary run-button"
+        type="submit"
+        [disabled]="!selected().size || !controls.valid || blocked() || pending() || loading()"
+      >
+        <i
+          class="pi"
+          [class.pi-play]="!pending()"
+          [class.pi-spinner]="pending()"
+          [class.pi-spin]="pending()"
+        ></i
+        >{{ pending() ? 'Submitting…' : useAi ? 'Run with AI enrichment' : 'Run scrape · no AI' }}
+      </button>
+    </fieldset>
+  </form>
+  @if (error() || activityError()) {
+    <div class="connection-error">
+      <span>{{ error() || activityError() }}</span>
+      <button class="button-secondary" type="button" (click)="load()">Reconnect</button>
+    </div>
+  }
+  @if (external() ? null : task(); as current) {
+    <div class="current-run">
+      <div>
+        <span class="status-pill" [attr.data-status]="current.status">{{
+          current.cancel_requested && active() ? 'Stopping…' : (current.status | titlecase)
+        }}</span>
+        <span class="run-mode">{{ current.settings.use_ai ? 'AI enrichment' : 'No AI' }}</span>
+      </div>
+      @let progress = current.progress;
+      <div class="run-progress">
+        @if (active() || current.status === 'completed') {
+          <div class="run-progress-head">
+            @if (active()) {
+              <app-loading-indicator [compact]="true" [label]="stage()" />
+            } @else {
+              <span>Done</span>
+            }
+            <strong>{{ progress.percent }}%</strong>
+          </div>
+          <p-progressbar
+            [value]="progress.percent"
+            [mode]="active() && !progress.percent ? 'indeterminate' : 'determinate'"
+            [showValue]="false"
+          />
+        }
+        <p class="hint">
+          @if (active() && progress.current_source) {
+            Source {{ progress.sources_finished + 1 }} of {{ progress.sources_total }} ·
+            {{ progress.current_source }}
+            @if (progress.items_total !== null) {
+              · {{ progress.items_done ?? 0 }} / {{ progress.items_total }} postings
+            }
+          } @else {
+            {{ progress.sources_finished }} of {{ progress.sources_total }} sources finished
+          }
+        </p>
+      </div>
+      <dl class="run-usage">
+        <div>
+          <dt>AI tokens</dt>
+          <dd
+            [title]="
+              (current.usage.input_tokens | number) +
+              ' in · ' +
+              (current.usage.output_tokens | number) +
+              ' out'
+            "
+          >
+            {{ formatTokens(current.usage.input_tokens + current.usage.output_tokens) }}
+          </dd>
+        </div>
+        <div>
+          <dt>Time</dt>
+          <dd>{{ duration(current.elapsed_seconds) }}</dd>
+        </div>
+      </dl>
+      <details class="run-details">
+        <summary>Run details</summary>
+        <p class="hint">
+          {{
+            current.settings.include_older_postings
+              ? 'All posting ages'
+              : 'Posting age: ' + current.settings.max_age_days + ' days'
+          }}
+          · {{ current.settings.max_downloads }} downloads / source ·
+          {{ duration(current.settings.max_runtime_seconds) }} time limit
+        </p>
+        <p class="hint">
+          Started {{ (current.started_at || current.created_at) * 1000 | date: 'MMM d · h:mm a' }}
+          @if (current.finished_at; as finished) {
+            · Finished {{ finished * 1000 | date: 'h:mm a' }}
+          }
+        </p>
+      </details>
+      @if (current.error) {
+        <p class="hint">{{ current.error }}</p>
+      }
+      @if (active()) {
+        <button
+          class="button-secondary"
+          type="button"
+          [disabled]="pending() || current.cancel_requested"
+          (click)="cancel()"
+        >
+          Cancel remaining work
+        </button>
+      }
+    </div>
+  }
+</section>
