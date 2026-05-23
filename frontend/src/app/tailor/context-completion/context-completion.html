@@ -1,0 +1,30 @@
+<div class="completion" [class.has-suggestion]="suggestion()" [id]="textarea().id + '-completion'">
+  @if (suggestion()) {
+    <div class="suggestion-heading">
+      <span>Suggested continuation</span><small>{{ model() }}</small>
+    </div>
+    <p class="suggestion-text">{{ suggestion() }}</p>
+    <div class="completion-actions">
+      <button type="button" class="accept" (mousedown)="$event.preventDefault()" (click)="accept()">
+        <kbd>Tab</kbd> Accept sentence
+      </button>
+      <button type="button" (mousedown)="$event.preventDefault()" (click)="dismiss()">
+        Dismiss
+      </button>
+    </div>
+  } @else {
+    <div class="completion-idle">
+      <span>{{
+        busy()
+          ? 'Thinking of a sentence…'
+          : message() || (enabled() ? 'AI suggestions · Tab to accept' : 'AI suggestions paused')
+      }}</span>
+      @if (message() && enabled()) {
+        <button type="button" [disabled]="disabled()" (click)="retry()">Try again</button>
+      }
+      <button type="button" [disabled]="disabled()" (click)="toggle()">
+        {{ enabled() ? 'Pause' : 'Enable' }}
+      </button>
+    </div>
+  }
+</div>
