@@ -1,0 +1,182 @@
+<section class="panel detail-panel overview-panel">
+  <div class="detail-heading">
+    <h3 class="detail-title" id="job-details-heading">
+      <span class="detail-mark"><i class="pi pi-briefcase"></i></span>
+      <span>Job details</span>
+    </h3>
+    @if (!editing()) {
+      <div class="heading-actions">
+        <button type="button" class="button-secondary" (click)="begin('description')">
+          <i
+            class="pi"
+            [class.pi-pencil]="!!(job().cleanedDescription ?? job().rawDescription)"
+            [class.pi-plus]="!(job().cleanedDescription ?? job().rawDescription)"
+          ></i>
+          {{
+            (job().cleanedDescription ?? job().rawDescription)
+              ? 'Edit description'
+              : 'Add description'
+          }}
+        </button>
+        <button type="button" class="button-secondary" (click)="begin()">
+          <i class="pi pi-sliders-h"></i> Edit job details
+        </button>
+      </div>
+    }
+  </div>
+  @if (editing() === 'details') {
+    <p class="hint">Your edits are kept when this job is scraped again.</p>
+    <form #detailsForm="ngForm" (ngSubmit)="detailsForm.valid && save()">
+      <fieldset [disabled]="saving()"><app-job-fields [draft]="draft" [editing]="true" /></fieldset>
+      <ng-container
+        [ngTemplateOutlet]="editActions"
+        [ngTemplateOutletContext]="{ invalid: detailsForm.invalid }"
+      />
+    </form>
+  } @else {
+    @if (job().summary) {
+      <div class="summary-block">
+        <p class="description">{{ job().summary }}</p>
+      </div>
+    }
+  }
+  @if (editing() !== 'details') {
+    <section class="description-panel">
+      @if (editing() === 'description') {
+        <form
+          class="description-form"
+          #descriptionForm="ngForm"
+          (ngSubmit)="descriptionForm.valid && save()"
+        >
+          <div class="field">
+            <label for="edit-description">Cleaned description · used for tailoring</label>
+            <textarea
+              id="edit-description"
+              name="cleaned_description"
+              [(ngModel)]="draft.cleaned_description"
+              rows="10"
+              [maxlength]="storedDescriptionLimit"
+              [disabled]="saving()"
+              placeholder="Paste or write the full job description here…"
+            ></textarea>
+            <app-text-count
+              id="cleaned-description-count"
+              [text]="draft.cleaned_description"
+              [limit]="tailoringDescriptionLimit"
+              purpose="tailoring"
+              guidance="You can save this draft; shorten the cleaned text before tailoring. The raw source is kept separately."
+            />
+          </div>
+          <div class="field">
+            <label for="edit-raw-description">Raw description · original reference</label>
+            <textarea
+              id="edit-raw-description"
+              name="raw_description"
+              [(ngModel)]="draft.raw_description"
+              rows="10"
+              [maxlength]="storedDescriptionLimit"
+              [disabled]="saving()"
+            ></textarea>
+            <app-text-count
+              id="raw-description-count"
+              [text]="draft.raw_description"
+              [limit]="storedDescriptionLimit"
+            />
+          </div>
+          <p class="hint description-help">
+            Edits survive future scrapes. Leave cleaned text blank to regenerate from raw text.
+            Tailoring accepts up to 200,000 cleaned characters.
+          </p>
+          <div class="description-actions">
+            <ng-container
+              [ngTemplateOutlet]="editActions"
+              [ngTemplateOutletContext]="{ invalid: descriptionForm.invalid }"
+            />
+          </div>
+        </form>
+      } @else if (job().cleanedDescription ?? job().rawDescription) {
+        <div
+          id="job-description-text"
+          class="description full-description formatted"
+          [class.collapsed]="!descriptionOpen()"
+        >
+          @for (block of blocks(); track $index) {
+            @switch (block.kind) {
+              @case ('heading') {
+                <h4>{{ block.text }}</h4>
+              }
+              @case ('list') {
+                <ul>
+                  @for (entry of block.items; track $index) {
+                    <li>{{ entry }}</li>
+                  }
+                </ul>
+              }
+              @default {
+                <p>{{ block.text }}</p>
+              }
+            }
+          }
+        </div>
+        <button
+          type="button"
+          class="description-toggle"
+          (click)="descriptionOpen.set(!descriptionOpen())"
+        >
+          {{ descriptionOpen() ? 'Show less' : 'Show full description' }}
+          <i
+            class="pi"
+            [class.pi-chevron-down]="!descriptionOpen()"
+            [class.pi-chevron-up]="descriptionOpen()"
+          ></i>
+        </button>
+        @if (descriptionTooLong()) {
+          <app-text-count
+            [text]="job().cleanedDescription ?? job().rawDescription ?? ''"
+            [limit]="tailoringDescriptionLimit"
+            purpose="tailoring"
+            guidance="Edit the cleaned description before tailoring. Your saved raw source stays intact."
+          />
+        }
+      } @else {
+        <div class="description-empty">
+          <h4>No description yet</h4>
+          <p>Add a description to tailor your documents.</p>
+        </div>
+      }
+      @if (editing() !== 'description' && showRawSource()) {
+        <details class="raw-description">
+          <summary>Original source text</summary>
+          <div class="description full-description" [textContent]="job().rawDescription"></div>
+        </details>
+      }
+    </section>
+  }
+</section>
+@if (message()) {
+  <p class="save-confirmation"><i class="pi pi-check-circle"></i> {{ message() }}</p>
+}
+
+<ng-template #editActions let-invalid="invalid">
+  @if (error()) {
+    <p class="notice error">{{ error() }}</p>
+    <button type="button" class="button-secondary" (click)="reload()" [disabled]="saving()">
+      Discard draft and reload saved details
+    </button>
+  }
+  <div class="actions">
+    <button type="submit" class="button-primary" [disabled]="saving() || invalid">
+      {{
+        saving() ? 'Saving…' : editing() === 'description' ? 'Save description' : 'Save job details'
+      }}
+    </button>
+    <button
+      type="button"
+      class="button-secondary"
+      [disabled]="saving()"
+      (click)="editing.set(null)"
+    >
+      Cancel edits
+    </button>
+  </div>
+</ng-template>

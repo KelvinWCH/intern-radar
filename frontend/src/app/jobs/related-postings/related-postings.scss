@@ -1,0 +1,37 @@
+.related-postings {
+  margin-top: 7px;
+  color: var(--muted);
+  font-size: 12px;
+}
+summary {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  padding: 2px 8px;
+  border-radius: 999px;
+  color: #49644f;
+  background: #edf2ec;
+  font-weight: 600;
+  list-style: none;
+  cursor: pointer;
+}
+summary::-webkit-details-marker {
+  display: none;
+}
+ul {
+  display: grid;
+  gap: 4px;
+  max-width: 420px;
+  margin: 7px 0 0;
+  padding: 0;
+  list-style: none;
+}
+li {
+  display: flex;
+  justify-content: space-between;
+  gap: 8px;
+}
+a {
+  color: var(--accent);
+  overflow-wrap: anywhere;
+}
