@@ -16,8 +16,9 @@
     <div class="completion-idle">
       <span>{{
         busy()
-          ? 'Thinking of a sentence…'
-          : message() || (enabled() ? 'AI suggestions · Tab to accept' : 'AI suggestions paused')
+          ? 'Thinking of a sentence...'
+          : message() ||
+            (enabled() ? 'AI suggestions on, press Tab to accept' : 'AI suggestions paused')
       }}</span>
       @if (message() && enabled()) {
         <button type="button" [disabled]="disabled()" (click)="retry()">Try again</button>

@@ -70,7 +70,7 @@ summary {
   font-size: 0.85rem;
 }
 .check-list summary::before {
-  content: '›';
+  content: '>';
   color: var(--muted);
   font-size: 1rem;
 }

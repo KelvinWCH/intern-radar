@@ -129,8 +129,9 @@
 }
 blockquote {
   margin: 6px 0 2px;
-  padding-left: 10px;
-  border-left: 3px solid var(--line);
+  padding: 6px 10px;
+  border-radius: 6px;
+  background: #f5f7f3;
   font-size: 13px;
 }
 .acknowledged-finding {
@@ -235,8 +236,6 @@ app-context-completion {
 }
 .history-round {
   margin-top: 10px;
-  padding-left: 12px;
-  border-left: 2px solid var(--line);
 }
 .history-round h5 {
   margin: 0;
