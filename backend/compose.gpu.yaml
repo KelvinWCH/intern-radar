@@ -1,0 +1,49 @@
+# optional: run the job matching embeddings on an nvidia jetson gpu instead of the cpu
+#   docker compose -f compose.yaml -f compose.gpu.yaml up -d --build
+# needs jetpack 6 and the nvidia container runtime, the cuda libs get mounted from the host
+# if the sidecar dies the worker just keeps scoring on the cpu
+services:
+  embedder:
+    build:
+      context: .
+      dockerfile: embedder/Dockerfile
+    image: ${JOB_EMBEDDER_IMAGE:-intern-radar-embedder:local}
+    init: true
+    restart: unless-stopped
+    runtime: nvidia
+    read_only: true
+    tmpfs:
+      - /tmp
+    volumes:
+      - /usr/local/cuda-12.6/targets/aarch64-linux/lib:/opt/nvidia/cuda:ro
+      - /usr/lib/aarch64-linux-gnu/libcudnn.so.9:/opt/nvidia/lib/libcudnn.so.9:ro
+      - /usr/lib/aarch64-linux-gnu/libcudnn_adv.so.9:/opt/nvidia/lib/libcudnn_adv.so.9:ro
+      - /usr/lib/aarch64-linux-gnu/libcudnn_cnn.so.9:/opt/nvidia/lib/libcudnn_cnn.so.9:ro
+      - /usr/lib/aarch64-linux-gnu/libcudnn_engines_precompiled.so.9:/opt/nvidia/lib/libcudnn_engines_precompiled.so.9:ro
+      - /usr/lib/aarch64-linux-gnu/libcudnn_engines_runtime_compiled.so.9:/opt/nvidia/lib/libcudnn_engines_runtime_compiled.so.9:ro
+      - /usr/lib/aarch64-linux-gnu/libcudnn_graph.so.9:/opt/nvidia/lib/libcudnn_graph.so.9:ro
+      - /usr/lib/aarch64-linux-gnu/libcudnn_heuristic.so.9:/opt/nvidia/lib/libcudnn_heuristic.so.9:ro
+      - /usr/lib/aarch64-linux-gnu/libcudnn_ops.so.9:/opt/nvidia/lib/libcudnn_ops.so.9:ro
+    healthcheck:
+      test:
+        - CMD
+        - python
+        - -c
+        - "import urllib.request; urllib.request.urlopen('http://127.0.0.1:8100/health', timeout=5)"
+      interval: 30s
+      timeout: 10s
+      start_period: 60s
+      retries: 3
+    security_opt:
+      - no-new-privileges:true
+    cap_drop:
+      - ALL
+    logging:
+      driver: json-file
+      options:
+        max-size: "10m"
+        max-file: "3"
+
+  worker:
+    environment:
+      JOB_EMBEDDER_URL: http://embedder:8100
