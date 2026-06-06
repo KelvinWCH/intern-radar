@@ -1,0 +1,43 @@
+<dialog #previewDialog (close)="clear()">
+  <header>
+    <div>
+      <h2 id="pdf-preview-title">{{ current()?.title ?? 'Document preview' }}</h2>
+      @if (current()?.subtitle; as subtitle) {
+        <p>{{ subtitle }}</p>
+      }
+    </div>
+    <button
+      class="close-button"
+      type="button"
+      title="Close document preview"
+      (click)="close()"
+      autofocus
+    >
+      <i class="pi pi-times"></i>
+    </button>
+  </header>
+  @if (loading()) {
+    <div class="preview-message">
+      <i class="pi pi-spinner pi-spin"></i>
+      <h3>Preparing the PDF</h3>
+      <p>Building the document from its saved content…</p>
+    </div>
+  } @else if (error()) {
+    <div class="preview-message">
+      <i class="pi pi-file-pdf"></i>
+      <h3>Preview unavailable</h3>
+      <p>{{ error() }}</p>
+      <button class="button-secondary" type="button" (click)="load()">Retry preview</button>
+    </div>
+  } @else if (previewUrl(); as url) {
+    <iframe [src]="url" [title]="current()?.title ?? 'Document preview'"></iframe>
+  }
+  <footer>
+    <p>Press Escape or close to dismiss. The file is not kept after closing.</p>
+    @if (downloadUrl(); as url) {
+      <a class="button-primary" [href]="url" [download]="filename() || 'document.pdf'">
+        <i class="pi pi-download"></i> Download PDF
+      </a>
+    }
+  </footer>
+</dialog>
