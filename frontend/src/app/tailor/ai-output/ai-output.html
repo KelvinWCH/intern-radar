@@ -1,0 +1,129 @@
+<article class="ai-card" [attr.data-state]="state()">
+  <header class="ai-head">
+    <span class="ai-mark"><i [class]="'pi ' + kind().icon"></i></span>
+    <div class="ai-heading">
+      <strong>{{ kind().title }}</strong>
+      <time>{{ event().created_at * 1000 | date: 'HH:mm:ss' }}</time>
+    </div>
+    <span class="ai-state">
+      @switch (state()) {
+        @case ('writing') {
+          <i class="pi pi-spinner pi-spin"></i> Writing…
+        }
+        @case ('done') {
+          <i class="pi pi-check"></i> Done
+        }
+        @default {
+          <i class="pi pi-exclamation-circle"></i> Stopped early
+        }
+      }
+    </span>
+  </header>
+  @if (thinking().length) {
+    <details class="thinking" [open]="state() === 'writing'">
+      <summary>
+        <i class="pi pi-lightbulb"></i>
+        Thinking
+        <span>{{ state() === 'writing' ? 'live' : 'summary from the model' }}</span>
+        <i class="pi pi-chevron-down"></i>
+      </summary>
+      <div class="thinking-body">
+        @for (paragraph of thinking(); track $index) {
+          <p>
+            @for (run of paragraph; track $index) {
+              @if (run.bold) {
+                <strong>{{ run.text }}</strong>
+              } @else {
+                {{ run.text }}
+              }
+            }
+          </p>
+        }
+      </div>
+    </details>
+  }
+  @if (view(); as laidOut) {
+    <div class="ai-sections">
+      @for (section of laidOut.sections; track section.title) {
+        <section class="ai-section">
+          <h5>{{ section.title }}</h5>
+          @switch (section.kind) {
+            @case ('text') {
+              <p class="ai-text">{{ section.kind === 'text' ? section.text : '' }}</p>
+            }
+            @case ('chips') {
+              <ul class="ai-chips">
+                @for (chip of section.kind === 'chips' ? section.chips : []; track $index) {
+                  <li>{{ chip }}</li>
+                }
+              </ul>
+            }
+            @case ('items') {
+              <ul class="ai-items">
+                @for (item of section.kind === 'items' ? section.items : []; track $index) {
+                  <li>
+                    <span class="ai-item-text">{{ item.text }}</span>
+                    @for (tag of item.tags ?? []; track tag.label) {
+                      <span class="ai-tag" [attr.data-tone]="tag.tone">{{ tag.label }}</span>
+                    }
+                    @if (item.note) {
+                      <small>{{ item.note }}</small>
+                    }
+                  </li>
+                }
+              </ul>
+            }
+            @case ('groups') {
+              @for (group of section.kind === 'groups' ? section.groups : []; track $index) {
+                <div class="ai-group">
+                  <div class="ai-group-head">
+                    <strong>{{ group.title }}</strong>
+                    @for (tag of group.tags ?? []; track tag.label) {
+                      <span class="ai-tag" [attr.data-tone]="tag.tone">{{ tag.label }}</span>
+                    }
+                  </div>
+                  @if (group.subtitle) {
+                    <p class="ai-subtitle">{{ group.subtitle }}</p>
+                  }
+                  @if (group.chips?.length) {
+                    <ul class="ai-chips">
+                      @for (chip of group.chips ?? []; track $index) {
+                        <li>{{ chip }}</li>
+                      }
+                    </ul>
+                  }
+                  <ul class="ai-items">
+                    @for (item of group.items; track $index) {
+                      <li>
+                        <span class="ai-item-text">{{ item.text }}</span>
+                        @for (tag of item.tags ?? []; track tag.label) {
+                          <span class="ai-tag" [attr.data-tone]="tag.tone">{{ tag.label }}</span>
+                        }
+                        @if (item.note) {
+                          <small>{{ item.note }}</small>
+                        }
+                      </li>
+                    }
+                  </ul>
+                </div>
+              }
+            }
+          }
+        </section>
+      } @empty {
+        <p class="ai-waiting">Waiting for the first fields…</p>
+      }
+      @if (state() === 'writing') {
+        <span class="ai-caret"></span>
+      }
+    </div>
+    <details class="ai-raw">
+      <summary>Raw output</summary>
+      <pre>{{ event().output }}</pre>
+    </details>
+  } @else if (event().output) {
+    <pre class="ai-raw-text">{{ event().output }}</pre>
+  } @else if (state() === 'writing') {
+    <p class="ai-waiting">Waiting for the first words…</p>
+  }
+</article>
