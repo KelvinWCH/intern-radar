@@ -1,0 +1,91 @@
+<div class="stack-editor">
+  <div class="stack-heading">
+    <div>
+      <span class="stack-label">{{ text().title }}</span>
+      <p>Keep every {{ text().noun }} here. Select the ones shown on your resume by default.</p>
+    </div>
+    <span class="stack-count"
+      >{{ selected().length }} default / {{ available().length }} total</span
+    >
+  </div>
+  @if (available().length > 12) {
+    <input
+      class="stack-search"
+      type="search"
+      [placeholder]="text().find + '…'"
+      [ngModelOptions]="{ standalone: true }"
+      [(ngModel)]="filter"
+    />
+  }
+  <div class="stack-chips">
+    @for (name of visibleItems(); track name) {
+      <button
+        type="button"
+        class="stack-chip"
+        [class.chosen]="selected().includes(name)"
+        (click)="toggle(name)"
+      >
+        <span>{{ selected().includes(name) ? '✓' : '+' }}</span
+        >{{ name }}
+      </button>
+    } @empty {
+      <p class="empty">
+        {{ available().length ? 'No matching ' + text().plural + '.' : text().empty }}
+      </p>
+    }
+  </div>
+  <div class="stack-add">
+    <input
+      type="text"
+      [placeholder]="text().example"
+      [ngModelOptions]="{ standalone: true }"
+      [(ngModel)]="draft"
+      (keydown.enter)="$event.preventDefault(); add()"
+    />
+    <button type="button" class="button-secondary" [disabled]="!draft.trim()" (click)="add()">
+      Add
+    </button>
+    <button type="button" class="subtle-button" (click)="edit()">Edit inventory</button>
+  </div>
+  @if (editing) {
+    <div class="inventory-edit">
+      <label
+        >Full inventory · one per line or comma separated<textarea
+          rows="3"
+          [ngModelOptions]="{ standalone: true }"
+          [(ngModel)]="inventoryDraft"
+        ></textarea>
+      </label>
+      <p>Removing a {{ text().noun }} also removes it from the resume defaults.</p>
+      <div>
+        <button type="button" class="button-secondary" (click)="apply()">Apply inventory</button
+        ><button type="button" class="subtle-button" (click)="editing = false">Cancel</button>
+      </div>
+    </div>
+  }
+  <div class="stack-defaults">
+    <span class="stack-label">{{ text().defaults }}</span>
+    <div class="default-chips">
+      @for (name of selected(); track name; let index = $index) {
+        <span class="default-chip"
+          ><span class="order">{{ index + 1 }}</span
+          >{{ name
+          }}<button type="button" [disabled]="index === 0" (click)="move(index, -1)">‹</button
+          ><button
+            type="button"
+            [disabled]="index === selected().length - 1"
+            (click)="move(index, 1)"
+          >
+            ›
+          </button></span
+        >
+      } @empty {
+        <p class="empty">No defaults selected. Click {{ text().plural }} above to include them.</p>
+      }
+    </div>
+    <p class="stack-help">
+      Defaults always print. Tailoring reorders them for each job and adds relevant
+      {{ text().plural }} from the full inventory.
+    </p>
+  </div>
+</div>

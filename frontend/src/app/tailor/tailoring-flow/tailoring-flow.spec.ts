@@ -89,7 +89,7 @@ describe('TailoringFlow', (): void => {
     await fixture.whenStable();
     const current = element.querySelector('.flow-current');
     expect(current?.textContent).toContain('In progress');
-    expect(current?.textContent.replace(/\s+/g, ' ')).toContain('Resume · Cover letter');
+    expect(current?.textContent.replace(/\s+/g, ' ')).toContain('Resume, Cover letter');
     expect(element.querySelectorAll('.current')).toHaveLength(2);
     fixture.componentRef.setInput('document', {
       ...savedDocument,
