@@ -1,2 +1,101 @@
 :host {
   display: block;
+  min-width: 0;
+}
+.generator-card {
+  padding: 14px 16px 16px;
+  border: 1px solid #d5e1cd;
+  border-radius: 14px;
+  background: white;
+}
+.generator-card h4 {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin: 0 0 4px;
+  font-size: 15px;
+  font-weight: 600;
+}
+.generator-card h4 .pi {
+  color: var(--accent);
+  font-size: 13px;
+}
+p {
+  font-size: 13px;
+  line-height: 1.7;
+  color: var(--muted);
+}
+.choices {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin: 8px 0 14px;
+  font-size: 14px;
+}
+.choices label {
+  display: flex;
+  flex: 1 1 auto;
+  align-items: center;
+  gap: 8px;
+  min-height: 44px;
+  padding: 10px;
+  border: 1px solid var(--line);
+  border-radius: 10px;
+  background: #fcfdf7;
+  cursor: pointer;
+}
+.choices label:has(.p-checkbox-checked) {
+  border-color: #bed2bb;
+  background: #edf4e7;
+}
+input {
+  accent-color: var(--accent);
+}
+.button-primary {
+  width: 100%;
+  min-height: 44px;
+  margin-top: 8px;
+  border-radius: 11px;
+  background: linear-gradient(125deg, #2e795a, #205b49);
+}
+.button-primary:hover:not(:disabled) {
+  background: var(--accent-hover);
+}
+.hint {
+  font-size: 12px;
+}
+summary {
+  cursor: pointer;
+  font-size: 14px;
+  color: var(--accent);
+  min-height: 38px;
+  padding-block: 4px;
+  display: list-item;
+}
+.instructions,
+.model-settings {
+  border-top: 1px solid var(--line);
+  padding: 8px 0 0;
+}
+.model-settings {
+  margin-bottom: 10px;
+}
+.instructions textarea {
+  display: block;
+  width: 100%;
+  resize: vertical;
+  min-height: 72px;
+  padding: 9px 11px;
+  margin-bottom: 10px;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  background: var(--surface);
+  color: var(--text);
+  font-size: 14px;
+  line-height: 1.5;
+}
+.profile-link {
+  display: block;
+  margin-top: 14px;
+  text-align: center;
+}
