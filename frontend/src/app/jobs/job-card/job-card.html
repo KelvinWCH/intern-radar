@@ -22,7 +22,7 @@
     <div class="job-meta">
       <span class="location">
         <i class="pi pi-map-marker"></i>
-        {{ listing.locations.length ? listing.locations.join(' · ') : 'Location not listed' }}
+        {{ listing.locations.length ? listing.locations.join(', ') : 'Location not listed' }}
       </span>
       <app-posted-date [timestamp]="listing.details?.date_posted" />
       <span class="discovery-time">Found {{ listing.firstSeenAt * 1000 | date: 'h:mm a' }}</span>
@@ -45,7 +45,7 @@
         <span class="term">{{ term }}</span>
       }
       @if (listing.reviewReason) {
-        <span class="review-badge" title="Security challenge — review the source posting"
+        <span class="review-badge" title="Security challenge, review the source posting"
           ><i class="pi pi-flag"></i> Flagged</span
         >
       }

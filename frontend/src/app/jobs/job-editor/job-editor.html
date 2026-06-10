@@ -49,7 +49,7 @@
           (ngSubmit)="descriptionForm.valid && save()"
         >
           <div class="field">
-            <label for="edit-description">Cleaned description · used for tailoring</label>
+            <label for="edit-description">Cleaned description (used for tailoring)</label>
             <textarea
               id="edit-description"
               name="cleaned_description"
@@ -57,7 +57,7 @@
               rows="10"
               [maxlength]="storedDescriptionLimit"
               [disabled]="saving()"
-              placeholder="Paste or write the full job description here…"
+              placeholder="Paste or write the full job description here..."
             ></textarea>
             <app-text-count
               id="cleaned-description-count"
@@ -68,7 +68,7 @@
             />
           </div>
           <div class="field">
-            <label for="edit-raw-description">Raw description · original reference</label>
+            <label for="edit-raw-description">Raw description (original)</label>
             <textarea
               id="edit-raw-description"
               name="raw_description"
@@ -167,7 +167,11 @@
   <div class="actions">
     <button type="submit" class="button-primary" [disabled]="saving() || invalid">
       {{
-        saving() ? 'Saving…' : editing() === 'description' ? 'Save description' : 'Save job details'
+        saving()
+          ? 'Saving...'
+          : editing() === 'description'
+            ? 'Save description'
+            : 'Save job details'
       }}
     </button>
     <button

@@ -59,9 +59,6 @@ export class JobWeek {
       };
     });
   });
-  protected readonly busiestDay = computed((): number =>
-    Math.max(1, ...this.days().map((day): number => day.groups.length)),
-  );
 
   constructor() {
     effect((): void => {
