@@ -1,1 +1,213 @@
 <div class="workspace-page activity-page">
+  <header class="page-head">
+    <div>
+      <h2>Your <em>activity.</em><span class="heading-spark">✳</span></h2>
+    </div>
+    <div class="page-actions">
+      <button pButton type="button" [outlined]="true" [disabled]="loading()" (click)="load()">
+        <i pButtonIcon class="pi pi-refresh" [class.pi-spin]="loading()"></i
+        ><span pButtonLabel>Refresh</span>
+      </button>
+      <a class="button-primary" routerLink="/jobs">Browse jobs <i class="pi pi-arrow-right"></i></a>
+    </div>
+  </header>
+  @if (error() || loading()) {
+    <div class="async-status">
+      @if (error()) {
+        <span>{{ error() }}</span>
+      } @else {
+        <app-loading-indicator [compact]="true" label="Updating your progress…" />
+      }
+    </div>
+  }
+  @if (summary(); as data) {
+    <div class="period-head">
+      <div>
+        <h3>Your progress</h3>
+        <p class="hint">
+          {{ data.start_date | date: 'MMM d' }} – {{ data.end_date | date: 'MMM d, y' }}
+        </p>
+      </div>
+      <div class="range-buttons">
+        @for (days of ranges; track days) {
+          <button
+            pButton
+            type="button"
+            size="small"
+            [outlined]="range() !== days"
+            (click)="load(days)"
+          >
+            <span pButtonLabel>{{ days }} days</span>
+          </button>
+        }
+      </div>
+    </div>
+    <dl class="stat-grid">
+      <div title="First time marked applied per job">
+        <dt>Applications in this period</dt>
+        <dd>{{ applications() }}</dd>
+      </div>
+      <div title="Completed resume or cover letter sets">
+        <dt>Document sets tailored</dt>
+        <dd>{{ documents() }}</dd>
+      </div>
+      <div title="Days you took a recorded step">
+        <dt>Active days</dt>
+        <dd>
+          {{ data.active_days }} <span>/ {{ data.days.length }}</span>
+        </dd>
+      </div>
+      <div title="All recorded application milestones">
+        <dt>Applications to date</dt>
+        <dd>{{ data.total_applications }}</dd>
+      </div>
+    </dl>
+
+    <div class="charts-grid">
+      <section class="panel effort-panel">
+        <h3>See your consistency</h3>
+        <div class="legend">
+          <span><i class="application-color"></i>Applications</span
+          ><span><i class="document-color"></i>Document sets</span
+          ><span><i class="other-color"></i>Other actions</span>
+        </div>
+        <div class="chart-scroll">
+          <div
+            class="daily-chart"
+            [style.grid-template-columns]="'repeat(' + data.days.length + ', minmax(14px, 1fr))'"
+          >
+            @for (day of data.days; track day.date) {
+              <button
+                class="day-bar"
+                type="button"
+                [class.selected]="selectedDay()?.date === day.date"
+                [title]="describeDay(day)"
+                (click)="selectedDay.set(day)"
+              >
+                <span class="bar-track">
+                  <span
+                    class="other-color"
+                    [style.height.%]="
+                      (100 * (day.actions - day.applications - day.documents)) / maxActions()
+                    "
+                  ></span>
+                  <span
+                    class="document-color"
+                    [style.height.%]="(100 * day.documents) / maxActions()"
+                  ></span>
+                  <span
+                    class="application-color"
+                    [style.height.%]="(100 * day.applications) / maxActions()"
+                  ></span>
+                </span>
+                <span class="day-number">{{ day.date | date: 'd' }}</span>
+              </button>
+            }
+          </div>
+        </div>
+        @if (selectedDay(); as day) {
+          <p class="day-detail">
+            <strong>{{ day.date | date: 'MMM d' }}:</strong> {{ day.actions }} actions ·
+            {{ day.applications }} applications · {{ day.documents }} document sets ·
+            {{ day.resume_updates }} resume updates
+          </p>
+        }
+        @if (data.active_days === 0) {
+          <p class="hint">No activity recorded yet.</p>
+        }
+      </section>
+      <section class="panel pipeline-panel">
+        <h3>Where things stand</h3>
+        <p class="hint">Current status across {{ pipelineTotal() }} tracked jobs · all time</p>
+        <div class="pipeline">
+          @for (stage of data.pipeline; track stage.status) {
+            <div class="pipeline-stage">
+              <div>
+                <span>{{ stage.status | titlecase }}</span
+                ><strong>{{ stage.count }}</strong>
+              </div>
+              <div class="pipeline-track">
+                <span
+                  class="stage"
+                  [attr.data-status]="stage.status"
+                  [style.width.%]="pipelineTotal() ? (100 * stage.count) / pipelineTotal() : 0"
+                ></span>
+              </div>
+            </div>
+          }
+          @if (pipelineTotal() === 0) {
+            <div class="pipeline-empty">
+              <i class="pi pi-inbox"></i>
+              <p>Nothing tracked yet.</p>
+              <span>Save a job or update its application status to see it here.</span>
+            </div>
+          }
+        </div>
+        <a class="subtle-link" routerLink="/applications">Open your application tracker →</a>
+      </section>
+    </div>
+
+    <section class="panel recent-panel">
+      <h3>Recent activity</h3>
+      <p class="hint">Latest 20 recorded actions in this period</p>
+      <ol class="activity-feed">
+        @for (event of data.recent; track event.id) {
+          <li>
+            <span class="event-dot"></span>
+            <div class="event-content">
+              <strong>{{ eventLabel(event) }}</strong>
+              @if (event.data.job_id; as jobId) {
+                <a [routerLink]="['/jobs', jobId]"
+                  >{{ event.data.title }} · {{ event.data.company }}</a
+                >
+              } @else {
+                <a routerLink="/profile"
+                  >Source resume · revision {{ event.data.profile_revision }}</a
+                >
+              }
+              @if (event.data.status) {
+                <span class="status-pill" [attr.data-status]="event.data.status">{{
+                  event.data.status | titlecase
+                }}</span>
+              }
+              @if (event.data.document_id; as documentId) {
+                @if (event.data.job_id; as jobId) {
+                  <a
+                    class="subtle-link"
+                    [routerLink]="['/jobs', jobId]"
+                    [queryParams]="{ version: documentId }"
+                    >View documents →</a
+                  >
+                } @else {
+                  <a class="subtle-link" [routerLink]="['/documents', documentId]"
+                    >View documents →</a
+                  >
+                }
+              }
+              @if (event.data.backfilled) {
+                <small>Recovered from saved history</small>
+              }
+            </div>
+            <time>{{ eventTime(event.occurred_at) }}</time>
+          </li>
+        } @empty {
+          <li class="empty-activity">
+            <p>No activity in this period.</p>
+            <a routerLink="/profile" class="subtle-link">Update your profile →</a>
+          </li>
+        }
+      </ol>
+    </section>
+  } @else if (loading()) {
+    <section class="panel">
+      <app-skeleton width="35%" height="12px" />
+      <app-skeleton width="70%" height="28px" />
+      <app-skeleton height="6px" />
+    </section>
+  } @else {
+    <section class="panel">
+      <h3>Your activity is unavailable.</h3>
+      <p class="hint">Use Refresh to try again.</p>
+    </section>
+  }
+</div>
