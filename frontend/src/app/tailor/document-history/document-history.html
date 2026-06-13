@@ -1,0 +1,107 @@
+<div class="workspace-page">
+  <app-pdf-preview-dialog #pdfPreview />
+  <header class="page-head">
+    <div>
+      <h2>Tailoring <em>history.</em><span class="heading-spark">✳</span></h2>
+    </div>
+    <a class="button-primary" routerLink="/tailor">Tailor a job</a>
+  </header>
+  @if (error()) {
+    <p class="notice error">{{ error() }}</p>
+    <button type="button" class="button-secondary" (click)="load()">Retry</button>
+  }
+  @if (loading()) {
+    <p>Loading history…</p>
+  }
+  @if (page(); as results) {
+    <section class="panel table-panel">
+      <div class="table-scroll">
+        <table class="data-table">
+          <thead>
+            <tr>
+              <th>Target role</th>
+              <th>Created</th>
+              <th>Documents</th>
+              <th>Result</th>
+              <th>AI usage & cost</th>
+              <th></th>
+            </tr>
+          </thead>
+          <tbody>
+            @for (item of results.items; track item.id) {
+              <tr>
+                <td>
+                  <a class="subtle-link role-link" [routerLink]="['/jobs', item.job_id]">{{
+                    item.title
+                  }}</a>
+                  <p class="hint role-meta">
+                    {{ item.company }} · <app-posted-date [timestamp]="item.date_posted" />
+                  </p>
+                </td>
+                <td class="nowrap">{{ item.created_at * 1000 | date: 'MMM d, y · h:mm a' }}</td>
+                <td>
+                  <span class="document-chips">
+                    @if (item.has_resume) {
+                      <button type="button" class="document-chip" (click)="preview(item, 'resume')">
+                        <i class="pi pi-file-pdf"></i> Resume
+                      </button>
+                    }
+                    @if (item.has_cover_letter) {
+                      <button
+                        type="button"
+                        class="document-chip"
+                        (click)="preview(item, 'cover-letter')"
+                      >
+                        <i class="pi pi-file-pdf"></i> Cover letter
+                      </button>
+                    }
+                    @if (!item.has_resume && !item.has_cover_letter) {
+                      —
+                    }
+                  </span>
+                </td>
+                <td>
+                  <span class="status-pill" [attr.data-status]="item.status">{{
+                    item.status === 'awaiting_review' ? 'Needs review' : (item.status | titlecase)
+                  }}</span>
+                </td>
+                <td><app-ai-usage-summary [usage]="item.ai_usage" /></td>
+                <td>
+                  <a
+                    class="button-secondary button-sm"
+                    [routerLink]="['/jobs', item.job_id]"
+                    [queryParams]="{ version: item.id }"
+                    >Open</a
+                  >
+                </td>
+              </tr>
+            } @empty {
+              <tr>
+                <td colspan="6" class="empty-state">No documents yet.</td>
+              </tr>
+            }
+          </tbody>
+        </table>
+      </div>
+      <div class="pagination">
+        <button
+          class="button-secondary button-sm"
+          type="button"
+          [disabled]="loading() || navigation.cursor(results.offset - results.limit) === undefined"
+          (click)="load(results.offset - results.limit)"
+        >
+          <i class="pi pi-chevron-left"></i> Previous</button
+        ><span
+          >Page {{ results.offset / results.limit + 1 }} · {{ results.items.length }} attempts</span
+        ><button
+          class="button-secondary button-sm"
+          type="button"
+          [disabled]="loading() || !results.nextCursor"
+          (click)="load(results.offset + results.limit)"
+        >
+          Next <i class="pi pi-chevron-right"></i>
+        </button>
+      </div>
+    </section>
+  }
+</div>
