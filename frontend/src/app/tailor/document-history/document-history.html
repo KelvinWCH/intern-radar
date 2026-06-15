@@ -2,7 +2,7 @@
   <app-pdf-preview-dialog #pdfPreview />
   <header class="page-head">
     <div>
-      <h2>Tailoring <em>history.</em><span class="heading-spark">✳</span></h2>
+      <h2>Tailoring history</h2>
     </div>
     <a class="button-primary" routerLink="/tailor">Tailor a job</a>
   </header>
@@ -11,7 +11,7 @@
     <button type="button" class="button-secondary" (click)="load()">Retry</button>
   }
   @if (loading()) {
-    <p>Loading history…</p>
+    <p>Loading history...</p>
   }
   @if (page(); as results) {
     <section class="panel table-panel">
@@ -35,10 +35,10 @@
                     item.title
                   }}</a>
                   <p class="hint role-meta">
-                    {{ item.company }} · <app-posted-date [timestamp]="item.date_posted" />
+                    {{ item.company }}, posted <app-posted-date [timestamp]="item.date_posted" />
                   </p>
                 </td>
-                <td class="nowrap">{{ item.created_at * 1000 | date: 'MMM d, y · h:mm a' }}</td>
+                <td class="nowrap">{{ item.created_at * 1000 | date: 'MMM d, y, h:mm a' }}</td>
                 <td>
                   <span class="document-chips">
                     @if (item.has_resume) {
@@ -56,7 +56,7 @@
                       </button>
                     }
                     @if (!item.has_resume && !item.has_cover_letter) {
-                      —
+                      -
                     }
                   </span>
                 </td>
@@ -92,7 +92,7 @@
         >
           <i class="pi pi-chevron-left"></i> Previous</button
         ><span
-          >Page {{ results.offset / results.limit + 1 }} · {{ results.items.length }} attempts</span
+          >Page {{ results.offset / results.limit + 1 }}, {{ results.items.length }} attempts</span
         ><button
           class="button-secondary button-sm"
           type="button"

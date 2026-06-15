@@ -17,7 +17,7 @@ import { DocumentsService } from '../documents.service';
         </p>
       } @else {
         <p class="empty-state">
-          <i class="pi pi-spinner pi-spin"></i> Opening the job's documents…
+          <i class="pi pi-spinner pi-spin"></i> Opening the job's documents...
         </p>
       }
     </div>

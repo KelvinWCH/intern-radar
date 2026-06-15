@@ -8,7 +8,7 @@
     <span class="ai-state">
       @switch (state()) {
         @case ('writing') {
-          <i class="pi pi-spinner pi-spin"></i> Writing…
+          <i class="pi pi-spinner pi-spin"></i> Writing...
         }
         @case ('done') {
           <i class="pi pi-check"></i> Done
@@ -111,7 +111,7 @@
           }
         </section>
       } @empty {
-        <p class="ai-waiting">Waiting for the first fields…</p>
+        <p class="ai-waiting">Waiting for the first fields...</p>
       }
       @if (state() === 'writing') {
         <span class="ai-caret"></span>
@@ -124,6 +124,6 @@
   } @else if (event().output) {
     <pre class="ai-raw-text">{{ event().output }}</pre>
   } @else if (state() === 'writing') {
-    <p class="ai-waiting">Waiting for the first words…</p>
+    <p class="ai-waiting">Waiting for the first words...</p>
   }
 </article>
