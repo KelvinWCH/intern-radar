@@ -11,14 +11,14 @@ FastAPI app, scrape worker and CLI, all in the `job_backend` package. Setup is i
 | `scrape/<provider>/` | adapters for public job boards (greenhouse, lever, ashby, workday, oracle...) |
 | `scrape/companies/`  | `companies.json`, the list of company boards                                  |
 | `scrape/pipeline/`   | one import: fetch, filter, read pages, extract, save, close stale postings    |
-| `scrape/utils/`      | http client, per host pacing, page reader, headless browser                   |
-| `scrape/worker/`     | the scheduler, `schedules.json` and the per source child processes            |
+| `scrape/utils/`      | http client, per-host pacing, page reader, headless browser                   |
+| `scrape/worker/`     | the scheduler, `schedules.json` and the per-source child processes            |
 | `jobs/`              | saved jobs, browsing and filters, application status, tailoring runs          |
 | `resumes/`           | research, writers, reviewer, latex rendering, pdf checks                      |
 | `profile/`           | your profile                                                                  |
-| `matching/`          | embedding based match scores                                                  |
+| `matching/`          | embedding-based match scores                                                  |
 | `persistence/`       | postgres access, json records, migrations                                     |
-| `embedder/`          | the optional gpu embedding sidecar (next to `src/`, not in it)                |
+| `embedder/`          | the optional gpu embedding sidecar (it lives next to `src/`)                  |
 
 Each feature folder keeps its models in `models.py` and its constants, AI prompts included, in
 `constants.py`.
@@ -30,7 +30,7 @@ python -m job_backend.cli --repo simplify-summer2027   # one github list
 python -m job_backend.cli --all-repos
 python -m job_backend.cli --list-companies             # no network
 python -m job_backend.cli --company 1password
-python -m job_backend.cli --all-companies --use-ai     # ai extraction is opt in
+python -m job_backend.cli --all-companies --use-ai     # ai extraction is opt-in
 python -m job_backend.scrape.worker --show-schedule    # print the schedule and exit
 python -m job_backend.scrape.worker --check-browser    # make sure headless chromium starts
 ```

@@ -49,7 +49,7 @@ def wait_while_paused(engine: Database, request_id: str, step: str) -> None:
                     raise EditConflictError(PAUSE_EXPIRED)
                 if not announced:
                     with session.begin():
-                        _append_event(row, "paused", f"{step} · Paused before its next step")
+                        _append_event(row, "paused", f"{step}: paused before its next step")
                     announced = True
             if condition is None:
                 time.sleep(PAUSE_POLL_SECONDS)
@@ -71,7 +71,7 @@ def pause_tailoring(engine: Database, document_id: str) -> DocumentDetail:
         if row.paused_at is not None:
             raise EditConflictError("This tailoring attempt is already paused.")
         row.paused_at = int(time.time())
-        _append_event(row, "paused", "Pause requested · the step already running finishes first")
+        _append_event(row, "paused", "Pause requested. The step already running finishes first")
         session.flush()
         return document_response(session, row, DocumentDetail)
 

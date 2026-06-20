@@ -1,0 +1,18 @@
+:host {
+  pointer-events: none;
+}
+.atmosphere-viewport {
+  position: fixed;
+  inset: 0;
+  overflow: hidden;
+  z-index: -1;
+  isolation: isolate;
+}
+app-weather-backdrop {
+  z-index: 0;
+}
+@media print {
+  :host {
+    display: none;
+  }
+}
