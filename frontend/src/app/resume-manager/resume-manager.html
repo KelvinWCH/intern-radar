@@ -1,0 +1,633 @@
+<div class="workspace-page profile-page">
+  <header class="page-heading">
+    <div class="heading-copy">
+      <h2>Your <em>profile.</em><span class="heading-spark">✳</span></h2>
+      <p>The facts every tailored resume and cover letter is written from.</p>
+    </div>
+    <a class="button-secondary" routerLink="/tailor"
+      ><i class="pi pi-upload"></i>Upload or replace a resume</a
+    >
+  </header>
+  @if (loading()) {
+    <div class="manager-layout profile-loading">
+      <div class="profile-loading-main">
+        <app-loading-indicator
+          label="Opening your profile"
+          detail="Getting your experience, skills, and saved details ready."
+        />
+        <section class="panel detail-panel profile-placeholder">
+          @for (card of [0, 1, 2, 3]; track card) {
+            <div class="placeholder-row">
+              <app-skeleton width="34px" height="34px" />
+              <div class="placeholder-copy">
+                <app-skeleton width="150px" height="16px" />
+                <app-skeleton width="60%" height="12px" />
+              </div>
+            </div>
+          }
+        </section>
+        <section class="panel detail-panel profile-placeholder">
+          @for (card of [0, 1, 2]; track card) {
+            <div class="placeholder-row">
+              <app-skeleton width="34px" height="34px" />
+              <div class="placeholder-copy">
+                <app-skeleton width="120px" height="16px" />
+                <app-skeleton width="45%" height="12px" />
+              </div>
+            </div>
+          }
+        </section>
+      </div>
+      <aside class="panel detail-panel profile-placeholder">
+        <app-skeleton width="118px" height="12px" />
+        <app-skeleton width="145px" height="20px" />
+        <app-skeleton height="48px" />
+        <app-skeleton width="75%" height="28px" />
+        <app-skeleton height="44px" />
+      </aside>
+    </div>
+  }
+  @if (error()) {
+    <p class="notice error">{{ error() }}</p>
+    <button class="button-secondary" type="button" [disabled]="loading()" (click)="load()">
+      Reload saved profile
+    </button>
+  }
+  @if (message()) {
+    <p class="notice">{{ message() }}</p>
+  }
+  @if (state(); as current) {
+    @if (!loading()) {
+      <div class="manager-layout">
+        <form #editor="ngForm" (ngSubmit)="save()" class="editor-form">
+          <div class="mode-bar">
+            <div class="mode-buttons">
+              <button
+                pButton
+                type="button"
+                [class.p-button-outlined]="mode() !== 'form'"
+                [disabled]="saving()"
+                (click)="showForm()"
+              >
+                <i pButtonIcon class="pi pi-list"></i>
+                <span pButtonLabel>Form</span>
+              </button>
+              <button
+                pButton
+                type="button"
+                [class.p-button-outlined]="mode() !== 'json'"
+                [disabled]="saving()"
+                (click)="showJson()"
+              >
+                <i pButtonIcon class="pi pi-code"></i>
+                <span pButtonLabel>JSON</span>
+              </button>
+            </div>
+            @if (mode() === 'json') {
+              <button
+                pButton
+                type="button"
+                severity="secondary"
+                [outlined]="true"
+                (click)="copyJson()"
+              >
+                <i pButtonIcon class="pi pi-copy"></i>
+                <span pButtonLabel>Copy JSON</span>
+              </button>
+            } @else {
+              <div class="mode-buttons">
+                <button
+                  pButton
+                  type="button"
+                  severity="secondary"
+                  [text]="true"
+                  (click)="setAllOpen(true)"
+                >
+                  <i pButtonIcon class="pi pi-angle-double-down"></i>
+                  <span pButtonLabel>Expand all</span>
+                </button>
+                <button
+                  pButton
+                  type="button"
+                  severity="secondary"
+                  [text]="true"
+                  (click)="setAllOpen(false)"
+                >
+                  <i pButtonIcon class="pi pi-angle-double-up"></i>
+                  <span pButtonLabel>Collapse all</span>
+                </button>
+              </div>
+            }
+          </div>
+          <fieldset [disabled]="saving()">
+            @if (mode() === 'json') {
+              <section class="panel detail-panel">
+                <div class="detail-heading">
+                  <h3 class="detail-title">
+                    <span class="detail-mark"><i class="pi pi-code"></i></span
+                    ><label for="resume-json">Profile JSON</label>
+                  </h3>
+                </div>
+                <p class="hint" id="resume-json-hint">
+                  Edit your complete profile. Switch to Form to review individual fields.
+                </p>
+                <textarea
+                  pTextarea
+                  id="resume-json"
+                  name="json"
+                  class="json-editor"
+                  rows="30"
+                  spellcheck="false"
+                  required
+                  [(ngModel)]="json"
+                ></textarea>
+              </section>
+            } @else {
+              <app-profile-section
+                heading="Identity & contact"
+                [icon]="icons.contact"
+                [summary]="contactSummary()"
+                [attention]="contactIncomplete(editor)"
+                [open]="isOpen('contact')"
+                (openChange)="setOpen('contact', $event)"
+              >
+                <div class="field-grid contact-grid">
+                  <div class="field">
+                    <label for="resume-name">Full name *</label
+                    ><input
+                      pInputText
+                      id="resume-name"
+                      name="name"
+                      required
+                      [(ngModel)]="header.name"
+                    />
+                  </div>
+                  <div class="field">
+                    <label for="resume-email">Email</label
+                    ><input
+                      pInputText
+                      id="resume-email"
+                      name="email"
+                      type="email"
+                      email
+                      autocomplete="email"
+                      (blur)="normalizeContact()"
+                      [(ngModel)]="header.email"
+                    />
+                  </div>
+                  <div class="field">
+                    <label for="resume-phone">Phone</label
+                    ><input
+                      pInputText
+                      id="resume-phone"
+                      name="phone"
+                      type="tel"
+                      autocomplete="tel"
+                      placeholder="+1 (647) 555-0123"
+                      pattern="[+0-9() .-]{7,25}"
+                      (blur)="normalizeContact()"
+                      [(ngModel)]="header.phone"
+                    />
+                  </div>
+                  <div class="field">
+                    <label for="resume-location">Location</label
+                    ><input
+                      pInputText
+                      id="resume-location"
+                      name="location"
+                      [(ngModel)]="header.location"
+                    />
+                  </div>
+                  <div class="field">
+                    <label for="resume-linkedin">LinkedIn</label
+                    ><input
+                      pInputText
+                      id="resume-linkedin"
+                      name="linkedin"
+                      inputmode="url"
+                      autocomplete="url"
+                      spellcheck="false"
+                      placeholder="linkedin.com/in/your-name"
+                      [(ngModel)]="header.linkedin"
+                    />
+                  </div>
+                  <div class="field">
+                    <label for="resume-linkedin-label">LinkedIn link text</label
+                    ><input
+                      pInputText
+                      id="resume-linkedin-label"
+                      name="linkedinLabel"
+                      spellcheck="false"
+                      placeholder="linkedin.com/in/your-name"
+                      [(ngModel)]="header.linkedinLabel"
+                    />
+                  </div>
+                  <div class="field">
+                    <label for="resume-github">GitHub</label
+                    ><input
+                      pInputText
+                      id="resume-github"
+                      name="github"
+                      inputmode="url"
+                      autocomplete="url"
+                      spellcheck="false"
+                      placeholder="github.com/your-username"
+                      [(ngModel)]="header.github"
+                    />
+                  </div>
+                  <p class="hint full-width" id="resume-profile-hint">
+                    Printed as clickable linkedin.com/in/… and github.com/… text so applicant
+                    tracking systems can read them. Set LinkedIn link text to print something
+                    shorter, such as linkedin.com/your-name; the link still opens your profile.
+                  </p>
+                  <div class="field full-width">
+                    <div class="bullet-list">
+                      <span class="bullet-label" id="resume-links-label">Other links</span>
+                      @for (link of header.links; track $index; let linkIndex = $index) {
+                        <div class="bullet-row">
+                          <input
+                            pInputText
+                            [id]="'resume-link-' + linkIndex"
+                            [ngModelOptions]="{ standalone: true }"
+                            placeholder="https://your-portfolio.dev"
+                            [(ngModel)]="header.links[linkIndex]"
+                          />
+                          <button
+                            pButton
+                            type="button"
+                            size="small"
+                            severity="secondary"
+                            [outlined]="true"
+                            [title]="'Remove link ' + (linkIndex + 1)"
+                            (click)="removeBullet(header.links, linkIndex)"
+                          >
+                            <i pButtonIcon class="pi pi-minus"></i>
+                          </button>
+                        </div>
+                      } @empty {
+                        <p class="hint">No links yet.</p>
+                      }
+                      <button
+                        pButton
+                        class="add-bullet"
+                        type="button"
+                        size="small"
+                        [outlined]="true"
+                        (click)="addBullet(header.links)"
+                      >
+                        <i pButtonIcon class="pi pi-plus"></i>
+                        <span pButtonLabel>Add link</span>
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              </app-profile-section>
+              <app-profile-section
+                heading="About you"
+                [icon]="icons.about"
+                [summary]="aboutSummary()"
+                [open]="isOpen('about')"
+                (openChange)="setOpen('about', $event)"
+              >
+                <div class="field-grid">
+                  <div class="field">
+                    <label for="profile-about">Background & interests</label>
+                    <textarea
+                      pTextarea
+                      id="profile-about"
+                      name="about"
+                      rows="4"
+                      [(ngModel)]="about"
+                    ></textarea>
+                  </div>
+                  <div class="field">
+                    <label for="profile-goals">Career goals</label>
+                    <textarea
+                      pTextarea
+                      id="profile-goals"
+                      name="goals"
+                      rows="4"
+                      [(ngModel)]="goals"
+                    ></textarea>
+                  </div>
+                </div>
+              </app-profile-section>
+              <app-profile-section
+                heading="Job preferences"
+                [icon]="icons.preferences"
+                [summary]="preferencesSummary()"
+                [open]="isOpen('preferences')"
+                (openChange)="setOpen('preferences', $event)"
+              >
+                <app-profile-preferences [(value)]="preferences" />
+              </app-profile-section>
+              <app-profile-section
+                heading="Resume tailoring"
+                [icon]="icons.bullets"
+                [summary]="bulletsSummary()"
+                [open]="isOpen('bullets')"
+                (openChange)="setOpen('bullets', $event)"
+              >
+                <div class="field-grid contact-grid">
+                  @for (field of bulletFields; track field.key) {
+                    <div class="field">
+                      <label [for]="'profile-' + field.key">{{ field.label }}</label>
+                      <input
+                        pInputText
+                        [id]="'profile-' + field.key"
+                        type="number"
+                        step="1"
+                        [min]="field.min"
+                        [max]="field.max"
+                        [(ngModel)]="resumeSettings[field.key]"
+                        [ngModelOptions]="{ standalone: true }"
+                      />
+                    </div>
+                  }
+                </div>
+                <p class="hint" id="profile-bullets-hint">
+                  The minimum each entry keeps when tailoring. Bullets that don't fit the job are
+                  cut, but never below these. An entry with fewer bullets keeps all of them.
+                </p>
+              </app-profile-section>
+              @for (section of sections; track section.key) {
+                <app-profile-section
+                  [heading]="section.title"
+                  [icon]="icons[section.key]"
+                  [summary]="sectionSummary(section)"
+                  [count]="section.entries.length || null"
+                  [attention]="sectionIncomplete(section)"
+                  [open]="isOpen(section.key)"
+                  (openChange)="setOpen(section.key, $event)"
+                >
+                  <div class="entry-list">
+                    @for (entry of section.entries; track entry; let index = $index) {
+                      @let entryName = entryHeading(section.key, entry);
+                      @let onResumes = entrySwitch(entry);
+                      <div
+                        class="entry-row"
+                        [class.switchable]="onResumes"
+                        [class.entry-off]="onResumes?.value === false"
+                      >
+                        <details class="entry" [open]="isAdded(entry)">
+                          <summary>
+                            <span class="entry-title">
+                              <strong>{{ entryName.title || 'New ' + nouns[section.key] }}</strong>
+                              @if (entryName.detail) {
+                                <span>{{ entryName.detail }}</span>
+                              }
+                            </span>
+                            @if (onResumes?.value === false) {
+                              <span class="attention off-chip">Off</span>
+                            }
+                            @if (entryIncomplete(entry)) {
+                              <span class="attention"
+                                ><i class="pi pi-exclamation-circle"></i> Needs details</span
+                              >
+                            }
+                            <i class="pi pi-chevron-down entry-chevron"></i>
+                          </summary>
+                          <div class="entry-body">
+                            <div class="field-grid">
+                              @for (field of entry; track field.key) {
+                                @if (field.kind !== 'switch' && !field.key.startsWith('context.')) {
+                                  <div
+                                    class="field"
+                                    [class.full-width]="field.multiline"
+                                    [class.context-field]="field.key === 'raw_description'"
+                                  >
+                                    @if (field.kind === 'inventory') {
+                                      <app-inventory-selector
+                                        [kind]="
+                                          section.key === 'skills'
+                                            ? 'skills'
+                                            : section.key === 'education'
+                                              ? 'coursework'
+                                              : 'technologies'
+                                        "
+                                        [(available)]="field.available"
+                                        [(selected)]="field.value"
+                                      />
+                                    } @else if (field.kind === 'bullets') {
+                                      <div class="bullet-list">
+                                        <span
+                                          class="bullet-label"
+                                          [id]="
+                                            section.key + '-' + index + '-' + field.key + '-label'
+                                          "
+                                        >
+                                          {{ field.label }}
+                                        </span>
+                                        @for (
+                                          bullet of field.value;
+                                          track $index;
+                                          let bulletIndex = $index
+                                        ) {
+                                          <div
+                                            class="bullet-row"
+                                            [class.with-context]="field.notes"
+                                          >
+                                            <textarea
+                                              pTextarea
+                                              class="bullet-input"
+                                              [id]="
+                                                section.key + '-' + index + '-bullet-' + bulletIndex
+                                              "
+                                              [ngModelOptions]="{ standalone: true }"
+                                              rows="2"
+                                              [placeholder]="
+                                                section.key === 'education'
+                                                  ? 'Relevant coursework, honors, or other highlights'
+                                                  : 'Describe a contribution or accomplishment'
+                                              "
+                                              [(ngModel)]="field.value[bulletIndex]"
+                                            ></textarea>
+                                            <button
+                                              pButton
+                                              type="button"
+                                              size="small"
+                                              severity="secondary"
+                                              [outlined]="true"
+                                              [title]="
+                                                'Remove ' +
+                                                section.title +
+                                                ' entry ' +
+                                                (index + 1) +
+                                                ', bullet ' +
+                                                (bulletIndex + 1)
+                                              "
+                                              (click)="
+                                                removeBullet(field.value, bulletIndex, field.notes)
+                                              "
+                                            >
+                                              <i pButtonIcon class="pi pi-minus"></i>
+                                            </button>
+                                            @if (field.notes) {
+                                              <textarea
+                                                pTextarea
+                                                class="bullet-context"
+                                                [id]="
+                                                  section.key + '-' + index + '-note-' + bulletIndex
+                                                "
+                                                [ngModelOptions]="{ standalone: true }"
+                                                rows="1"
+                                                placeholder="Context for this bullet, never printed: numbers, how they were measured, who used it, why it mattered"
+                                                [(ngModel)]="field.notes[bulletIndex]"
+                                              ></textarea>
+                                            }
+                                          </div>
+                                        } @empty {
+                                          <p class="hint">No bullet points.</p>
+                                        }
+                                        <button
+                                          pButton
+                                          class="add-bullet"
+                                          type="button"
+                                          size="small"
+                                          [outlined]="true"
+                                          (click)="addBullet(field.value, field.notes)"
+                                        >
+                                          <i pButtonIcon class="pi pi-plus"></i>
+                                          <span pButtonLabel>Add bullet point</span>
+                                        </button>
+                                      </div>
+                                    } @else {
+                                      <label [for]="section.key + '-' + index + '-' + field.key"
+                                        >{{ field.label }}{{ field.required ? ' *' : '' }}</label
+                                      >
+                                      @if (field.multiline) {
+                                        <textarea
+                                          pTextarea
+                                          [id]="section.key + '-' + index + '-' + field.key"
+                                          [name]="section.key + '-' + index + '-' + field.key"
+                                          rows="3"
+                                          [required]="field.required"
+                                          [(ngModel)]="field.value"
+                                        ></textarea>
+                                      } @else {
+                                        <input
+                                          pInputText
+                                          [id]="section.key + '-' + index + '-' + field.key"
+                                          [name]="section.key + '-' + index + '-' + field.key"
+                                          [required]="field.required"
+                                          [type]="field.key === 'url' ? 'url' : 'text'"
+                                          [placeholder]="
+                                            field.key === 'url'
+                                              ? 'https://github.com/you/project'
+                                              : ''
+                                          "
+                                          [(ngModel)]="field.value"
+                                        />
+                                      }
+                                      @if (field.key === 'raw_description') {
+                                        <p
+                                          class="hint"
+                                          [id]="section.key + '-' + index + '-context-hint'"
+                                        >
+                                          Used for tailoring; hidden from your resume preview.
+                                        </p>
+                                      }
+                                    }
+                                  </div>
+                                }
+                              }
+                            </div>
+                            @if (section.key === 'experience' || section.key === 'projects') {
+                              <details class="extra-context">
+                                <summary>More context <span>Optional</span></summary>
+                                <div class="field-grid">
+                                  @for (field of entry; track field.key) {
+                                    @if (
+                                      field.key.startsWith('context.') && field.kind === 'text'
+                                    ) {
+                                      <div class="field">
+                                        <label
+                                          [for]="section.key + '-' + index + '-' + field.key"
+                                          >{{ field.label }}</label
+                                        >
+                                        <textarea
+                                          pTextarea
+                                          [id]="section.key + '-' + index + '-' + field.key"
+                                          [name]="section.key + '-' + index + '-' + field.key"
+                                          rows="2"
+                                          [(ngModel)]="field.value"
+                                        ></textarea>
+                                      </div>
+                                    }
+                                  }
+                                </div>
+                              </details>
+                            }
+                            <div class="entry-actions">
+                              <button
+                                class="subtle-button"
+                                type="button"
+                                (click)="remove(section, index)"
+                              >
+                                <i class="pi pi-trash"></i> Remove
+                                {{ nouns[section.key] }}
+                              </button>
+                            </div>
+                          </div>
+                        </details>
+                        @if (onResumes) {
+                          <button
+                            class="entry-switch"
+                            type="button"
+                            [class.checked]="onResumes.value"
+                            [title]="
+                              onResumes.value
+                                ? 'On: used when tailoring resumes and cover letters'
+                                : 'Off: kept here but left out until switched back on'
+                            "
+                            (click)="toggleEntry(onResumes)"
+                          >
+                            <span class="switch-track"></span>
+                          </button>
+                        }
+                      </div>
+                    } @empty {
+                      <p class="hint">Nothing added yet.</p>
+                    }
+                  </div>
+                  <button class="button-secondary add-entry" type="button" (click)="add(section)">
+                    <i class="pi pi-plus"></i>Add {{ nouns[section.key] }}
+                  </button>
+                </app-profile-section>
+              }
+            }
+          </fieldset>
+          <div class="save-bar">
+            @if (!editor.valid && mode() === 'form') {
+              <p>Fill in the fields marked Needs details to save.</p>
+            }
+            <button class="button-primary" type="submit" [disabled]="saving() || !editor.valid">
+              {{ saving() ? 'Saving…' : 'Save profile' }}
+            </button>
+          </div>
+        </form>
+        <aside class="panel detail-panel saved-card">
+          <div class="eyebrow">Saved profile</div>
+          <h3>{{ current.profile ? current.profile.name : 'Create your source' }}</h3>
+          <p class="hint">
+            {{
+              current.profile
+                ? 'Changes apply to future applications.'
+                : 'Start here or upload an existing resume from the tailor page.'
+            }}
+          </p>
+          @if (current.updated_at; as updated) {
+            <p class="hint">Saved {{ updated * 1000 | date: 'MMM d · h:mm a' }}</p>
+          }
+          @if (current.profile; as resume) {
+            @if (!saving()) {
+              <app-source-resume-preview [profile]="resume" />
+            }
+          }
+          <app-transcript-card class="side-section" />
+          <a class="subtle-link side-section" routerLink="/documents">View tailoring history →</a>
+        </aside>
+      </div>
+    }
+  }
+</div>
