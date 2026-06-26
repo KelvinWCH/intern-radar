@@ -1,0 +1,83 @@
+:host {
+  display: block;
+}
+.review-panel {
+  border: 1px solid #e3cda4;
+  border-radius: 16px;
+  background: #fffbf0;
+  padding: clamp(1rem, 3vw, 1.5rem);
+  margin: 1rem 0;
+}
+.review-panel h4 {
+  font-size: 1.15rem;
+  margin: 0.4rem 0 0.75rem;
+}
+.review-panel p {
+  line-height: 1.6;
+  max-width: 80ch;
+}
+.generic-research {
+  background: #fffefa;
+  border: 1px solid #e2e7d9;
+  border-radius: 12px;
+  padding: 1rem;
+  margin: 1.25rem 0;
+}
+.generic-research h5 {
+  font-size: 1rem;
+  margin: 0 0 0.5rem;
+}
+.generic-research textarea {
+  background: #fff;
+  color: inherit;
+  border: 1px solid var(--line);
+  border-radius: 10px;
+  line-height: 1.7;
+}
+.manual-review {
+  margin-top: 1rem;
+}
+.manual-review summary {
+  cursor: pointer;
+  font-size: 0.9rem;
+}
+.review-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+  margin-top: 1rem;
+}
+fieldset {
+  border: 0;
+  padding: 0;
+  min-width: 0;
+}
+label {
+  display: grid;
+  gap: 0.35rem;
+  margin: 0.8rem 0;
+}
+textarea,
+select {
+  width: 100%;
+  max-width: 100%;
+  box-sizing: border-box;
+  font: inherit;
+  padding: 0.5rem;
+  border: 1px solid var(--line);
+  border-radius: 10px;
+  background: white;
+  color: var(--text);
+  line-height: 1.7;
+}
+textarea {
+  min-height: 5rem;
+  resize: vertical;
+}
+.finding {
+  border-bottom: 1px solid var(--line);
+  padding-bottom: 1rem;
+}
+button {
+  white-space: normal;
+}
