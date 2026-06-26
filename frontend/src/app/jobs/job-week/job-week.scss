@@ -21,27 +21,12 @@
   min-height: 100%;
 }
 .day-column {
-  --tone: #e6f2e7;
-  --edge: #c4dcc8;
-  --ink: #397354;
+  --tone: #f6f8f4;
+  --edge: #dce4dc;
+  --ink: #4b5a52;
   min-width: 0;
   border-right: 1px solid #dce4dc;
-  background: linear-gradient(180deg, color-mix(in srgb, var(--tone) 35%, #fffefa), #fafbf7 300px);
-}
-.day-column:nth-child(4n + 2) {
-  --tone: #fff0dd;
-  --edge: #eddbbe;
-  --ink: #996332;
-}
-.day-column:nth-child(4n + 3) {
-  --tone: #efebfc;
-  --edge: #d9cef0;
-  --ink: #7760a3;
-}
-.day-column:nth-child(4n + 4) {
-  --tone: #e9f3fb;
-  --edge: #cbdfed;
-  --ink: #447794;
+  background: #fcfdfa;
 }
 .day-column:last-child {
   border-right: 0;
@@ -61,7 +46,7 @@
   height: 50px;
   padding: 6px 12px;
   border-bottom: 1px solid var(--edge);
-  background: linear-gradient(155deg, #ffffff80, #ffffff20), var(--tone);
+  background: var(--tone);
 }
 .day-number {
   display: grid;
@@ -73,11 +58,9 @@
   border-radius: 12px;
   background: #fffefac0;
   color: var(--ink);
-  font-family: Georgia, serif;
-  font-size: 21px;
-  font-weight: 400;
+  font-size: 17px;
+  font-weight: 600;
   font-variant-numeric: tabular-nums;
-  letter-spacing: -0.05em;
 }
 .today .day-number {
   background: var(--accent);
@@ -122,20 +105,6 @@ h3 {
   font-size: 14px;
   font-variant-numeric: tabular-nums;
 }
-.day-meter {
-  position: absolute;
-  bottom: 0;
-  inset-inline: 16px;
-  height: 3px;
-  overflow: hidden;
-}
-.day-meter > span {
-  display: block;
-  height: 100%;
-  background: var(--ink);
-  transform-origin: left;
-  border-radius: 3px;
-}
 .day-jobs {
   display: grid;
   gap: 8px;
@@ -157,10 +126,7 @@ h3 {
   padding: 8px 10px 4px;
   background: white;
   border: 1px solid #d6e0d8;
-  border-radius: 13px;
-  box-shadow:
-    0 2px 0 #d6e0d870,
-    0 5px 10px #173e2804;
+  border-radius: 10px;
 }
 .card-dates {
   display: flex;

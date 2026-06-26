@@ -114,7 +114,6 @@
     align-items: center;
     gap: 14px;
     border: 1px solid var(--line);
-    border-left: 3px solid var(--stage);
     padding: 9px 12px;
     border-radius: 10px;
     background: white;
@@ -130,9 +129,7 @@
     overflow-wrap: anywhere;
   }
   .job-card.prestige {
-    border-top-color: #eadbb3;
-    border-right-color: #eadbb3;
-    border-bottom-color: #eadbb3;
+    border-color: #eadbb3;
     background: #fff9e8;
   }
   .company-avatar {
@@ -351,9 +348,7 @@
 }
 
 .job-workspace .job-card.tech {
-  border-top-color: #e9cbd0;
-  border-right-color: #e9cbd0;
-  border-bottom-color: #e9cbd0;
+  border-color: #e9cbd0;
   background: #fff1f2;
 }
 .job-workspace .tech .prestige-badge {
