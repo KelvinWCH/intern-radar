@@ -1,0 +1,66 @@
+<section>
+  <h3>Are the PDFs readable?</h3>
+  <p class="intro">
+    Checks of the compiled documents: page count, selectable text and expected content. These are
+    local checks with no ATS pass score.
+  </p>
+  <div class="documents">
+    @for (report of reports(); track report.document) {
+      <article class="document-health">
+        <header>
+          <h4>{{ report.document === 'resume' ? 'Resume' : 'Cover letter' }}</h4>
+          <span class="page-count">{{ report.page_count }} page(s)</span>
+        </header>
+        <div class="check-totals">
+          <span class="passed">{{ count(report, 'passed') }} passed</span>
+          <span [class.warning]="count(report, 'warning') > 0"
+            >{{ count(report, 'warning') }} to inspect</span
+          >
+          <span>{{ count(report, 'info') }} notes</span>
+        </div>
+        <div class="check-list">
+          @for (check of report.checks; track check.key) {
+            <details [open]="check.status === 'warning'" [attr.data-status]="check.status">
+              <summary>
+                <span>{{ check.label }}</span
+                ><span class="check-status">{{
+                  check.status === 'warning'
+                    ? 'Inspect'
+                    : check.status === 'passed'
+                      ? 'Passed'
+                      : 'Note'
+                }}</span>
+              </summary>
+              <p>{{ check.detail }}</p>
+              @if (check.missing.length) {
+                <p class="missing">Not found: {{ check.missing.join(' · ') }}</p>
+              }
+            </details>
+          }
+        </div>
+        <p class="skills">
+          <strong>Supported required skills found:</strong>
+          {{ report.matched_required_skills.join(', ') || 'None identified' }}
+        </p>
+        @if (report.unsupported_required_skills.length) {
+          <div class="evidence-gap">
+            <strong>Requirements without profile evidence:</strong>
+            <p>{{ report.unsupported_required_skills.join(', ') }}</p>
+            <span
+              >A rewrite cannot establish these qualifications. Add genuine evidence to your profile
+              if it is missing.</span
+            >
+          </div>
+        }
+        <details class="extracted-text">
+          <summary>Read extracted PDF text</summary>
+          <pre>{{ report.extracted_text }}</pre>
+        </details>
+      </article>
+    } @empty {
+      <p class="intro">
+        Diagnostics appear after a document compiles. Older saved versions may not have diagnostics.
+      </p>
+    }
+  </div>
+</section>

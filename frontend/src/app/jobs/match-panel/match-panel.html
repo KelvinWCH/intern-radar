@@ -1,0 +1,50 @@
+<details class="panel match-panel" open>
+  <summary>
+    <i class="pi pi-bolt"></i> Match
+    <i class="pi pi-chevron-down disclosure-chevron"></i>
+  </summary>
+  @if (match(); as value) {
+    <div class="match-head" [attr.data-band]="value.band">
+      <span class="match-score">{{ value.score }}</span>
+      <div>
+        <strong>{{ label() }}</strong>
+        @if (value.role) {
+          <span class="hint">Closest to {{ value.role }}</span>
+        }
+      </div>
+    </div>
+    @if (value.reasons.length) {
+      <ul class="match-reasons">
+        @for (reason of value.reasons; track reason) {
+          <li>{{ reason }}</li>
+        }
+      </ul>
+    }
+    <dl class="match-parts">
+      @for (part of parts(); track part.key) {
+        <div [title]="part.help">
+          <dt>{{ part.label }}</dt>
+          <dd>
+            <span class="bar"><span [style.width.%]="part.value * 100"></span></span>
+            <span class="value">{{ part.value * 100 | number: '1.0-0' }}</span>
+          </dd>
+        </div>
+      }
+    </dl>
+    @if (value.skills.length) {
+      <p class="match-skills">
+        @for (skill of value.skills; track skill) {
+          <span class="skill-chip">{{ skill }}</span>
+        }
+      </p>
+    }
+    <p class="hint">
+      Scored {{ value.scoredAt * 1000 | date: 'MMM d, h:mm a' }} against your profile. Parts compare
+      this posting with every saved job; 100 means closer than all of them.
+    </p>
+  } @else {
+    <p class="hint match-empty">
+      Not scored yet. The worker scores new jobs after each import and after profile changes.
+    </p>
+  }
+</details>
