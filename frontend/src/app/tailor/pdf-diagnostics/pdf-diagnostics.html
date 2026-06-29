@@ -33,7 +33,7 @@
               </summary>
               <p>{{ check.detail }}</p>
               @if (check.missing.length) {
-                <p class="missing">Not found: {{ check.missing.join(' · ') }}</p>
+                <p class="missing">Not found: {{ check.missing.join(', ') }}</p>
               }
             </details>
           }

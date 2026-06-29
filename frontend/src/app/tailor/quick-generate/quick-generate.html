@@ -1,0 +1,51 @@
+@let run = state();
+@if (run.status === 'running') {
+  <a
+    class="quick-generate running"
+    [routerLink]="['/jobs', job().id]"
+    [queryParams]="{ version: run.documentId }"
+    title="One-shot run in progress. Click to open it"
+  >
+    <i class="pi pi-spinner pi-spin"></i>
+    @if (!compact()) {
+      <span>Generating...</span>
+    }
+  </a>
+} @else if (run.status === 'ready') {
+  <a
+    class="quick-generate ready"
+    [routerLink]="['/jobs', job().id]"
+    [queryParams]="{ version: run.documentId }"
+    title="Open the generated resume and cover letter"
+  >
+    <i class="pi pi-check-circle"></i>
+    @if (!compact()) {
+      <span>Documents ready</span>
+    }
+  </a>
+} @else {
+  <button
+    type="button"
+    class="quick-generate"
+    [class.failed]="error()"
+    [disabled]="run.status === 'starting'"
+    [title]="error() || 'Write a tailored resume and cover letter in one AI call'"
+    (click)="start()"
+  >
+    <i
+      class="pi"
+      [class.pi-bolt]="run.status === 'idle'"
+      [class.pi-spinner]="run.status === 'starting'"
+      [class.pi-spin]="run.status === 'starting'"
+      [class.pi-refresh]="error()"
+    ></i>
+    @if (!compact()) {
+      <span>{{
+        run.status === 'starting' ? 'Starting...' : error() ? 'Retry' : 'Quick generate'
+      }}</span>
+    }
+  </button>
+  @if (error() && !compact()) {
+    <p class="quick-error">{{ error() }}</p>
+  }
+}
