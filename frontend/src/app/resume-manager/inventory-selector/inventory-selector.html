@@ -12,7 +12,7 @@
     <input
       class="stack-search"
       type="search"
-      [placeholder]="text().find + '…'"
+      [placeholder]="text().find + '...'"
       [ngModelOptions]="{ standalone: true }"
       [(ngModel)]="filter"
     />
@@ -25,8 +25,7 @@
         [class.chosen]="selected().includes(name)"
         (click)="toggle(name)"
       >
-        <span>{{ selected().includes(name) ? '✓' : '+' }}</span
-        >{{ name }}
+        <i [class]="selected().includes(name) ? 'pi pi-check' : 'pi pi-plus'"></i>{{ name }}
       </button>
     } @empty {
       <p class="empty">
@@ -50,7 +49,7 @@
   @if (editing) {
     <div class="inventory-edit">
       <label
-        >Full inventory · one per line or comma separated<textarea
+        >Full inventory (one per line or comma separated)<textarea
           rows="3"
           [ngModelOptions]="{ standalone: true }"
           [(ngModel)]="inventoryDraft"
@@ -70,15 +69,21 @@
         <span class="default-chip"
           ><span class="order">{{ index + 1 }}</span
           >{{ name
-          }}<button type="button" [disabled]="index === 0" (click)="move(index, -1)">‹</button
+          }}<button
+            type="button"
+            aria-label="Move earlier"
+            [disabled]="index === 0"
+            (click)="move(index, -1)"
+          >
+            <i class="pi pi-angle-left"></i></button
           ><button
             type="button"
             [disabled]="index === selected().length - 1"
+            aria-label="Move later"
             (click)="move(index, 1)"
           >
-            ›
-          </button></span
-        >
+            <i class="pi pi-angle-right"></i></button
+        ></span>
       } @empty {
         <p class="empty">No defaults selected. Click {{ text().plural }} above to include them.</p>
       }
