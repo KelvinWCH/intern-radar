@@ -16,7 +16,7 @@ import type { FailureDetails } from '../models/failure.models';
       <ul>
         @for (failure of data.failures; track $index) {
           <li>
-            <strong>{{ failure.stage }} · {{ failure.error_type }}</strong>
+            <strong>{{ failure.stage }}: {{ failure.error_type }}</strong>
             <p>{{ failure.reason }}</p>
             @if (failure.url) {
               <a [href]="failure.url" target="_blank" rel="noopener noreferrer">{{

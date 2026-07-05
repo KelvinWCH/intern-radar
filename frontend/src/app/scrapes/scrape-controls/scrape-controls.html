@@ -4,7 +4,7 @@
 >
   <header>
     <div>
-      <h2>Run a <em>scrape.</em><span class="heading-spark">✳</span></h2>
+      <h2>Run a scrape</h2>
     </div>
     <a class="button-secondary button-sm" routerLink="/scrapes"
       ><i class="pi pi-history"></i> History</a
@@ -16,7 +16,7 @@
       @for (run of activity()?.runs ?? []; track run.id) {
         <strong>{{ scrapeTriggerLabel(run.trigger) }} scrape running</strong>
         <p class="hint">
-          {{ run.source }} · {{ scrapeStageLabels[run.phase ?? ''] ?? run.phase ?? 'Starting' }} ·
+          {{ run.source }}: {{ scrapeStageLabels[run.phase ?? ''] ?? run.phase ?? 'Starting' }},
           {{ duration(run.elapsed_seconds) }}
         </p>
         @if (run.items_total !== null) {
@@ -49,8 +49,7 @@
         </div>
       </div>
       <div class="source-toolbar">
-        <span
-          >{{ allSelected() ? 'Full scrape selected · ' : '' }}{{ selected().size }} selected</span
+        <span>{{ allSelected() ? 'Full scrape, ' : '' }}{{ selected().size }} selected</span
         ><button type="button" (click)="selectVisible()">Select visible</button
         ><button type="button" title="Select every source in every group" (click)="selectAll()">
           Select all</button
@@ -110,7 +109,7 @@
         </label>
         <div class="field-grid">
           <div class="field">
-            <label for="scrape-runtime">Time limit · minutes</label
+            <label for="scrape-runtime">Time limit (minutes)</label
             ><input
               id="scrape-runtime"
               name="runtime"
@@ -122,7 +121,7 @@
             />
           </div>
           <div class="field">
-            <label for="scrape-age">Posting age · days</label
+            <label for="scrape-age">Posting age (days)</label
             ><input
               id="scrape-age"
               name="age"
@@ -174,7 +173,9 @@
           [class.pi-spinner]="pending()"
           [class.pi-spin]="pending()"
         ></i
-        >{{ pending() ? 'Submitting…' : useAi ? 'Run with AI enrichment' : 'Run scrape · no AI' }}
+        >{{
+          pending() ? 'Submitting...' : useAi ? 'Run with AI enrichment' : 'Run scrape without AI'
+        }}
       </button>
     </fieldset>
   </form>
@@ -188,7 +189,7 @@
     <div class="current-run">
       <div>
         <span class="status-pill" [attr.data-status]="current.status">{{
-          current.cancel_requested && active() ? 'Stopping…' : (current.status | titlecase)
+          current.cancel_requested && active() ? 'Stopping...' : (current.status | titlecase)
         }}</span>
         <span class="run-mode">{{ current.settings.use_ai ? 'AI enrichment' : 'No AI' }}</span>
       </div>
@@ -211,10 +212,10 @@
         }
         <p class="hint">
           @if (active() && progress.current_source) {
-            Source {{ progress.sources_finished + 1 }} of {{ progress.sources_total }} ·
+            Source {{ progress.sources_finished + 1 }} of {{ progress.sources_total }}:
             {{ progress.current_source }}
             @if (progress.items_total !== null) {
-              · {{ progress.items_done ?? 0 }} / {{ progress.items_total }} postings
+              ({{ progress.items_done ?? 0 }} / {{ progress.items_total }} postings)
             }
           } @else {
             {{ progress.sources_finished }} of {{ progress.sources_total }} sources finished
@@ -227,7 +228,7 @@
           <dd
             [title]="
               (current.usage.input_tokens | number) +
-              ' in · ' +
+              ' in, ' +
               (current.usage.output_tokens | number) +
               ' out'
             "
@@ -248,13 +249,13 @@
               ? 'All posting ages'
               : 'Posting age: ' + current.settings.max_age_days + ' days'
           }}
-          · {{ current.settings.max_downloads }} downloads / source ·
+          - {{ current.settings.max_downloads }} downloads per source,
           {{ duration(current.settings.max_runtime_seconds) }} time limit
         </p>
         <p class="hint">
-          Started {{ (current.started_at || current.created_at) * 1000 | date: 'MMM d · h:mm a' }}
+          Started {{ (current.started_at || current.created_at) * 1000 | date: 'MMM d, h:mm a' }}
           @if (current.finished_at; as finished) {
-            · Finished {{ finished * 1000 | date: 'h:mm a' }}
+            - finished {{ finished * 1000 | date: 'h:mm a' }}
           }
         </p>
       </details>

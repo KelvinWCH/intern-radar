@@ -2,15 +2,13 @@
 <section class="console-panel">
   <header>
     <div class="console-title">
-      <h3 id="scrape-console-heading">
-        Scraping <em>progress.</em><span class="heading-spark">✳</span>
-      </h3>
+      <h3 id="scrape-console-heading">Scraping progress</h3>
       <span class="console-status" [attr.data-active]="active()">
         @if (external()) {
-          Live · {{ runs()[0] ? scrapeTriggerLabel(runs()[0]?.trigger ?? null) : 'Importer' }}
+          Live: {{ runs()[0] ? scrapeTriggerLabel(runs()[0]?.trigger ?? null) : 'Importer' }}
         } @else if (current) {
           {{ active() ? 'Live' : current.status === 'completed' ? 'Finished' : current.status }}
-          · {{ current.progress.sources_finished }}/{{ current.progress.sources_total }} sources
+          ({{ current.progress.sources_finished }}/{{ current.progress.sources_total }} sources)
         } @else {
           Ready
         }
@@ -36,7 +34,7 @@
         <time>{{ event.created_at * 1000 | date: 'HH:mm:ss' }}</time>
         <span class="tag">{{ scrapeStepLabels[kind] }}</span>
         <span class="source" [title]="sources().get(event.run_id) ?? ''">{{
-          sources().get(event.run_id) ?? '—'
+          sources().get(event.run_id) ?? '-'
         }}</span>
         <span class="message">{{ event.message }}</span>
       </div>
@@ -44,15 +42,10 @@
       <p class="console-empty">
         {{
           current || external()
-            ? 'Waiting for the first step…'
+            ? 'Waiting for the first step...'
             : 'Run a scrape to see its progress here.'
         }}
       </p>
-    }
-    @if (active()) {
-      <div class="console-line console-cursor">
-        <time></time><span></span><span></span><span class="message">▍</span>
-      </div>
     }
   </div>
 </section>
