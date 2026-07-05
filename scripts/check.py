@@ -33,7 +33,7 @@ def main() -> int:
                 "../scripts",
             ],
         ),
-        (root, [str(python), "-m", "pyright"]),
+        (backend, [str(python), "-m", "pyright"]),
         (backend, [str(python), "-m", "pytest"]),
     ]
     with tempfile.TemporaryDirectory(prefix="intern-radar-check-") as check_temp:
