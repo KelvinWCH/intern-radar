@@ -1,0 +1,221 @@
+%-------------------------
+% Resume in Latex
+% Author : Jake Gutierrez
+% Based off of: https://github.com/sb2nov/resume
+% License : MIT (see JAKE_TEMPLATE_LICENSE.txt)
+% Adaptation: conditional pdfTeX glyph mapping, wrapping heading columns, Computer Modern under
+% XeTeX (Tectonic) so the output matches the classic pdfTeX build, and layout checks that print
+% nothing. Margins, spacing, and lists are Jake's.
+%------------------------
+
+\documentclass[letterpaper,11pt]{article}
+
+\usepackage{latexsym}
+\usepackage[empty]{fullpage}
+\usepackage{titlesec}
+\usepackage{marvosym}
+\usepackage[usenames,dvipsnames]{color}
+\usepackage{verbatim}
+\usepackage{enumitem}
+\usepackage[hidelinks]{hyperref}
+\usepackage{fancyhdr}
+\usepackage[english]{babel}
+\usepackage{tabularx}
+\usepackage{iftex}
+\ifPDFTeX
+\input{glyphtounicode}
+\else
+% Tectonic would otherwise use Latin Modern. CMU is Computer Modern with full Unicode coverage.
+\usepackage{fontspec}
+\setmainfont{cmunrm.otf}[
+  BoldFont=cmunbx.otf,
+  ItalicFont=cmunti.otf,
+  BoldItalicFont=cmunbi.otf
+]
+\fi
+% Headings use the classic cmcsc10 small caps, which also keep their text ATS-readable.
+\newcommand{\resumeSmallCaps}{\fontencoding{OT1}\fontfamily{cmr}\fontshape{sc}\selectfont}
+
+
+%----------FONT OPTIONS----------
+% sans-serif
+% \usepackage[sfdefault]{FiraSans}
+% \usepackage[sfdefault]{roboto}
+% \usepackage[sfdefault]{noto-sans}
+% \usepackage[default]{sourcesanspro}
+
+% serif
+% \usepackage{CormorantGaramond}
+% \usepackage{charter}
+
+
+\pagestyle{fancy}
+\fancyhf{} % clear all header and footer fields
+\fancyfoot{}
+\renewcommand{\headrulewidth}{0pt}
+\renewcommand{\footrulewidth}{0pt}
+
+% Adjust margins
+\addtolength{\oddsidemargin}{-0.5in}
+\addtolength{\evensidemargin}{-0.5in}
+\addtolength{\textwidth}{1in}
+\addtolength{\topmargin}{-.5in}
+\addtolength{\textheight}{1.0in}
+
+\urlstyle{same}
+
+\raggedbottom
+\raggedright
+\setlength{\tabcolsep}{0in}
+
+% Sections formatting
+\titleformat{\section}{
+  \vspace{-4pt}\resumeSmallCaps\raggedright\large
+}{}{0em}{}[\color{black}\titlerule \vspace{-5pt}]
+
+% Ensure that generate pdf is machine readable/ATS parsable
+\ifPDFTeX
+\pdfgentounicode=1
+\fi
+
+%-------------------------
+% Custom commands
+\newcommand{\resumeItem}[1]{
+  \item\small{
+    {#1 \vspace{-2pt}}
+  }
+}
+
+% \resumeItem with layout checks that print nothing. Experience and project bullets take one or
+% two printed lines, with their first number on the first. #1 names the bullet, #2 is its text
+% through that number (empty when it has none), and #3 is the rest. The application asks for a
+% rewrite of a bullet whose number lands past the first line (LATE, with how far), one longer
+% than two lines (WRAP, with its overflow), or one that spills only a few words onto a second
+% line (DANGLE, with how far it spills). A one-line bullet using under 80% of the line is
+% reported with its unused width (SHORT), so a short page can ask for supported detail there
+% first. Under 1.9 line widths always fits two lines, since a ragged first line loses less than
+% one word.
+\newsavebox{\resumeLineBox}
+\newcommand{\resumeLineItem}[3]{
+  \item\small{
+    \sbox{\resumeLineBox}{#2}%
+    \ifdim\wd\resumeLineBox>\linewidth
+      \typeout{JOB-RESUME-LATE: #1 \the\dimexpr\wd\resumeLineBox-\linewidth\relax}%
+    \fi
+    \sbox{\resumeLineBox}{#2#3}%
+    \ifdim\wd\resumeLineBox>1.9\linewidth
+      \typeout{JOB-RESUME-WRAP: #1 \the\dimexpr\wd\resumeLineBox-1.9\linewidth\relax}%
+    \else\ifdim\wd\resumeLineBox>\linewidth
+      \ifdim\wd\resumeLineBox<1.3\linewidth
+        \typeout{JOB-RESUME-DANGLE: #1 \the\dimexpr\wd\resumeLineBox-\linewidth\relax}%
+      \fi
+    \else\ifdim\wd\resumeLineBox<0.8\linewidth
+      \typeout{JOB-RESUME-SHORT: #1 \the\dimexpr\linewidth-\wd\resumeLineBox\relax}%
+    \fi\fi\fi
+    % How many printed lines the bullet takes, so an overflowing page knows what each cut frees.
+    \ifdim\wd\resumeLineBox>1.9\linewidth
+      \typeout{JOB-RESUME-LINES: #1 3}%
+    \else\ifdim\wd\resumeLineBox>\linewidth
+      \typeout{JOB-RESUME-LINES: #1 2}%
+    \else
+      \typeout{JOB-RESUME-LINES: #1 1}%
+    \fi\fi
+    {#2#3 \vspace{-2pt}}
+  }
+}
+
+% Jake's headings, with tabularx so a long title or employer wraps instead of overflowing.
+\newcommand{\resumeSubheading}[4]{
+  \vspace{-2pt}\item
+    \begin{tabularx}{0.97\textwidth}[t]{>{\raggedright\arraybackslash}Xr}
+      \textbf{#1} & #2 \\
+      \textit{\small#3} & \textit{\small #4} \\
+    \end{tabularx}\vspace{-7pt}
+}
+
+% A labeled line under an education heading, aligned with the institution name.
+\newcommand{\resumeCoursework}[1]{%
+  \par\vspace{2pt}{\small\textbf{Relevant Coursework:} #1}\par
+}
+
+\newcommand{\resumeSubSubheading}[2]{
+    \item
+    \begin{tabularx}{0.97\textwidth}{>{\raggedright\arraybackslash}Xr}
+      \textit{\small#1} & \textit{\small #2} \\
+    \end{tabularx}\vspace{-7pt}
+}
+
+\newcommand{\resumeProjectHeading}[2]{
+    \item
+    \begin{tabularx}{0.97\textwidth}{>{\raggedright\arraybackslash}Xr}
+      \small#1 & #2 \\
+    \end{tabularx}\vspace{-7pt}
+}
+
+% A project heading's stack and a Relevant Coursework line stay on one printed line: a wrap
+% would cost the page a line that nothing else measures. The renderer lists every version from
+% all items down to the fewest, most relevant first. The first whose \small width fits is kept
+% in \resumeFitted, and its item count is reported (FIT) so the saved resume matches the PDF.
+% \resumeFitLast is the fallback kept when nothing longer fits. These print nothing.
+\newsavebox{\resumeFitBox}
+\newlength{\resumeFitWidth}
+\newif\ifresumeFitFound
+\newcommand{\resumeFitStart}[3]{%
+  \def\resumeFitId{#1}\setlength{\resumeFitWidth}{#2}\def\resumeFitPrefix{#3}%
+  \resumeFitFoundfalse\def\resumeFitted{}%
+}
+% A heading shares its line with the right-aligned dates, so only the rest of it is available.
+\newcommand{\resumeFitHeading}[2]{%
+  \sbox{\resumeFitBox}{#2}%
+  \resumeFitStart{#1}{\dimexpr0.97\textwidth-\wd\resumeFitBox-4pt\relax}{}%
+}
+\newcommand{\resumeFitOption}[2]{%
+  \ifresumeFitFound\else
+    \sbox{\resumeFitBox}{\small\resumeFitPrefix#2}%
+    \ifdim\wd\resumeFitBox>\resumeFitWidth\else
+      \resumeFitFoundtrue\def\resumeFitted{#2}%
+      \typeout{JOB-RESUME-FIT: \resumeFitId\space#1}%
+    \fi
+  \fi
+}
+\newcommand{\resumeFitLast}[2]{%
+  \ifresumeFitFound\else
+    \resumeFitFoundtrue\def\resumeFitted{#2}%
+    \typeout{JOB-RESUME-FIT: \resumeFitId\space#1}%
+  \fi
+}
+
+\newcommand{\resumeSubItem}[1]{\resumeItem{#1}\vspace{-4pt}}
+
+\renewcommand\labelitemii{$\vcenter{\hbox{\tiny$\bullet$}}$}
+
+\newcommand{\resumeSubHeadingListStart}{\begin{itemize}[leftmargin=0.15in, label={}]}
+\newcommand{\resumeSubHeadingListEnd}{\end{itemize}}
+\newcommand{\resumeItemListStart}{\begin{itemize}}
+\newcommand{\resumeItemListEnd}{\end{itemize}\vspace{-5pt}}
+
+% Ends the page and reports a blank band at the bottom that is too tall to leave, so the
+% application can ask for more supported content. When the content ran onto another page, it
+% reports how far instead (OVERFLOW: the page number, the height used on it, and the text
+% height), so the application can cut about that much. It prints nothing and moves nothing: the
+% spacing above is exactly Jake's.
+\newlength{\resumeFillLimit}
+\setlength{\resumeFillLimit}{0.5in}
+\newcommand{\resumeFillPage}{%
+  \par
+  \ifnum\value{page}>1
+    \typeout{JOB-RESUME-OVERFLOW: \the\value{page} \the\pagetotal\space\the\textheight}%
+  \else\ifdim\dimexpr\pagegoal-\pagetotal\relax<\resumeFillLimit\else
+    \typeout{JOB-RESUME-BLANK: \the\dimexpr\pagegoal-\pagetotal\relax}%
+  \fi\fi
+  \penalty-10000
+}
+
+%-------------------------------------------
+%%%%%%  RESUME STARTS HERE  %%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+
+\begin{document}
+%%RESUME_BODY%%
+\resumeFillPage
+\end{document}
