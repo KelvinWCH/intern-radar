@@ -1,0 +1,56 @@
+<section>
+  <h4>Requirement coverage</h4>
+  @if (coverage().length) {
+    <p class="hint">
+      The resume writer's map of each job requirement to the entries that show it. The reviewer
+      checks this map; it is never printed.
+    </p>
+    <ul class="coverage">
+      @for (item of covered(); track $index) {
+        <li data-covered="true">
+          <div class="coverage-meta">
+            <strong>{{ item.requirement }}</strong>
+            <span class="tag">{{ item.importance === 'required' ? 'Required' : 'Preferred' }}</span>
+          </div>
+          <p>Shown in {{ item.entries.join(', ') }}</p>
+        </li>
+      }
+      @for (item of uncovered(); track $index) {
+        <li data-covered="false">
+          <div class="coverage-meta">
+            <strong>{{ item.requirement }}</strong>
+            <span class="tag">{{ item.importance === 'required' ? 'Required' : 'Preferred' }}</span>
+          </div>
+          <p>No supporting entry in your profile</p>
+        </li>
+      }
+    </ul>
+  } @else {
+    <p class="hint">No requirement map was saved with this resume.</p>
+  }
+</section>
+<section>
+  <h4>Posting keywords</h4>
+  @if (checks(); as report) {
+    @if (keywordCount()) {
+      <p class="hint">
+        The posting's search terms and required skills, checked against this resume's own text.
+      </p>
+      <ul class="keywords">
+        @for (keyword of report.matched_keywords; track $index) {
+          <li data-state="used">{{ keyword }}</li>
+        }
+        @for (keyword of report.missing_supported_keywords; track $index) {
+          <li data-state="missing">{{ keyword }} <span>supported, not used</span></li>
+        }
+        @for (keyword of report.unsupported_keywords; track $index) {
+          <li data-state="gap">{{ keyword }} <span>not in your profile</span></li>
+        }
+      </ul>
+    } @else {
+      <p class="hint">No posting keywords were found for this attempt.</p>
+    }
+  } @else {
+    <p class="hint">Keyword coverage appears after the resume is checked.</p>
+  }
+</section>

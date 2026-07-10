@@ -292,7 +292,7 @@ export class StageModels {
           } effort`,
         );
       }
-      return parts.length ? [`${name}: ${parts.join(' · ')}`] : [];
+      return parts.length ? [`${name}: ${parts.join(', ')}`] : [];
     });
   });
 

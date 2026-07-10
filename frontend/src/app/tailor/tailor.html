@@ -4,11 +4,11 @@
     <div class="heading-copy">
       @if (company().trim() && title().trim()) {
         <p class="target-company">
-          <em>{{ company() }}</em>
+          {{ company() }}
         </p>
-        <h2>{{ title() }}<span class="heading-spark">✳</span></h2>
+        <h2>{{ title() }}</h2>
       } @else {
-        <h2>Tailor your <em>application.</em><span class="heading-spark">✳</span></h2>
+        <h2>Tailor your application</h2>
       }
     </div>
     <ol class="tailor-steps">
@@ -94,7 +94,7 @@
           <p class="profile-status">
             @switch (profileStatus()) {
               @case ('loading') {
-                Loading saved resume…
+                Loading saved resume...
               }
               @case ('ready') {
                 <strong>{{ profile()?.name }}</strong>
@@ -132,7 +132,7 @@
                   [disabled]="busy()"
                 />
                 <p id="upload-help" class="helper">
-                  PDF, DOCX, TXT, MD, TEX · Max 5 MiB. Replaces your saved resume.
+                  PDF, DOCX, TXT, MD or TEX, up to 5 MiB. Replaces your saved resume.
                 </p>
                 <button
                   class="button-secondary"
@@ -140,7 +140,7 @@
                   (click)="upload()"
                   [disabled]="!fileName() || busy()"
                 >
-                  {{ uploading() ? 'Saving…' : 'Save resume' }}
+                  {{ uploading() ? 'Saving...' : 'Save resume' }}
                 </button>
               </div>
             </details>
@@ -164,7 +164,7 @@
             }
           </div>
           @if (jobLoading()) {
-            <p class="helper">Loading saved job…</p>
+            <p class="helper">Loading saved job...</p>
           }
           @if (closedNotice()) {
             <p class="closed-warning">
@@ -187,7 +187,7 @@
               [(ngModel)]="description"
               (ngModelChange)="targetChanged()"
               rows="7"
-              placeholder="Paste the posting here, or enter a company and role below…"
+              placeholder="Paste the posting here, or enter a company and role below..."
             ></textarea>
             <app-text-count
               id="description-count"
@@ -236,7 +236,7 @@
                     pattern="https?://.+"
                     [(ngModel)]="applicationUrl"
                     (ngModelChange)="targetChanged()"
-                    placeholder="https://…"
+                    placeholder="https://..."
                   />
                 </div>
                 <div>
@@ -323,11 +323,11 @@
                 class="pi"
                 [class.pi-spinner]="generating()"
                 [class.pi-spin]="generating()"
-                [class.pi-sparkles]="!generating()"
+                [class.pi-file-edit]="!generating()"
               ></i
               >{{
                 generating()
-                  ? 'Generating documents…'
+                  ? 'Generating documents...'
                   : progress()?.status === 'running'
                     ? 'Reconnect to progress'
                     : 'Research & tailor'
@@ -342,7 +342,7 @@
             }
             @if (savedJobId(); as id) {
               <p class="helper">
-                <a [routerLink]="['/jobs', id]">View saved job & application →</a>
+                <a [routerLink]="['/jobs', id]">View saved job & application</a>
               </p>
             }
           </div>
@@ -364,7 +364,7 @@
         </header>
         <div class="output-status">
           @if (generating()) {
-            Researching, writing and reviewing… This may take a few minutes.
+            Researching, writing and reviewing... This may take a few minutes.
           } @else if (progress()?.status === 'awaiting_review') {
             Your drafts are saved. Resolve the review above before finishing.
           } @else if (progress()?.status === 'failed') {
@@ -372,7 +372,7 @@
           } @else if (progress()?.status === 'cancelled') {
             You cancelled this attempt. Any completed documents remain available below.
           } @else if (generated()) {
-            Documents saved · {{ resultLabel() }}
+            Documents saved for {{ resultLabel() }}
           }
         </div>
         @if (progress(); as document) {
@@ -397,7 +397,7 @@
                           documentId: document.id,
                           kind: 'resume',
                           title: 'Tailored resume',
-                          subtitle: document.company + ' · ' + document.title,
+                          subtitle: document.title + ' at ' + document.company,
                         })
                       "
                     >
@@ -425,7 +425,7 @@
                           documentId: document.id,
                           kind: 'cover-letter',
                           title: 'Cover letter',
-                          subtitle: document.company + ' · ' + document.title,
+                          subtitle: document.title + ' at ' + document.company,
                         })
                       "
                     >
