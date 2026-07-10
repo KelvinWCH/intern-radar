@@ -1,0 +1,488 @@
+<div class="workspace-page tailor-page">
+  <app-pdf-preview-dialog #pdfPreview />
+  <header class="page-heading">
+    <div class="heading-copy">
+      @if (company().trim() && title().trim()) {
+        <p class="target-company">
+          <em>{{ company() }}</em>
+        </p>
+        <h2>{{ title() }}<span class="heading-spark">✳</span></h2>
+      } @else {
+        <h2>Tailor your <em>application.</em><span class="heading-spark">✳</span></h2>
+      }
+    </div>
+    <ol class="tailor-steps">
+      <li [class.current]="workflowStep() === 1" [class.complete]="workflowStep() > 1">
+        <span class="step-number">1</span><span>Prepare</span>
+      </li>
+      <li [class.current]="workflowStep() === 2" [class.complete]="workflowStep() > 2">
+        <span class="step-number">2</span><span>Research & write</span>
+      </li>
+      <li [class.current]="workflowStep() === 3">
+        <span class="step-number">3</span><span>Review & download</span>
+      </li>
+    </ol>
+  </header>
+  @if (jobLoading()) {
+    <div class="tailor-layout">
+      <div class="source-panel panel detail-panel loading-preview">
+        <app-skeleton width="40%" height="24px" />
+        <app-skeleton width="60%" />
+        <app-skeleton height="44px" />
+      </div>
+      <div class="job-form panel detail-panel loading-preview">
+        <app-skeleton width="40%" height="24px" />
+        <app-skeleton height="300px" />
+        <app-skeleton height="44px" />
+        <app-skeleton width="65%" height="44px" />
+      </div>
+      <div class="output-panel panel detail-panel loading-preview">
+        <app-skeleton width="45%" height="24px" />
+        <app-skeleton height="200px" />
+      </div>
+    </div>
+  }
+  <div [hidden]="jobLoading()">
+    @if (consoleVisible() || progress()) {
+      <nav class="attempt-navigation">
+        <a [routerLink]="[]" fragment="tailoring-console"
+          ><i class="pi pi-chart-line"></i> Progress</a
+        >
+        @if (progress()) {
+          <a [routerLink]="[]" fragment="tailoring-review"
+            ><i class="pi pi-check-circle"></i> Review</a
+          >
+        }
+        <a [routerLink]="[]" fragment="tailored-documents"><i class="pi pi-file"></i> Documents</a>
+        <a [routerLink]="[]" fragment="tailor-inputs"
+          >Job & settings <i class="pi pi-arrow-down"></i
+        ></a>
+      </nav>
+    }
+    @if (consoleVisible() || progress()) {
+      <app-tailoring-console
+        id="tailoring-console"
+        [document]="progress()"
+        [pending]="generating() && !progress()"
+        [connected]="generating() || progress()?.status !== 'running'"
+        [error]="generationError()"
+        (changed)="controlled($event)"
+      />
+    }
+    @if (progress(); as report) {
+      <app-tailoring-reports
+        id="tailoring-review"
+        [document]="report"
+        [expanded]="report.status === 'awaiting_review' || report.status === 'running'"
+        (updated)="researchUpdated($event)"
+      />
+    }
+    <div
+      class="tailor-layout"
+      [class.has-documents]="!!progress()?.resume || !!progress()?.cover_letter"
+    >
+      <div class="input-column">
+        <section class="source-panel panel detail-panel">
+          <div class="detail-heading">
+            <h3 class="detail-title" id="source-heading">
+              <span class="detail-mark"><i class="pi pi-id-card"></i></span>Source resume
+            </h3>
+            <a class="button-secondary button-sm" routerLink="/profile"
+              ><i class="pi pi-pencil"></i> Edit profile</a
+            >
+          </div>
+          <p class="profile-status">
+            @switch (profileStatus()) {
+              @case ('loading') {
+                Loading saved resume…
+              }
+              @case ('ready') {
+                <strong>{{ profile()?.name }}</strong>
+              }
+              @case ('missing') {
+                No resume saved.
+              }
+              @case ('error') {
+                Source resume unavailable.
+              }
+            }
+          </p>
+          @if (profileStatus() === 'ready' && !uploading()) {
+            @if (profile(); as savedProfile) {
+              <app-source-resume-preview [profile]="savedProfile" />
+            }
+          }
+          @if (profileStatus() === 'error') {
+            <button class="text-link" type="button" (click)="loadProfile()">
+              Retry connection
+            </button>
+          }
+          @if (profileStatus() !== 'loading') {
+            <details
+              [open]="profileStatus() === 'missing'"
+              [class.first-upload]="profileStatus() === 'missing'"
+            >
+              <summary>{{ profile() ? 'Replace resume' : 'Upload resume' }}</summary>
+              <div class="upload-form">
+                <input
+                  id="source-file"
+                  type="file"
+                  accept=".pdf,.docx,.txt,.md,.tex"
+                  (change)="chooseFile($event)"
+                  [disabled]="busy()"
+                />
+                <p id="upload-help" class="helper">
+                  PDF, DOCX, TXT, MD, TEX · Max 5 MiB. Replaces your saved resume.
+                </p>
+                <button
+                  class="button-secondary"
+                  type="button"
+                  (click)="upload()"
+                  [disabled]="!fileName() || busy()"
+                >
+                  {{ uploading() ? 'Saving…' : 'Save resume' }}
+                </button>
+              </div>
+            </details>
+          }
+          @if (profileError()) {
+            <p class="error-message">{{ profileError() }}</p>
+          }
+        </section>
+        <form
+          id="tailor-inputs"
+          class="job-form panel detail-panel"
+          #jobForm="ngForm"
+          (ngSubmit)="jobForm.valid && generate()"
+        >
+          <div class="detail-heading">
+            <h3 class="detail-title">
+              <span class="detail-mark"><i class="pi pi-briefcase"></i></span>Job & company
+            </h3>
+            @if (linkedJob()) {
+              <span class="ready-badge">Saved job</span>
+            }
+          </div>
+          @if (jobLoading()) {
+            <p class="helper">Loading saved job…</p>
+          }
+          @if (closedNotice()) {
+            <p class="closed-warning">
+              <i class="pi pi-ban"></i> This posting looks closed: {{ closedNotice() }} Confirm it
+              on the employer site before tailoring.
+            </p>
+          }
+          @if (jobError()) {
+            <p class="error-message">{{ jobError() }}</p>
+            <button class="text-link" type="button" (click)="loadJob()" [disabled]="busy()">
+              Retry loading job
+            </button>
+          }
+          <fieldset [disabled]="busy() || linkedJob()">
+            <label for="job-description">Job description</label>
+            <textarea
+              pTextarea
+              id="job-description"
+              name="description"
+              [(ngModel)]="description"
+              (ngModelChange)="targetChanged()"
+              rows="7"
+              placeholder="Paste the posting here, or enter a company and role below…"
+            ></textarea>
+            <app-text-count
+              id="description-count"
+              [text]="description()"
+              [limit]="tailoringDescriptionLimit"
+              purpose="tailoring"
+            />
+            @if (!description().trim()) {
+              <p class="helper">
+                No posting yet? Enter a company and role below to research typical responsibilities
+                and create a generic report.
+              </p>
+            }
+            <details class="job-details" [open]="linkedJob() || !description().trim()">
+              <summary>
+                Company & role
+                <span>{{ linkedJob() ? 'From your saved job' : 'Add context' }}</span>
+              </summary>
+              <div class="context-fields">
+                <div>
+                  <label for="company">Company</label
+                  ><input
+                    id="company"
+                    name="company"
+                    [(ngModel)]="company"
+                    (ngModelChange)="targetChanged()"
+                    placeholder="Company name"
+                  />
+                </div>
+                <div>
+                  <label for="role-title">Role</label
+                  ><input
+                    id="role-title"
+                    name="title"
+                    [(ngModel)]="title"
+                    (ngModelChange)="targetChanged()"
+                    placeholder="Job title"
+                  />
+                </div>
+                <div>
+                  <label for="job-url">Posting URL</label
+                  ><input
+                    id="job-url"
+                    name="applicationUrl"
+                    type="url"
+                    pattern="https?://.+"
+                    [(ngModel)]="applicationUrl"
+                    (ngModelChange)="targetChanged()"
+                    placeholder="https://…"
+                  />
+                </div>
+                <div>
+                  @if (linkedJob()) {
+                    <span class="field-label">Posted</span
+                    ><app-posted-date [timestamp]="savedPostedDate()" />
+                  } @else {
+                    <label for="target-date-posted">Date posted</label>
+                    <input
+                      id="target-date-posted"
+                      name="date_posted"
+                      type="date"
+                      [(ngModel)]="postedDate"
+                      (ngModelChange)="targetChanged()"
+                    />
+                  }
+                </div>
+              </div>
+            </details>
+          </fieldset>
+          <div class="description-footer"></div>
+          @if (generationError()) {
+            <p class="error-message">{{ generationError() }}</p>
+          }
+          <p class="selection-label">Documents to create</p>
+          <div class="document-choices">
+            <label for="tailor-resume"
+              ><p-checkbox
+                [binary]="true"
+                name="includeResume"
+                inputId="tailor-resume"
+                [(ngModel)]="includeResume"
+                (ngModelChange)="generationOptionsChanged()"
+                [disabled]="busy()"
+              />
+              <span><strong>Resume</strong></span></label
+            ><label for="tailor-letter"
+              ><p-checkbox
+                [binary]="true"
+                name="includeLetter"
+                inputId="tailor-letter"
+                [(ngModel)]="includeLetter"
+                (ngModelChange)="generationOptionsChanged()"
+                [disabled]="busy()"
+              />
+              <span><strong>Cover letter</strong></span></label
+            >
+          </div>
+          <details class="advanced-settings">
+            <summary>Research & AI settings</summary>
+            <app-stage-models
+              [(resume)]="aiOptions"
+              [(research)]="researchOptions"
+              [(letter)]="letterOptions"
+              [(reviewer)]="reviewerOptions"
+              (reviewerChange)="generationOptionsChanged()"
+              [(companyUrl)]="researchUrl"
+              [(mode)]="tailoringMode"
+              [(oneShot)]="oneShotOptions"
+              (modeChange)="generationOptionsChanged()"
+              (oneShotChange)="generationOptionsChanged()"
+              (resumeChange)="generationOptionsChanged()"
+              (researchChange)="generationOptionsChanged()"
+              (letterChange)="generationOptionsChanged()"
+              (companyUrlChange)="generationOptionsChanged()"
+              [disabled]="busy()"
+              [includeResume]="includeResume()"
+              [includeLetter]="includeLetter()"
+            />
+          </details>
+          <div class="generation-actions">
+            <button
+              pButton
+              class="button-primary generate-button"
+              type="submit"
+              [disabled]="
+                generating() ||
+                (progress()?.status === 'awaiting_review' && !progress()?.review) ||
+                (progress()?.status !== 'running' &&
+                  (!canGenerate() || jobForm.invalid || (!includeResume() && !includeLetter())))
+              "
+            >
+              <i
+                class="pi"
+                [class.pi-spinner]="generating()"
+                [class.pi-spin]="generating()"
+                [class.pi-sparkles]="!generating()"
+              ></i
+              >{{
+                generating()
+                  ? 'Generating documents…'
+                  : progress()?.status === 'running'
+                    ? 'Reconnect to progress'
+                    : 'Research & tailor'
+              }}
+            </button>
+            @if (profileStatus() !== 'ready') {
+              <p class="helper">Add a source resume to continue.</p>
+            } @else if (!includeResume() && !includeLetter()) {
+              <p class="helper">Choose at least one document to continue.</p>
+            } @else if (!description().trim() && (!company().trim() || !title().trim())) {
+              <p class="helper">Add a job description, or enter both a company and role.</p>
+            }
+            @if (savedJobId(); as id) {
+              <p class="helper">
+                <a [routerLink]="['/jobs', id]">View saved job & application →</a>
+              </p>
+            }
+          </div>
+        </form>
+      </div>
+      <section id="tailored-documents" class="output-panel panel detail-panel">
+        <header class="detail-heading">
+          <h3 class="detail-title" id="output-heading">
+            <span class="detail-mark"><i class="pi pi-file-check"></i></span>Your documents
+          </h3>
+          @if (progress(); as document) {
+            <a
+              class="button-secondary"
+              [routerLink]="['/jobs', document.job_id]"
+              [queryParams]="{ version: document.id }"
+              >Open on the job page <i class="pi pi-arrow-up-right"></i
+            ></a>
+          }
+        </header>
+        <div class="output-status">
+          @if (generating()) {
+            Researching, writing and reviewing… This may take a few minutes.
+          } @else if (progress()?.status === 'awaiting_review') {
+            Your drafts are saved. Resolve the review above before finishing.
+          } @else if (progress()?.status === 'failed') {
+            This attempt needs attention. Any completed documents remain available below.
+          } @else if (progress()?.status === 'cancelled') {
+            You cancelled this attempt. Any completed documents remain available below.
+          } @else if (generated()) {
+            Documents saved · {{ resultLabel() }}
+          }
+        </div>
+        @if (progress(); as document) {
+          <div class="document-previews">
+            @if (document.resume; as resume) {
+              <article class="document-preview">
+                <div class="download-bar">
+                  <h4>Resume</h4>
+                  <div class="document-tools">
+                    @if (canEditResume(document)) {
+                      <a
+                        class="button-secondary"
+                        [routerLink]="['/documents', document.id, 'resume']"
+                        ><i class="pi pi-pencil"></i> Edit</a
+                      >
+                    }
+                    <button
+                      type="button"
+                      class="button-secondary"
+                      (click)="
+                        pdfPreview.open({
+                          documentId: document.id,
+                          kind: 'resume',
+                          title: 'Tailored resume',
+                          subtitle: document.company + ' · ' + document.title,
+                        })
+                      "
+                    >
+                      <i class="pi pi-eye"></i> Preview PDF
+                    </button>
+                    <app-document-actions [documentId]="document.id" kind="resume" />
+                  </div>
+                </div>
+                <details class="text-preview">
+                  <summary>Show the resume text</summary>
+                  <app-resume-preview [resume]="resume" />
+                </details>
+              </article>
+            }
+            @if (document.cover_letter; as letter) {
+              <article class="document-preview">
+                <div class="download-bar">
+                  <h4>Cover letter</h4>
+                  <div class="document-tools">
+                    <button
+                      type="button"
+                      class="button-secondary"
+                      (click)="
+                        pdfPreview.open({
+                          documentId: document.id,
+                          kind: 'cover-letter',
+                          title: 'Cover letter',
+                          subtitle: document.company + ' · ' + document.title,
+                        })
+                      "
+                    >
+                      <i class="pi pi-eye"></i> Preview PDF
+                    </button>
+                    <app-document-actions [documentId]="document.id" kind="cover-letter" />
+                  </div>
+                </div>
+                <details class="text-preview">
+                  <summary>Show the letter text</summary>
+                  <app-cover-letter-preview [letter]="letter" />
+                </details>
+              </article>
+            }
+            @if (document.unfitted_resume; as draft) {
+              <app-unfitted-draft
+                class="document-preview"
+                [documentId]="document.id"
+                [resume]="draft"
+                [editable]="canEditResume(document)"
+              />
+            }
+            @if (document.unfitted_cover_letter; as draft) {
+              <app-unfitted-draft
+                class="document-preview"
+                [documentId]="document.id"
+                [letter]="draft"
+              />
+            }
+          </div>
+          <app-ai-usage-summary class="output-usage" [usage]="document.ai_usage" />
+        }
+        @if (
+          !progress()?.resume &&
+          !progress()?.cover_letter &&
+          !progress()?.unfitted_resume &&
+          !progress()?.unfitted_cover_letter
+        ) {
+          <div class="empty-preview">
+            <span class="document-icon"><i class="pi pi-file"></i></span>
+            <h4>
+              {{
+                generating()
+                  ? 'Your application is taking shape'
+                  : 'Ready for your next opportunity'
+              }}
+            </h4>
+            <p>
+              {{
+                generating()
+                  ? 'Progress and drafts will appear here.'
+                  : 'Your selected documents will appear here, ready to review and download.'
+              }}
+            </p>
+          </div>
+        }
+      </section>
+    </div>
+  </div>
+</div>
