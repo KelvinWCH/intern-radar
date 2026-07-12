@@ -1,0 +1,108 @@
+<section class="flow-panel">
+  <div class="flow-decoration">
+    <span class="orbit orbit-one"></span><span class="orbit orbit-two"></span>
+    <span class="little-spark">✳</span>
+    @for (flake of snowflakes; track $index) {
+      <span
+        class="flake"
+        [style.--x]="flake.x + '%'"
+        [style.--y]="flake.y + '%'"
+        [style.--size]="flake.size + 'px'"
+        [style.--duration]="flake.duration + 's'"
+        [style.--delay]="flake.delay + 's'"
+        [style.--drift]="flake.drift + 'px'"
+        [style.--alpha]="flake.alpha"
+        [style.--tint]="flake.tint"
+        >{{ flake.glyph }}</span
+      >
+    }
+  </div>
+  <header class="flow-header">
+    <h3>Tailoring progress</h3>
+    @if (document(); as attempt) {
+      @if (attempt.status === 'running') {
+        <app-tailoring-controls [document]="attempt" (changed)="changed.emit($event)" />
+      }
+    }
+    <div class="flow-tools">
+      <div class="flow-current">
+        @if (currentNodes()[0]; as current) {
+          <div class="current-stage" [attr.data-status]="status(current.key)">
+            <i [class]="stateIcon(current.key)"></i>
+            <div>
+              <strong>{{ label(current.key) }}</strong>
+              <span>
+                @for (node of currentNodes(); track node.key; let last = $last) {
+                  {{ node.label }}{{ last ? '' : ' · ' }}
+                }
+              </span>
+            </div>
+          </div>
+        }
+      </div>
+    </div>
+  </header>
+  <div class="flow-canvas">
+    <svg class="flow-wires">
+      @for (wire of wires(); track wire.key) {
+        <g
+          [class.revision-route]="wire.returning"
+          [attr.data-to]="wire.to"
+          [attr.data-active]="wireActive(wire)"
+          [attr.data-done]="wireDone(wire)"
+        >
+          <path
+            class="wire-track"
+            [attr.d]="wire.path"
+            [attr.pathLength]="wire.returning ? null : 1"
+          />
+          <path
+            class="wire-pulse"
+            [attr.d]="wire.path"
+            pathLength="1"
+            [attr.data-active]="wireActive(wire)"
+          />
+          <path [class]="wire.returning ? 'return-head' : 'wire-head'" [attr.d]="wire.arrow" />
+        </g>
+      }
+    </svg>
+    <div class="flow-grid" [style.--flow-columns]="columns().length">
+      @for (column of columns(); track column.label; let index = $index) {
+        <div class="flow-column" [attr.data-tone]="column.tone">
+          <div class="column-label">
+            <span class="step-number">0{{ index + 1 }}</span
+            ><span>{{ column.label.split(' · ')[1] }}</span>
+          </div>
+          <div class="flow-branch">
+            @for (node of column.nodes; track node.key) {
+              <div class="node-slot" [attr.data-node]="node.key">
+                <article
+                  class="flow-node"
+                  [attr.data-status]="status(node.key)"
+                  [class.current]="isCurrent(node.key)"
+                >
+                  <span class="node-icon"><i [class]="'pi ' + node.icon"></i></span>
+                  <strong>{{ node.label }}</strong>
+                  <span class="node-detail">{{ node.detail }}</span>
+                  @if (node.key === 'one_shot') {
+                    <ol class="call-steps">
+                      @for (step of callSteps; track step.key) {
+                        <li [attr.data-state]="callStepState(step.key)">
+                          <i [class]="callStepIcon(step.key)"></i>{{ step.label }}
+                          @if (callStepState(step.key) === 'current') {}
+                        </li>
+                      }
+                    </ol>
+                  }
+                  <span class="node-state"
+                    ><i [class]="stateIcon(node.key)"></i>{{ label(node.key) }}</span
+                  >
+                </article>
+              </div>
+            }
+          </div>
+        </div>
+      }
+    </div>
+  </div>
+</section>

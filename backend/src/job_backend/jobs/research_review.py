@@ -64,9 +64,9 @@ def review_research(
         message = (
             "Generating a generic company and role report"
             if review.action == "generate_generic"
-            else "Research approved by you · continuing with saved inputs"
+            else "Research approved, continuing with the saved inputs"
             if review.action == "continue"
-            else "Research edits saved · review the citation results before continuing"
+            else "Research edits saved. Check the citation results before continuing"
         )
         row.events.append(
             json_object.validate_python(

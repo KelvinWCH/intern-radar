@@ -110,7 +110,7 @@ def collect_sources(
 ) -> tuple[list[ResearchSource], list[str]]:
     sources = [
         ResearchSource(
-            title=f"{job.company} · {job.title}", url=job.application_url, text=job.raw_description
+            title=f"{job.title} at {job.company}", url=job.application_url, text=job.raw_description
         )
     ]
     warnings: list[str] = []
