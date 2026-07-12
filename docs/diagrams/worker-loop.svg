@@ -1,0 +1,49 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="560" height="356" viewBox="0 38 560 356" role="img" aria-labelledby="title desc">
+<title id="title">The worker loop</title>
+<desc id="desc">The worker loop asks whether a scrape group is due. If not, it scores new matches and waits up to 30 seconds. If one is, it runs that group&#x27;s importers two or three at a time. When the internet is down it retries the group in 15 minutes; otherwise it schedules the group&#x27;s next run. Either way it goes back to checking what is due.</desc>
+<style>
+.t{font-family:-apple-system, BlinkMacSystemFont, 'Segoe UI', 'Noto Sans', Helvetica, Arial, sans-serif;font-weight:600}
+.s{font-family:-apple-system, BlinkMacSystemFont, 'Segoe UI', 'Noto Sans', Helvetica, Arial, sans-serif;font-size:12px}
+.d{font-family:-apple-system, BlinkMacSystemFont, 'Segoe UI', 'Noto Sans', Helvetica, Arial, sans-serif;font-size:13px;font-weight:600}
+.m{font-family:ui-monospace, SFMono-Regular, 'SF Mono', Menlo, Consolas, 'Liberation Mono', monospace;font-size:12px;font-weight:600}
+.c{font-family:ui-monospace, SFMono-Regular, 'SF Mono', Menlo, Consolas, 'Liberation Mono', monospace;font-size:11px}
+.g{font-family:ui-monospace, SFMono-Regular, 'SF Mono', Menlo, Consolas, 'Liberation Mono', monospace;font-size:12px;font-weight:600;fill:#7d8590}
+.n{font-family:ui-monospace, SFMono-Regular, 'SF Mono', Menlo, Consolas, 'Liberation Mono', monospace;font-size:11px;fill:#7d8590}
+.l{font-family:ui-monospace, SFMono-Regular, 'SF Mono', Menlo, Consolas, 'Liberation Mono', monospace;font-size:11px;fill:#ffffff}
+.e{fill:none;stroke:#8b949e;stroke-width:1.5;stroke-linejoin:round}
+</style>
+<defs><marker id="arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path d="M0.5,1 L9.5,5 L0.5,9 z" fill="#8b949e"/></marker></defs>
+<path d="M342,146.9 A178,110 0 0 1 453.5,225.4" class="e" marker-end="url(#arrow)"/>
+<path d="M452.9,276.1 A178,110 0 0 1 340,353.6" class="e" marker-end="url(#arrow)"/>
+<path d="M218.6,353.3 A178,110 0 0 1 105.5,271.6" class="e" marker-end="url(#arrow)"/>
+<path d="M106,226.9 A178,110 0 0 1 219.3,146.6" class="e" marker-end="url(#arrow)"/>
+<path d="M280,332 V273.5" class="e" marker-end="url(#arrow)"/>
+<path d="M280,228 V171.5" class="e" marker-end="url(#arrow)"/>
+<path d="M243,124 C222,120 205,108 207,88" class="e" marker-end="url(#arrow)"/>
+<path d="M353,88 C355,108 338,120 317,124" class="e" marker-end="url(#arrow)"/>
+<polygon points="280,110 355,140 280,170 205,140" fill="#e4f3e8" stroke="#236746" stroke-width="1.5" stroke-linejoin="round"/>
+<text x="280" y="136.5" class="d" text-anchor="middle" fill="#236746">a group</text>
+<text x="280" y="152.5" class="d" text-anchor="middle" fill="#236746">due?</text>
+<rect x="383" y="227" width="150" height="46" rx="5" fill="#eaf1fc" stroke="#345e91" stroke-width="1.5"/>
+<text x="458" y="248" class="t" font-size="14" text-anchor="middle" fill="#345e91">run importers</text>
+<text x="458" y="263" class="s" text-anchor="middle" fill="#345e91">2 or 3 at a time</text>
+<polygon points="280,332 355,360 280,388 205,360" fill="#e4f3e8" stroke="#236746" stroke-width="1.5" stroke-linejoin="round"/>
+<text x="280" y="356.5" class="d" text-anchor="middle" fill="#236746">internet</text>
+<text x="280" y="372.5" class="d" text-anchor="middle" fill="#236746">down?</text>
+<rect x="27" y="230" width="150" height="40" rx="5" fill="#f1efeb" stroke="#66625a" stroke-width="1.5"/>
+<text x="102" y="255" class="t" font-size="14" text-anchor="middle" fill="#66625a">schedule next run</text>
+<rect x="212" y="228" width="136" height="44" rx="5" fill="#f1efeb" stroke="#66625a" stroke-width="1.5"/>
+<text x="280" y="248" class="t" font-size="14" text-anchor="middle" fill="#66625a">retry the group</text>
+<text x="280" y="263" class="s" text-anchor="middle" fill="#66625a">in 15 minutes</text>
+<rect x="195" y="46" width="170" height="40" rx="5" fill="#eaf1fc" stroke="#345e91" stroke-width="1.5"/>
+<text x="280" y="64" class="t" font-size="14" text-anchor="middle" fill="#345e91">score new matches</text>
+<text x="280" y="79" class="s" text-anchor="middle" fill="#345e91">then wait up to 30 s</text>
+<rect x="413.2" y="161.8" width="27.8" height="17" rx="3" fill="#57606a"/>
+<text x="427.1" y="174.1" class="l" text-anchor="middle">yes</text>
+<rect x="122.3" y="321.2" width="21.2" height="17" rx="3" fill="#57606a"/>
+<text x="132.9" y="333.5" class="l" text-anchor="middle">no</text>
+<rect x="288" y="294.5" width="27.8" height="17" rx="3" fill="#57606a"/>
+<text x="301.9" y="306.8" class="l" text-anchor="middle">yes</text>
+<rect x="143.8" y="103.5" width="54.2" height="17" rx="3" fill="#57606a"/>
+<text x="170.9" y="115.8" class="l" text-anchor="middle">not yet</text>
+</svg>
