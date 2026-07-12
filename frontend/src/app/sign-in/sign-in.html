@@ -1,0 +1,27 @@
+<section class="sign-in-page">
+  <form class="sign-in-panel" (ngSubmit)="submit()">
+    <header class="panel-heading">
+      <span class="panel-icon"><i class="pi pi-lock"></i></span>
+      <h2>Sign in</h2>
+    </header>
+    <label for="sign-in-password">Password</label>
+    <input
+      id="sign-in-password"
+      name="password"
+      type="password"
+      autocomplete="current-password"
+      required
+      [(ngModel)]="password"
+      [disabled]="busy()"
+    />
+    @if (error()) {
+      <p class="error">{{ error() }}</p>
+    }
+    <div class="actions">
+      <button class="button-primary" type="submit" [disabled]="busy() || !password">
+        <i class="pi pi-sign-in"></i>
+        {{ busy() ? 'Signing in…' : 'Sign in' }}
+      </button>
+    </div>
+  </form>
+</section>
