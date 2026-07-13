@@ -1,0 +1,21 @@
+:host {
+  display: block;
+  width: 100%;
+}
+.primary-report {
+  --daily-results-height: clamp(360px, 65dvh, 600px);
+  margin-bottom: 16px;
+}
+.workspace-panels {
+  --workspace-panel-height: 560px;
+  display: grid;
+  grid-template-columns: minmax(360px, 1fr) minmax(0, 1.8fr);
+  gap: 16px;
+  align-items: start;
+  margin-bottom: 16px;
+}
+@media (max-width: 1000px) {
+  .workspace-panels {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}

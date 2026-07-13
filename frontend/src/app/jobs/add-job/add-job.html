@@ -1,15 +1,15 @@
 <header>
-  <h2>Add a <em>job.</em><span class="heading-spark">✳</span></h2>
+  <h2>Add a job</h2>
 </header>
 <section class="entry-panel">
   @if (saved(); as job) {
     <div class="saved-message">
       <strong>Job saved in your workspace</strong>
-      <p>{{ job.title }} · {{ job.company }}</p>
+      <p>{{ job.title }} at {{ job.company }}</p>
       <p><app-posted-date [timestamp]="job.details?.date_posted" /></p>
       <app-source-badge [source]="job.sourceType" />
       <p>Existing matches keep their saved details.</p>
-      <a [routerLink]="['/jobs', job.id]">Review or edit this job →</a>
+      <a [routerLink]="['/jobs', job.id]">Review or edit this job</a>
     </div>
   }
   <form #jobForm="ngForm" (ngSubmit)="jobForm.valid && save()">
@@ -20,7 +20,7 @@
       <p class="error-message">{{ error() }}</p>
     }
     <button class="button-primary" type="submit" [disabled]="!canSave() || jobForm.invalid">
-      {{ saving() ? 'Saving job…' : 'Save job' }}
+      {{ saving() ? 'Saving job...' : 'Save job' }}
     </button>
   </form>
 </section>

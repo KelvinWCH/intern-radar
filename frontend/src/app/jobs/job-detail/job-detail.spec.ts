@@ -228,7 +228,7 @@ describe('JobDetail', (): void => {
     expect(element.querySelector('.closed-panel')).toBeNull();
     button('Check if open').click();
     await fixture.whenStable();
-    expect(button('Checking…').disabled).toBe(true);
+    expect(button('Checking...').disabled).toBe(true);
     const checkedAt = Date.UTC(2026, 9, 22, 15) / 1000;
     const request = http.expectOne(`/api/jobs/${apiJob.id}/check-link`);
     expect(request.request.method).toBe('POST');

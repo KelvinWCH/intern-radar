@@ -53,7 +53,7 @@ export class JobStats {
       },
       {
         label: 'Last edited',
-        help: 'When you last edited this job’s details or description',
+        help: "When you last edited this job's details or description",
         value: job.metadata?.detailsUpdatedAt,
         dateOnly: false,
       },
@@ -74,6 +74,6 @@ export class JobStats {
       return 'Not recorded';
     }
     const ago = relativeTime(date.value, this.now());
-    return date.dateOnly ? `${ago} · the source gives only the date, not a time` : ago;
+    return date.dateOnly ? `${ago} (the source only gives a date)` : ago;
   }
 }
