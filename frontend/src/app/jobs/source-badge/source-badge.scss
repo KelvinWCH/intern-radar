@@ -1,0 +1,19 @@
+@use '../../../styles/badges';
+:host {
+  display: inline-flex;
+}
+span {
+  @include badges.label;
+}
+.scraped {
+  color: #185394;
+  background: #e9f2ff;
+}
+.user_added {
+  color: #20633e;
+  background: #e6f5ec;
+}
+.user_auto_add {
+  color: #71419a;
+  background: #f3eafe;
+}

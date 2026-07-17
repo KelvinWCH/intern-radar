@@ -1,0 +1,64 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="560" height="356" viewBox="0 38 560 356" role="img" aria-labelledby="title desc">
+<title id="title">Components</title>
+<desc id="desc">The Angular app calls the api over REST. The api holds jobs and profile, tailoring runs, and scrape control; the worker holds the scheduler and match scoring. They never call each other: both spawn importers, one process per source, and everything shares PostgreSQL. Tailoring calls an OpenAI compatible LLM API, and match scoring can use an optional GPU embedder.</desc>
+<style>
+.t{font-family:-apple-system, BlinkMacSystemFont, 'Segoe UI', 'Noto Sans', Helvetica, Arial, sans-serif;font-weight:600}
+.s{font-family:-apple-system, BlinkMacSystemFont, 'Segoe UI', 'Noto Sans', Helvetica, Arial, sans-serif;font-size:12px}
+.d{font-family:-apple-system, BlinkMacSystemFont, 'Segoe UI', 'Noto Sans', Helvetica, Arial, sans-serif;font-size:13px;font-weight:600}
+.m{font-family:ui-monospace, SFMono-Regular, 'SF Mono', Menlo, Consolas, 'Liberation Mono', monospace;font-size:12px;font-weight:600}
+.c{font-family:ui-monospace, SFMono-Regular, 'SF Mono', Menlo, Consolas, 'Liberation Mono', monospace;font-size:11px}
+.g{font-family:ui-monospace, SFMono-Regular, 'SF Mono', Menlo, Consolas, 'Liberation Mono', monospace;font-size:12px;font-weight:600;fill:#7d8590}
+.n{font-family:ui-monospace, SFMono-Regular, 'SF Mono', Menlo, Consolas, 'Liberation Mono', monospace;font-size:11px;fill:#7d8590}
+.l{font-family:ui-monospace, SFMono-Regular, 'SF Mono', Menlo, Consolas, 'Liberation Mono', monospace;font-size:11px;fill:#ffffff}
+.e{fill:none;stroke:#8b949e;stroke-width:1.5;stroke-linejoin:round}
+</style>
+<defs><marker id="arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path d="M0.5,1 L9.5,5 L0.5,9 z" fill="#8b949e"/></marker></defs>
+<rect x="20" y="108" width="230" height="148" rx="10" fill="none" stroke="#8b949e" stroke-dasharray="5 5"/>
+<text x="32" y="125" class="g" text-anchor="start">api</text>
+<rect x="300" y="108" width="170" height="108" rx="10" fill="none" stroke="#8b949e" stroke-dasharray="5 5"/>
+<text x="312" y="125" class="g" text-anchor="start">worker</text>
+<path d="M135,86 V108" class="e" marker-end="url(#arrow)"/>
+<path d="M236,189 L267,189 Q275,189 275,181 L275,74 Q275,66 283,66 L330,66" class="e" marker-end="url(#arrow)"/>
+<path d="M135,244 L135,284 Q135,292 143,292 L190,292" class="e" marker-end="url(#arrow)"/>
+<path d="M314,149 L298,149 Q290,149 290,157 L290,272" class="e" marker-end="url(#arrow)"/>
+<path d="M456,189 H486" class="e" stroke-dasharray="5 4" marker-end="url(#arrow)"/>
+<path d="M350,292 H386" class="e" marker-end="url(#arrow)"/>
+<path d="M60,256 V334" class="e" marker-end="url(#arrow)"/>
+<path d="M270,312 V334" class="e" marker-end="url(#arrow)"/>
+<path d="M368,216 V334" class="e" marker-end="url(#arrow)"/>
+<rect x="50" y="46" width="170" height="40" rx="5" fill="#eaf1fc" stroke="#345e91" stroke-width="1.5"/>
+<text x="135" y="64" class="t" font-size="14" text-anchor="middle" fill="#345e91">Angular app</text>
+<text x="135" y="79" class="s" text-anchor="middle" fill="#345e91">in your browser</text>
+<rect x="330" y="46" width="170" height="40" rx="5" fill="#f0ebfa" stroke="#695195" stroke-width="1.5"/>
+<text x="415" y="64" class="t" font-size="14" text-anchor="middle" fill="#695195">LLM API</text>
+<text x="415" y="79" class="s" text-anchor="middle" fill="#695195">OpenAI compatible</text>
+<rect x="34" y="134" width="202" height="30" rx="5" fill="#e4f3e8" stroke="#236746" stroke-width="1.5"/>
+<text x="135" y="154" class="t" font-size="14" text-anchor="middle" fill="#236746">jobs and profile</text>
+<rect x="34" y="174" width="202" height="30" rx="5" fill="#e4f3e8" stroke="#236746" stroke-width="1.5"/>
+<text x="135" y="194" class="t" font-size="14" text-anchor="middle" fill="#236746">tailoring runs</text>
+<rect x="34" y="214" width="202" height="30" rx="5" fill="#e4f3e8" stroke="#236746" stroke-width="1.5"/>
+<text x="135" y="234" class="t" font-size="14" text-anchor="middle" fill="#236746">scrape control</text>
+<rect x="314" y="134" width="142" height="30" rx="5" fill="#e4f3e8" stroke="#236746" stroke-width="1.5"/>
+<text x="385" y="154" class="t" font-size="14" text-anchor="middle" fill="#236746">scheduler</text>
+<rect x="314" y="174" width="142" height="30" rx="5" fill="#e4f3e8" stroke="#236746" stroke-width="1.5"/>
+<text x="385" y="194" class="t" font-size="14" text-anchor="middle" fill="#236746">match scoring</text>
+<rect x="486" y="169" width="62" height="40" rx="5" fill="#f1efeb" stroke="#66625a" stroke-width="1.5" stroke-dasharray="5 4"/>
+<text x="517" y="187" class="t" font-size="14" text-anchor="middle" fill="#66625a">GPU</text>
+<text x="517" y="202" class="s" text-anchor="middle" fill="#66625a">optional</text>
+<rect x="190" y="272" width="160" height="40" rx="5" fill="#e4f3e8" stroke="#236746" stroke-width="1.5"/>
+<text x="270" y="290" class="t" font-size="14" text-anchor="middle" fill="#236746">importer</text>
+<text x="270" y="305" class="s" text-anchor="middle" fill="#236746">one process per source</text>
+<rect x="386" y="272" width="160" height="40" rx="5" fill="#f1efeb" stroke="#66625a" stroke-width="1.5"/>
+<text x="466" y="290" class="t" font-size="14" text-anchor="middle" fill="#66625a">job boards</text>
+<text x="466" y="305" class="s" text-anchor="middle" fill="#66625a">and GitHub lists</text>
+<path d="M20,341 A263,7 0 0 0 546,341 V381 A263,7 0 0 1 20,381 Z" fill="#f1efeb" stroke="#66625a" stroke-width="1.5"/>
+<ellipse cx="283" cy="341" rx="263" ry="7" fill="#f1efeb" stroke="#66625a" stroke-width="1.5"/>
+<text x="283" y="362.5" class="t" font-size="14" text-anchor="middle" fill="#66625a">PostgreSQL</text>
+<text x="283" y="377.5" class="s" text-anchor="middle" fill="#66625a">JSONB records, shared by api and worker</text>
+<rect x="143" y="88.5" width="67.4" height="17" rx="3" fill="#57606a"/>
+<text x="176.7" y="100.8" class="l" text-anchor="middle">REST /api</text>
+<rect x="138.2" y="283.5" width="47.6" height="17" rx="3" fill="#57606a"/>
+<text x="162" y="295.8" class="l" text-anchor="middle">spawns</text>
+<rect x="266.2" y="235.5" width="47.6" height="17" rx="3" fill="#57606a"/>
+<text x="290" y="247.8" class="l" text-anchor="middle">spawns</text>
+</svg>
