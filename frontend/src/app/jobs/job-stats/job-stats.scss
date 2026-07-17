@@ -1,0 +1,79 @@
+:host {
+  display: block;
+  min-width: 0;
+}
+summary {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 18px 20px;
+  cursor: pointer;
+  font-size: 14px;
+  font-weight: 600;
+  list-style: none;
+}
+summary::-webkit-details-marker {
+  display: none;
+}
+summary > .pi:first-child {
+  color: var(--accent);
+}
+.disclosure-chevron {
+  margin-left: auto;
+  color: var(--muted);
+  font-size: 12px;
+}
+.stats-panel[open] .disclosure-chevron {
+  transform: rotate(180deg);
+}
+.stats-panel.panel {
+  padding: 0;
+  border-radius: 16px;
+  background: #fcfdf7;
+}
+.stats-panel > dl,
+.timezone-note {
+  margin-inline: 20px;
+}
+.stats-panel > dl:last-child {
+  margin-bottom: 20px;
+}
+dl {
+  margin: 14px 0 0;
+  display: grid;
+  gap: 10px;
+  font-size: 13px;
+}
+dl > div {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1.2fr);
+  gap: 12px;
+  align-items: baseline;
+}
+dt {
+  color: var(--muted);
+}
+dd {
+  margin: 0;
+  text-align: right;
+  font-weight: 500;
+  overflow-wrap: anywhere;
+  font-variant-numeric: tabular-nums;
+}
+.source-list {
+  margin-top: 12px;
+  padding-top: 12px;
+  border-top: 1px solid var(--line);
+}
+.open {
+  color: var(--accent);
+}
+dd time,
+dt[title] {
+  cursor: help;
+}
+.timezone-note {
+  margin: 10px 0 0;
+  color: var(--muted);
+  font-size: 13px;
+}
