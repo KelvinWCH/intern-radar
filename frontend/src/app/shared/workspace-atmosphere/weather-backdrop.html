@@ -1,0 +1,69 @@
+@for (scene of [weather()]; track scene.revision) {
+  <div
+    class="weather-scene"
+    [attr.data-weather]="scene.kind"
+    animate.enter="weather-enter"
+    animate.leave="weather-leave"
+  >
+    <div class="sky-wash"></div>
+    @switch (scene.kind) {
+      @case ('sunny') {
+        <div class="sun-halo"></div>
+        <div class="sun-rays"></div>
+      }
+      @case ('sunset') {
+        <div class="sun-halo sunset-halo"></div>
+      }
+      @case ('fog') {
+        <div class="fog-band"></div>
+        <div class="fog-band fog-middle"></div>
+        <div class="fog-band fog-low"></div>
+      }
+      @case ('thunderstorm') {
+        <div class="weather-cloud storm-cloud"></div>
+        <svg class="lightning" viewBox="0 0 100 220">
+          <path d="M62 8 24 104h36l-25 102 53-126H53Z" />
+        </svg>
+      }
+      @case ('breeze') {
+        <svg class="wind-ribbons" viewBox="0 0 900 250">
+          <path
+            d="M-40 95C120 0 290 160 460 90S740 30 940 90M-80 148C180 65 230 230 500 150S780 70 960 142"
+          />
+        </svg>
+      }
+      @case ('ocean') {
+        <svg class="water-ripples" viewBox="0 0 1200 360" preserveAspectRatio="none">
+          <path
+            d="M-100 70Q50 10 200 70T500 70T800 70T1100 70T1400 70M-100 160Q50 100 200 160T500 160T800 160T1100 160T1400 160M-100 250Q50 190 200 250T500 250T800 250T1100 250T1400 250"
+          />
+        </svg>
+      }
+      @default {
+        <div class="weather-cloud"></div>
+      }
+    }
+    @if (scene.kind === 'cloudy' || scene.kind === 'sunset') {
+      @for (cloud of [0, 1, 2]; track cloud) {
+        <svg class="drifting-cloud" viewBox="0 0 420 140" [style.--cloud]="cloud">
+          <path
+            d="M38 112C2 106 8 67 45 65 38 26 91 11 116 42 133 2 208-1 231 47 264 24 312 45 308 72 365 55 406 83 389 108 365 128 79 131 38 112Z"
+          />
+        </svg>
+      }
+    }
+    @for (particle of scene.particles; track $index) {
+      <i
+        class="weather-particle"
+        [style.left.%]="particle.leftPercent"
+        [style.animation-delay.s]="particle.delaySeconds"
+        [style.animation-duration.s]="particle.durationSeconds"
+        [style.--particle-size]="particle.sizePixels + 'px'"
+        [style.opacity]="particle.opacity"
+      ></i>
+    }
+    @if (scene.visitor; as visitor) {
+      <app-weather-visitors [kind]="visitor" />
+    }
+  </div>
+}

@@ -1,0 +1,119 @@
+:host {
+  display: block;
+  margin-bottom: 18px;
+}
+.preview-button {
+  width: 100%;
+}
+.source-note {
+  font-size: 12px;
+  color: var(--muted);
+  margin: 9px 0 0;
+}
+dialog {
+  width: min(940px, calc(100vw - 32px));
+  max-height: calc(100dvh - 32px);
+  padding: 0;
+  border: 1px solid var(--line);
+  border-radius: 16px;
+  background: var(--surface);
+  color: var(--text);
+  box-shadow: 0 24px 80px #1d2b2340;
+}
+dialog::backdrop {
+  background: #1d2b2399;
+  backdrop-filter: blur(3px);
+}
+header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  padding: 18px 22px;
+  border-bottom: 1px solid var(--line);
+  background: radial-gradient(ellipse at 88% 0%, #eaf2cd90, transparent 65%);
+}
+h2 {
+  margin: 0;
+  font-size: 18px;
+  font-weight: 600;
+  letter-spacing: -0.025em;
+}
+header p {
+  margin: 6px 0 0;
+  color: var(--muted);
+  font-size: 13px;
+}
+.close-button {
+  display: grid;
+  place-items: center;
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  border: 1px solid var(--line);
+  background: var(--surface);
+  color: var(--accent);
+  cursor: pointer;
+}
+iframe {
+  display: block;
+  width: 100%;
+  height: min(70dvh, 850px);
+  border: 0;
+  background: #e9f0eb;
+}
+.preview-message {
+  min-height: 350px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 32px;
+  text-align: center;
+}
+.preview-message > .pi {
+  font-size: 28px;
+  color: var(--accent);
+  margin-bottom: 8px;
+}
+h3 {
+  font-size: 16px;
+  margin: 14px 0 0;
+}
+.preview-message p {
+  max-width: 440px;
+  font-size: 14px;
+  line-height: 1.7;
+  color: var(--muted);
+  margin: 12px 0 24px;
+}
+footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  padding: 16px 22px;
+  border-top: 1px solid var(--line);
+}
+footer p {
+  font-size: 12px;
+  line-height: 1.6;
+  color: var(--muted);
+  margin: 0;
+}
+footer a {
+  flex-shrink: 0;
+}
+@media (max-width: 600px) {
+  footer {
+    flex-wrap: wrap;
+  }
+  header,
+  footer {
+    padding: 16px;
+  }
+  .preview-message {
+    min-height: 280px;
+    padding: 24px;
+  }
+}
