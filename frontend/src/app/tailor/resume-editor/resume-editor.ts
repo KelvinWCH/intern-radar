@@ -108,7 +108,7 @@ export class ResumeEditor {
   });
   protected readonly fit = computed((): FitStatus | null => {
     if (this.previewing()) {
-      return { state: 'pending', label: 'Updating the preview…' };
+      return { state: 'pending', label: 'Updating the preview...' };
     }
     const shown = this.shown();
     if (!shown || this.previewError()) {
@@ -123,7 +123,7 @@ export class ResumeEditor {
         state: 'fits',
         label:
           blank > 0
-            ? `Fits on one page · ${blank.toFixed(1)} in. left at the bottom`
+            ? `Fits on one page with ${blank.toFixed(1)} in. left at the bottom`
             : 'Fits on one page',
       };
     }
@@ -133,7 +133,7 @@ export class ResumeEditor {
         lines
           ? `Runs about ${String(lines)} line${lines === 1 ? '' : 's'} past one page`
           : `Runs onto ${String(pages)} pages`
-      } · shorten something to save`,
+      }. Shorten something to save`,
     };
   });
 

@@ -1,0 +1,225 @@
+<section>
+  <header class="review-status" [attr.data-tone]="status().tone">
+    <span class="status-icon"><i [class]="'pi ' + status().icon"></i></span>
+    <p>
+      <strong>{{ status().headline }}</strong> {{ status().detail }}
+    </p>
+  </header>
+
+  @if (latest(); as pass) {
+    @if (pass.analysis.summary) {
+      <p id="review-summary" class="review-summary" [class.clamped]="!summaryExpanded()">
+        {{ pass.analysis.summary }}
+      </p>
+      @if (pass.analysis.summary.length > summaryPreviewLength) {
+        <button
+          type="button"
+          class="text-button summary-toggle"
+          (click)="summaryExpanded.set(!summaryExpanded())"
+        >
+          {{ summaryExpanded() ? 'Show less' : 'Read the full summary' }}
+        </button>
+      }
+    }
+    @if (pass.analysis.gaps.length) {
+      <section class="review-group gaps">
+        <h4 id="review-gaps-heading">Gaps against the job</h4>
+        <ul class="review-list">
+          @for (gap of pass.analysis.gaps; track $index) {
+            <li [attr.data-status]="gap.status">
+              <p class="item-title">
+                {{ gap.requirement }}
+                <span class="item-note"
+                  >{{ gap.importance === 'required' ? 'Required' : 'Preferred' }},
+                  {{
+                    gap.status === 'no_evidence'
+                      ? 'not in your profile'
+                      : 'in your profile, not on the resume'
+                  }}</span
+                >
+              </p>
+              <p class="item-detail">{{ gap.detail }}</p>
+            </li>
+          }
+        </ul>
+      </section>
+    }
+    @for (group of findingGroups(); track group.title) {
+      <section class="review-group">
+        <h4>{{ group.title }}</h4>
+        <ul class="review-list">
+          @for (entry of group.entries; track entry.index) {
+            <li class="finding" [attr.data-severity]="entry.finding.severity">
+              <p class="item-title">
+                <span class="finding-document"
+                  >{{
+                    entry.finding.document === 'both'
+                      ? 'Both documents'
+                      : entry.finding.document === 'resume'
+                        ? 'Resume'
+                        : 'Cover letter'
+                  }}{{
+                    entry.finding.severity !== 'suggestion' &&
+                    entry.finding.category === 'requirements'
+                      ? ', requirement'
+                      : ''
+                  }}</span
+                >
+                {{ entry.finding.issue }}
+              </p>
+              <p class="item-detail">
+                {{ entry.finding.recommendation }}
+                @if (entry.finding.draft_quote) {
+                  <button type="button" class="quote-toggle" (click)="toggleQuote(entry.index)">
+                    {{ openQuotes().has(entry.index) ? 'Hide flagged text' : 'Flagged text' }}
+                  </button>
+                }
+              </p>
+              @if (entry.finding.draft_quote && openQuotes().has(entry.index)) {
+                <blockquote [id]="'flagged-text-' + entry.index">
+                  {{ entry.finding.draft_quote }}
+                </blockquote>
+              }
+              @if (acknowledgedFindingIndices().has(entry.index)) {
+                <p class="acknowledged-finding">
+                  Already reviewed. Your earlier choice is in the review history.
+                </p>
+              } @else if (canDecide() && entry.finding.severity !== 'suggestion') {
+                <fieldset [disabled]="saving()" class="choice-group">
+                  <label class="choice" [class.selected]="choices()[entry.index] === 'keep'">
+                    <input
+                      type="radio"
+                      [name]="'finding-' + entry.index"
+                      [checked]="choices()[entry.index] === 'keep'"
+                      (change)="choose(entry.index, 'keep')"
+                    />
+                    Keep as is
+                  </label>
+                  <label class="choice" [class.selected]="choices()[entry.index] === 'revise'">
+                    <input
+                      type="radio"
+                      [name]="'finding-' + entry.index"
+                      [checked]="choices()[entry.index] === 'revise'"
+                      (change)="choose(entry.index, 'revise')"
+                    />
+                    Fix & regenerate
+                  </label>
+                  @if (choices()[entry.index] === 'revise') {
+                    <label class="guidance"
+                      >What should change? <span>(optional)</span>
+                      <textarea
+                        #guidanceInput
+                        [id]="'review-guidance-' + entry.index"
+                        rows="2"
+                        maxlength="2000"
+                        [ngModel]="guidance()[entry.index] ?? ''"
+                        (ngModelChange)="setGuidance(entry.index, $event)"
+                        placeholder="For example: keep my graduation date accurate and emphasize my related coursework."
+                      ></textarea>
+                    </label>
+                    <app-context-completion
+                      [textarea]="guidanceInput"
+                      [disabled]="saving()"
+                      [context]="{
+                        purpose: 'guidance',
+                        document_id: documentId(),
+                        review_issue: entry.finding.issue + '\n' + entry.finding.recommendation,
+                        ai_options: aiOptions(),
+                      }"
+                    />
+                  }
+                </fieldset>
+              }
+            </li>
+          }
+        </ul>
+      </section>
+    } @empty {
+      <p class="clear-review">No findings reported for these drafts.</p>
+    }
+    @if ((canDecide() && actionableCount()) || report().status === 'needs_attention') {
+      <p class="profile-guidance">
+        To change your graduation date, availability, or other profile facts,
+        <a routerLink="/profile">edit your profile</a> and start a new version. Review notes do not
+        change the profile saved with this version.
+      </p>
+    }
+    @if (canDecide() && actionableCount()) {
+      <div class="decision-footer">
+        <span class="decision-progress">{{
+          remaining()
+            ? remaining() + ' decision(s) left'
+            : revisionCount()
+              ? revisionCount() + ' finding(s) selected for revision'
+              : 'All findings will be kept as is'
+        }}</span>
+        <div class="skip-review">
+          <button
+            type="button"
+            class="button-secondary"
+            [disabled]="saving()"
+            (click)="skipReview()"
+          >
+            Skip review & keep drafts
+          </button>
+        </div>
+        <div class="decision-actions">
+          <button
+            type="button"
+            class="button-primary"
+            [disabled]="saving() || remaining() > 0"
+            (click)="submit()"
+          >
+            {{
+              saving()
+                ? 'Saving choices...'
+                : revisionCount()
+                  ? 'Save choices & regenerate'
+                  : 'Keep documents & finish'
+            }}
+          </button>
+        </div>
+        <p id="skip-review-description" class="footer-hint">
+          Skipping keeps the current drafts without another revision or review. Findings remain
+          saved.
+        </p>
+      </div>
+    }
+    <details class="review-history">
+      <summary>
+        Review history and model usage ({{ report().passes.length }}
+        {{ report().passes.length === 1 ? 'round' : 'rounds' }})
+      </summary>
+      @for (round of historyRounds(); track round.pass.round) {
+        <section class="history-round">
+          <h5>
+            {{ round.pass.round === 1 ? 'Initial review' : 'Review after revision' }}, round
+            {{ round.pass.round }}
+          </h5>
+          <app-ai-usage-summary [usage]="round.pass.ai_usage" />
+          @if (!round.latest) {
+            <p>{{ round.pass.analysis.summary }}</p>
+            @if (round.pass.analysis.findings.length) {
+              <ul>
+                @for (finding of round.pass.analysis.findings; track $index) {
+                  <li>{{ finding.issue }}</li>
+                }
+              </ul>
+            }
+          }
+          @if (round.choices.length) {
+            <p><strong>Your choices</strong></p>
+            <ul>
+              @for (choice of round.choices; track $index) {
+                <li>
+                  {{ choice.action === 'keep' ? 'Kept as is' : 'Fixed and regenerated' }}:
+                  {{ choice.issue }}{{ choice.guidance ? ' ("' + choice.guidance + '")' : '' }}
+                </li>
+              }
+            </ul>
+          }
+        </section>
+      }
+    </details>
+  }
+</section>
