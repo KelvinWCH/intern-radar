@@ -1,7 +1,7 @@
 <div class="workspace-page profile-page">
   <header class="page-heading">
     <div class="heading-copy">
-      <h2>Your <em>profile.</em><span class="heading-spark">✳</span></h2>
+      <h2>Profile</h2>
       <p>The facts every tailored resume and cover letter is written from.</p>
     </div>
     <a class="button-secondary" routerLink="/tailor"
@@ -236,7 +236,7 @@
                     />
                   </div>
                   <p class="hint full-width" id="resume-profile-hint">
-                    Printed as clickable linkedin.com/in/… and github.com/… text so applicant
+                    Printed as clickable linkedin.com/in/... and github.com/... text so applicant
                     tracking systems can read them. Set LinkedIn link text to print something
                     shorter, such as linkedin.com/your-name; the link still opens your profile.
                   </p>
@@ -602,7 +602,7 @@
               <p>Fill in the fields marked Needs details to save.</p>
             }
             <button class="button-primary" type="submit" [disabled]="saving() || !editor.valid">
-              {{ saving() ? 'Saving…' : 'Save profile' }}
+              {{ saving() ? 'Saving...' : 'Save profile' }}
             </button>
           </div>
         </form>
@@ -617,7 +617,7 @@
             }}
           </p>
           @if (current.updated_at; as updated) {
-            <p class="hint">Saved {{ updated * 1000 | date: 'MMM d · h:mm a' }}</p>
+            <p class="hint">Saved {{ updated * 1000 | date: 'MMM d, h:mm a' }}</p>
           }
           @if (current.profile; as resume) {
             @if (!saving()) {
@@ -625,7 +625,7 @@
             }
           }
           <app-transcript-card class="side-section" />
-          <a class="subtle-link side-section" routerLink="/documents">View tailoring history →</a>
+          <a class="subtle-link side-section" routerLink="/documents">View tailoring history</a>
         </aside>
       </div>
     }

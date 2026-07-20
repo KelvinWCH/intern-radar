@@ -17,7 +17,7 @@ import {
   host: { '[class.is-compact]': 'compact()', '[class.is-paused]': 'paused()' },
 })
 export class LoadingIndicator {
-  readonly label = input('Loading…');
+  readonly label = input('Loading...');
   readonly detail = input('');
   readonly compact = input(false);
   private readonly document = inject(DOCUMENT);

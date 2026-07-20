@@ -1,0 +1,20 @@
+{
+  "tasks": [
+    { "group": "github", "interval_hours": 2, "parallel_sources": 2, "enabled": true },
+    { "group": "boards", "interval_hours": 3, "parallel_sources": 3, "enabled": true },
+    {
+      "group": "companies",
+      "interval_hours": 12,
+      "daily_hours": [3, 15],
+      "parallel_sources": 3,
+      "max_source_seconds": 1500,
+      "enabled": true
+    }
+  ],
+  "timezone": "America/New_York",
+  "pacing": { "min_delay_seconds": 2, "max_delay_seconds": 5 },
+  "max_run_seconds": 10800,
+  "max_source_seconds": 600,
+  "shutdown_grace_seconds": 15,
+  "poll_seconds": 30
+}

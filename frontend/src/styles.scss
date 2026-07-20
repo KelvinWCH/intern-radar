@@ -53,34 +53,6 @@ b {
   margin-top: 12px;
 }
 
-:is(h2, h3) > em {
-  font-family: Georgia, serif;
-  font-weight: 400;
-  color: #518052;
-}
-.heading-spark {
-  display: inline-block;
-  margin-left: 8px;
-  color: #719b3b;
-  font-size: 0.85em;
-  font-weight: 400;
-  font-style: normal;
-}
-.heading-spark {
-  animation: heading-twinkle 9s ease-in-out infinite;
-}
-@keyframes heading-twinkle {
-  0%,
-  80%,
-  100% {
-    transform: rotate(0) scale(1);
-  }
-  88% {
-    transform: rotate(45deg) scale(1.18);
-    color: #93b85a;
-  }
-}
-
 ::selection {
   background: #d0e8d8;
   color: #164832;
@@ -310,10 +282,8 @@ select {
     border-radius: 12px;
   }
   .eyebrow {
-    text-transform: uppercase;
-    letter-spacing: 0.07em;
-    font-size: 12px;
-    font-weight: 500;
+    font-size: 13px;
+    font-weight: 600;
     color: var(--accent);
   }
   .subtle-link {
@@ -385,7 +355,6 @@ select {
   }
   .notice.error {
     border-color: #efd1d5;
-    border-left: 3px solid #a23e50;
     background: #fff4f5;
     color: #913647;
   }
