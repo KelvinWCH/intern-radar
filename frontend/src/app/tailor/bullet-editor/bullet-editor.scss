@@ -1,0 +1,55 @@
+:host {
+  display: block;
+}
+.bullet-list {
+  display: grid;
+  gap: 6px;
+}
+.list-label {
+  font-size: 13px;
+  font-weight: 500;
+}
+.bullet-row {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  gap: 2px 6px;
+  align-items: start;
+}
+textarea {
+  width: 100%;
+  min-height: 40px;
+  padding: 7px 10px;
+  border: 1px solid var(--line);
+  border-radius: 9px;
+  background: white;
+  color: var(--text);
+  font-size: 14px;
+  line-height: 1.6;
+  resize: vertical;
+}
+textarea:hover {
+  border-color: #afc8b7;
+}
+textarea:focus {
+  border-color: var(--focus);
+  box-shadow: 0 0 0 3px #3f946714;
+}
+.bullet-note {
+  grid-column: 1 / -1;
+  margin: 0 0 2px;
+  color: var(--muted);
+  font-size: 12px;
+}
+.bullet-note[data-issue='wrapped'],
+.bullet-note[data-issue='dangling'],
+.bullet-note[data-issue='late'] {
+  color: #8a5212;
+}
+.add-item {
+  justify-self: start;
+}
+@media (max-width: 600px) {
+  textarea {
+    font-size: 16px;
+  }
+}
