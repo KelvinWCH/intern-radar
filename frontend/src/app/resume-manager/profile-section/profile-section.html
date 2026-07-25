@@ -1,0 +1,21 @@
+<details class="panel detail-panel profile-section" [open]="open()" (toggle)="toggled($event)">
+  <summary>
+    <span class="detail-mark"><i [class]="'pi ' + icon()"></i></span>
+    <span class="section-title">
+      <h3>{{ heading() }}</h3>
+      @if (summary()) {
+        <span class="section-summary">{{ summary() }}</span>
+      }
+    </span>
+    @if (attention()) {
+      <span class="attention"><i class="pi pi-exclamation-circle"></i> Needs details</span>
+    }
+    @if (count() !== null) {
+      <span class="section-count">{{ count() }}</span>
+    }
+    <i class="pi pi-chevron-down disclosure-chevron"></i>
+  </summary>
+  <div class="section-body">
+    <ng-content />
+  </div>
+</details>

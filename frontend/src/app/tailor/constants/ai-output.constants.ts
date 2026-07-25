@@ -15,7 +15,7 @@ export const outputKindsByStep: Readonly<Record<string, OutputKind>> = {
   Reviewer: { title: 'Independent review', icon: 'pi-verified' },
 };
 
-export const defaultOutputKind: OutputKind = { title: 'AI output', icon: 'pi-sparkles' };
+export const defaultOutputKind: OutputKind = { title: 'AI output', icon: 'pi-microchip-ai' };
 
 export const importanceTags: Readonly<Record<string, OutputTag>> = {
   required: { label: 'Required', tone: 'accent' },

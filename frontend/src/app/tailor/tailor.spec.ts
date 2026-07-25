@@ -186,7 +186,7 @@ describe('Tailor', (): void => {
       include_cover_letter: true,
     });
     await fixture.whenStable();
-    expect(button('Generating documents…').disabled).toBe(true);
+    expect(button('Generating documents...').disabled).toBe(true);
     expect(element.querySelector('.tailor-steps .current')?.textContent).toContain(
       'Research & write',
     );
