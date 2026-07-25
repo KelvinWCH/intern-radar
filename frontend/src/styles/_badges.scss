@@ -1,0 +1,78 @@
+@use 'sass:list';
+
+@mixin label {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  min-height: 24px;
+  padding: 2px 8px;
+  border: 1px solid transparent;
+  border-radius: 999px;
+  font-size: 12px;
+  font-weight: 500;
+  line-height: 1.35;
+  vertical-align: middle;
+  i {
+    font-size: 12px;
+  }
+}
+
+@mixin status {
+  @include label;
+  color: var(--badge-ink, #52635d);
+  background: var(--badge-wash, #edf2ef);
+  text-transform: capitalize;
+}
+
+@mixin palette {
+  @each $state,
+    $colors
+      in (
+        saved: (
+            #345e91,
+            #eaf1fc,
+          ),
+        applied: (
+            #695195,
+            #f0ebfa,
+          ),
+        interviewing: (
+            #876019,
+            #fff2d6,
+          ),
+        offered: (
+            #236746,
+            #e4f3e8,
+          ),
+        rejected: (
+            #944b5c,
+            #faedf0,
+          ),
+        withdrawn: (
+            #66625a,
+            #f1efeb,
+          ),
+        running: (
+            #236746,
+            #e4f3e8,
+          ),
+        completed: (
+            #236746,
+            #e4f3e8,
+          ),
+        failed: (
+            #944b5c,
+            #faedf0,
+          ),
+        cancelled: (
+            #66625a,
+            #f1efeb,
+          )
+      )
+  {
+    [data-status='#{$state}'] {
+      --badge-ink: #{list.nth($colors, 1)};
+      --badge-wash: #{list.nth($colors, 2)};
+    }
+  }
+}
