@@ -85,7 +85,7 @@ export class ScrapeControls {
       return 'Waiting to start';
     }
     if (task.cancel_requested) {
-      return 'Stopping…';
+      return 'Stopping...';
     }
     const phase = task.progress.phase;
     return phase === null ? 'Starting next source' : (scrapeStageLabels[phase] ?? phase);

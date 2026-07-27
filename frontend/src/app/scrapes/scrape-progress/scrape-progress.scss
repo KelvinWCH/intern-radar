@@ -76,10 +76,9 @@ progress::-moz-progress-bar {
   gap: 7px;
   min-width: 0;
   padding: 9px 8px;
-  border: 1px solid var(--edge);
+  border: 1px solid var(--line);
   border-radius: 10px;
-  background: linear-gradient(155deg, #ffffffb0, #ffffff20), var(--tone);
-  box-shadow: 0 2px 0 var(--edge);
+  background: #fff;
   color: var(--ink);
   font-size: 12px;
   white-space: nowrap;
@@ -101,9 +100,6 @@ progress::-moz-progress-bar {
 }
 .stage-flow li[data-active='true'] {
   border-color: var(--ink);
-  box-shadow:
-    0 2px 0 var(--edge),
-    0 0 0 2px color-mix(in srgb, var(--ink) 8%, transparent);
 }
 .stage-icon {
   display: grid;

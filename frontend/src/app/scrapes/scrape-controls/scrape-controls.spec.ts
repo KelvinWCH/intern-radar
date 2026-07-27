@@ -109,7 +109,7 @@ describe('ScrapeControls', (): void => {
     expect(element.querySelectorAll<HTMLInputElement>('input[type=checkbox]')[1]?.disabled).toBe(
       true,
     );
-    button('Run scrape · no AI').click();
+    button('Run scrape without AI').click();
     const request = http.expectOne('/api/scrapes');
     expect(request.request.method).toBe('POST');
     expect(request.request.body).toMatchObject({
@@ -128,7 +128,7 @@ describe('ScrapeControls', (): void => {
   it('reconnects and cancels', async (): Promise<void> => {
     http.expectOne('/api/scrapes').flush([task]);
     await fixture.whenStable();
-    expect(button('Run scrape · no AI').disabled).toBe(true);
+    expect(button('Run scrape without AI').disabled).toBe(true);
     expect(element.textContent).toContain('Reading postings');
     expect(element.textContent).toContain('75%');
     expect(element.textContent).toContain('3 / 4 postings');
@@ -140,7 +140,7 @@ describe('ScrapeControls', (): void => {
     expect(cancel.request.method).toBe('POST');
     cancel.flush({ ...task, cancel_requested: true });
     await fixture.whenStable();
-    expect(element.textContent).toContain('Stopping…');
+    expect(element.textContent).toContain('Stopping...');
     expect(button('Cancel remaining work').disabled).toBe(true);
     fixture.destroy();
     http.expectNone(
