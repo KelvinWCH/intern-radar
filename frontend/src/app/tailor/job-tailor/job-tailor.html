@@ -1,0 +1,126 @@
+<section class="generator-card">
+  <h4 id="tailor-generator-heading">
+    <i class="pi pi-sparkles"></i>
+    {{ hasVersion() ? 'Make a new version' : 'Create for this application' }}
+  </h4>
+  <div class="choices">
+    <label for="job-resume"
+      ><p-checkbox
+        [binary]="true"
+        inputId="job-resume"
+        [(ngModel)]="resume"
+        (ngModelChange)="generationOptionsChanged()"
+        [disabled]="controlsDisabled()"
+      />
+      Resume</label
+    ><label for="job-letter"
+      ><p-checkbox
+        [binary]="true"
+        inputId="job-letter"
+        [(ngModel)]="letter"
+        (ngModelChange)="generationOptionsChanged()"
+        [disabled]="controlsDisabled()"
+      />
+      Cover letter</label
+    >
+  </div>
+  <details class="instructions">
+    <summary>Instructions</summary>
+    <textarea
+      pTextarea
+      id="tailor-instructions"
+      name="instructions"
+      rows="3"
+      maxlength="2000"
+      [(ngModel)]="instructions"
+      (ngModelChange)="generationOptionsChanged()"
+      [disabled]="controlsDisabled()"
+      placeholder="e.g. Emphasize backend performance work and Angular. Keep a confident, concise tone."
+    ></textarea>
+    <app-text-count
+      id="instructions-count"
+      [text]="instructions"
+      [limit]="2000"
+      purpose="instructions"
+    />
+  </details>
+  <details class="model-settings">
+    <summary>Research & AI settings</summary>
+    <app-stage-models
+      [(resume)]="aiOptions"
+      [(research)]="researchOptions"
+      [(letter)]="letterOptions"
+      [(reviewer)]="reviewerOptions"
+      (reviewerChange)="generationOptionsChanged()"
+      [(companyUrl)]="researchUrl"
+      [(mode)]="tailoringMode"
+      [(oneShot)]="oneShotOptions"
+      (modeChange)="generationOptionsChanged()"
+      (oneShotChange)="generationOptionsChanged()"
+      (resumeChange)="generationOptionsChanged()"
+      (researchChange)="generationOptionsChanged()"
+      (letterChange)="generationOptionsChanged()"
+      (companyUrlChange)="generationOptionsChanged()"
+      [disabled]="controlsDisabled()"
+      [includeResume]="resume"
+      [includeLetter]="letter"
+    />
+  </details>
+  <button
+    pButton
+    class="button-primary"
+    type="button"
+    (click)="tailor()"
+    [disabled]="
+      working() ||
+      (progress()?.status === 'awaiting_review' && !progress()?.review) ||
+      (progress()?.status !== 'running' &&
+        ((!resume && !letter) ||
+          descriptionTooLong() ||
+          (resume && !validOptions(aiOptions())) ||
+          !validOptions(researchOptions()) ||
+          !validOptions(reviewerOptions()) ||
+          (letter && !validOptions(letterOptions()))))
+    "
+  >
+    <i
+      class="pi"
+      [class.pi-sparkles]="!working()"
+      [class.pi-spinner]="working()"
+      [class.pi-spin]="working()"
+    ></i
+    >{{
+      working()
+        ? 'Tailoring documents…'
+        : progress()?.status === 'running'
+          ? 'Reconnect to progress'
+          : hasVersion()
+            ? 'Tailor a new version'
+            : 'Research & tailor'
+    }}
+  </button>
+  @if (!hasDescription()) {
+    <p class="notice">
+      No job description? AI will research the company and typical role, then generate your
+      documents from a generic report.
+    </p>
+  }
+  @if (descriptionTooLong()) {
+    <p class="notice error">
+      The cleaned description is over 200,000 characters. Edit it in Job details before tailoring;
+      your raw source is preserved.
+    </p>
+  }
+  @if (error()) {
+    <p class="notice error">{{ error() }}</p>
+  }
+  @if (progress()?.status === 'cancelled') {
+    <p class="notice">
+      Tailoring cancelled. Its reports and any finished draft are kept with that version.
+    </p>
+  }
+  @if (result()) {
+    <p class="notice">Documents saved as the latest version.</p>
+  }
+  <a class="subtle-link profile-link" routerLink="/profile">Edit profile →</a>
+</section>

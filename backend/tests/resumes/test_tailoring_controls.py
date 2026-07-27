@@ -70,7 +70,7 @@ def wait_for(check: Callable[[], bool]) -> None:
 
 def paused_before_next_step(engine: Database, request_id: str) -> bool:
     events = get_document(engine, request_id).events
-    return any(event.message == "Resume · Paused before its next step" for event in events)
+    return any(event.message == "Resume: paused before its next step" for event in events)
 
 
 def test_pause_and_resume(tmp_path: Path) -> None:
