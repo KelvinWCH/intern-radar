@@ -1,0 +1,32 @@
+<div class="bullet-list">
+  <span class="list-label">{{ label() }}</span>
+  @for (item of items(); track $index; let index = $index) {
+    <div class="bullet-row">
+      <textarea
+        [id]="idPrefix() + '-' + index"
+        [rows]="rows()"
+        [placeholder]="placeholder()"
+        [ngModel]="item"
+        (ngModelChange)="set(index, $event)"
+      ></textarea>
+      <app-entry-tools
+        [items]="items()"
+        [index]="index"
+        [name]="noun() + ' ' + (index + 1) + ' of ' + name()"
+        (changed)="changed.emit()"
+      />
+      <p
+        class="bullet-note"
+        [id]="idPrefix() + '-' + index + '-note'"
+        [attr.data-issue]="issue(item)"
+      >
+        {{ note(item) }}
+      </p>
+    </div>
+  } @empty {
+    <p class="bullet-note">Nothing here yet.</p>
+  }
+  <button type="button" class="button-secondary button-sm add-item" (click)="add()">
+    <i class="pi pi-plus"></i> {{ addLabel() }}
+  </button>
+</div>
