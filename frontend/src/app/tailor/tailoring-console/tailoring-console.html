@@ -1,0 +1,93 @@
+<app-tailoring-flow
+  [document]="document()"
+  [pending]="pending()"
+  [connected]="connected()"
+  [error]="error()"
+  (changed)="changed.emit($event)"
+/>
+<details
+  class="activity"
+  [open]="pending() || document()?.status === 'running' || document()?.status === 'awaiting_review'"
+>
+  <summary class="activity-head">
+    <span class="activity-mark"><i class="pi pi-sparkles"></i></span>
+    <span class="activity-title">
+      <strong>AI activity</strong>
+      <span>{{
+        selectedStages().length
+          ? completedStages() + ' of ' + selectedStages().length + ' stages complete'
+          : notStarted()
+            ? 'Request failed before stages were confirmed'
+            : 'Each step and every AI draft, as it is written'
+      }}</span>
+    </span>
+    <span class="activity-status" [attr.data-tone]="status().tone">
+      {{ status().label }}
+    </span>
+    <i class="pi pi-chevron-down activity-chevron"></i>
+  </summary>
+  <section class="activity-body">
+    <div class="activity-tools">
+      <span>{{
+        paused()
+          ? 'Tailoring paused · resume to continue, or cancel to stop'
+          : active() && !connected()
+            ? 'Connection paused · showing the last saved state'
+            : 'Research → writers → PDF checks → review'
+      }}</span>
+      <label class="follow"
+        ><input type="checkbox" [checked]="follow()" (change)="follow.set(!follow())" />
+        Follow</label
+      >
+    </div>
+    <ol #log class="timeline">
+      @for (event of events(); track event.id) {
+        @if (event.stage === 'output') {
+          <li class="timeline-output">
+            <app-ai-output [event]="event" [active]="active() && connected()" [labels]="labels()" />
+          </li>
+        } @else {
+          <li class="timeline-step" [attr.data-tone]="stepTones[event.stage]">
+            <i [class]="'pi ' + stepIcons[event.stage]"></i>
+            <div class="step-body">
+              <p>
+                @if (source(event); as step) {
+                  <span class="step-source">{{ step }}</span>
+                }
+                {{ detail(event) }}
+              </p>
+              @if (event.details) {
+                <details class="error-details">
+                  <summary>Full error details</summary>
+                  <pre>{{ event.details }}</pre>
+                </details>
+              }
+            </div>
+            <time>{{ event.created_at * 1000 | date: 'HH:mm:ss' }}</time>
+          </li>
+        }
+      } @empty {
+        <li class="timeline-empty">
+          {{
+            pending()
+              ? 'Connecting to the saved progress stream…'
+              : notStarted()
+                ? 'No generation steps were confirmed. Your inputs are preserved.'
+                : 'Waiting for the first step…'
+          }}
+        </li>
+      }
+      @if (error()) {
+        <li class="timeline-step" data-tone="bad">
+          <i class="pi pi-times-circle"></i>
+          <div class="step-body">
+            <p><span class="step-source">Error</span> {{ error() }}</p>
+          </div>
+        </li>
+      }
+      @if (active() && connected() && !paused()) {
+        <li class="timeline-live"><span></span><span></span><span></span></li>
+      }
+    </ol>
+  </section>
+</details>
