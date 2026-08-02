@@ -1,0 +1,15 @@
+<div class="loading-state">
+  <div class="loading-visual">
+    <span class="loading-ring"></span>
+    <span class="loading-bars"><i></i><i></i><i></i><i></i><i></i></span>
+  </div>
+  <div class="loading-copy">
+    <strong>{{ label() }}</strong>
+    @if (detail()) {
+      <span>{{ detail() }}</span>
+    }
+  </div>
+  @if (!compact()) {
+    <span class="loading-track"><i></i></span>
+  }
+</div>
