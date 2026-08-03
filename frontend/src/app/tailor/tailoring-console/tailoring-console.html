@@ -10,7 +10,7 @@
   [open]="pending() || document()?.status === 'running' || document()?.status === 'awaiting_review'"
 >
   <summary class="activity-head">
-    <span class="activity-mark"><i class="pi pi-sparkles"></i></span>
+    <span class="activity-mark"><i class="pi pi-microchip-ai"></i></span>
     <span class="activity-title">
       <strong>AI activity</strong>
       <span>{{
@@ -30,10 +30,10 @@
     <div class="activity-tools">
       <span>{{
         paused()
-          ? 'Tailoring paused · resume to continue, or cancel to stop'
+          ? 'Tailoring paused. Resume to continue or cancel to stop'
           : active() && !connected()
-            ? 'Connection paused · showing the last saved state'
-            : 'Research → writers → PDF checks → review'
+            ? 'Connection lost, showing the last saved state'
+            : 'Research, write, check the PDF, review'
       }}</span>
       <label class="follow"
         ><input type="checkbox" [checked]="follow()" (change)="follow.set(!follow())" />
@@ -70,10 +70,10 @@
         <li class="timeline-empty">
           {{
             pending()
-              ? 'Connecting to the saved progress stream…'
+              ? 'Connecting to the saved progress stream...'
               : notStarted()
                 ? 'No generation steps were confirmed. Your inputs are preserved.'
-                : 'Waiting for the first step…'
+                : 'Waiting for the first step...'
           }}
         </li>
       }

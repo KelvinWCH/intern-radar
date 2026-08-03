@@ -1,6 +1,6 @@
 <section class="generator-card">
   <h4 id="tailor-generator-heading">
-    <i class="pi pi-sparkles"></i>
+    <i class="pi pi-file-edit"></i>
     {{ hasVersion() ? 'Make a new version' : 'Create for this application' }}
   </h4>
   <div class="choices">
@@ -85,13 +85,13 @@
   >
     <i
       class="pi"
-      [class.pi-sparkles]="!working()"
+      [class.pi-file-edit]="!working()"
       [class.pi-spinner]="working()"
       [class.pi-spin]="working()"
     ></i
     >{{
       working()
-        ? 'Tailoring documents…'
+        ? 'Tailoring documents...'
         : progress()?.status === 'running'
           ? 'Reconnect to progress'
           : hasVersion()
@@ -122,5 +122,5 @@
   @if (result()) {
     <p class="notice">Documents saved as the latest version.</p>
   }
-  <a class="subtle-link profile-link" routerLink="/profile">Edit profile →</a>
+  <a class="subtle-link profile-link" routerLink="/profile">Edit profile</a>
 </section>
