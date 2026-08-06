@@ -1,0 +1,55 @@
+:host {
+  display: block;
+}
+.sign-in-page {
+  display: grid;
+  place-items: start center;
+  padding-top: 8vh;
+}
+.sign-in-panel {
+  display: grid;
+  gap: 8px;
+  width: min(100%, 400px);
+  padding: 0 16px 16px;
+  border: 1px solid var(--line);
+  border-radius: 16px;
+  background: var(--surface);
+  box-shadow: var(--shadow-soft);
+}
+.panel-heading {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  min-height: 54px;
+  margin: 0 -16px 4px;
+  padding: 10px 16px;
+  border-bottom: 1px solid var(--line);
+}
+.panel-icon {
+  display: grid;
+  place-items: center;
+  width: 30px;
+  height: 30px;
+  border-radius: 10px;
+  background: var(--accent-soft);
+  color: var(--accent);
+}
+h2 {
+  margin: 0;
+  font-size: 17px;
+  font-weight: 600;
+}
+label {
+  font-weight: 600;
+}
+.error {
+  margin: 0;
+  color: #a12525;
+}
+.actions {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 12px;
+  margin-top: 8px;
+}
