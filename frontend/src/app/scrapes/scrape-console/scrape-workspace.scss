@@ -1,0 +1,95 @@
+.console-panel,
+.console-panel:has(.console-empty) {
+  height: var(--workspace-panel-height, 560px);
+  border: 1px solid #d6e2d3;
+  border-radius: 20px;
+}
+header {
+  flex: none;
+  padding: 13px 16px 10px;
+  border-color: #dbe3d3;
+  background: #fcfdf7;
+  color: #253d30;
+  font-family: 'Segoe UI', Arial, sans-serif;
+  color-scheme: light;
+}
+.console-title {
+  flex: 1;
+  justify-content: space-between;
+  gap: 8px;
+}
+.console-title h3 {
+  font-family: inherit;
+  font-size: 17px;
+  letter-spacing: -0.02em;
+  color: #253d30;
+}
+.console-status {
+  font-size: 12px;
+  color: #65715f;
+}
+.console-status[data-active='true'] {
+  color: #397354;
+}
+.log-heading {
+  display: flex;
+  flex: none;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 6px 12px;
+  min-height: 36px;
+  padding: 8px 16px;
+  background: #202327;
+  font-size: 12px;
+}
+.log-heading > span {
+  display: inline-flex;
+  align-items: center;
+  gap: 9px;
+}
+.lights {
+  gap: 4px;
+}
+.lights i {
+  width: 6px;
+  height: 6px;
+}
+.follow {
+  font-size: 12px;
+}
+.follow input {
+  width: 12px;
+  height: 12px;
+}
+.console-line {
+  grid-template-columns: 56px 48px 100px minmax(0, 1fr);
+  gap: 8px;
+  padding: 4px 16px;
+  font-size: 12px;
+}
+.tag {
+  font-size: 12px;
+}
+.console-empty {
+  font-size: 12px;
+}
+@container (max-width: 650px) {
+  .console-line {
+    grid-template-columns: 52px 48px minmax(0, 1fr);
+  }
+}
+@container (max-width: 400px) {
+  .console-title h3 {
+    font-size: 20px;
+  }
+  .console-status {
+    width: 100%;
+  }
+}
+@media (max-width: 1000px) {
+  .console-panel,
+  .console-panel:has(.console-empty) {
+    height: 520px;
+  }
+}
