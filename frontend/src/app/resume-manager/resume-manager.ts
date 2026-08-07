@@ -125,7 +125,7 @@ export class ResumeManager {
   protected contactSummary(): string {
     const { name, email, phone, location } = this.header;
     const parts = [name, email, phone, location].map((part): string => part.trim()).filter(Boolean);
-    return parts.length ? parts.join(' · ') : 'Add your name to save the profile';
+    return parts.length ? parts.join(' | ') : 'Add your name to save the profile';
   }
   protected aboutSummary(): string {
     const text = this.about.trim() || this.goals.trim();
@@ -136,12 +136,12 @@ export class ResumeManager {
     const parts = [target_roles, preferred_locations, available_terms]
       .filter((items): boolean => items.length > 0)
       .map((items): string => items.join(', '));
-    return parts.length ? parts.join(' · ') : 'Roles, locations, work terms, and eligibility';
+    return parts.length ? parts.join(' | ') : 'Roles, locations, work terms, and eligibility';
   }
   protected bulletsSummary(): string {
     const { min_experience_bullets, min_project_bullets } = this.resumeSettings;
     return (
-      `At least ${String(min_experience_bullets)} bullets per role · ` +
+      `At least ${String(min_experience_bullets)} bullets per role, ` +
       `${String(min_project_bullets)} per project`
     );
   }
@@ -153,7 +153,7 @@ export class ResumeManager {
       })
       .filter(Boolean);
     if (titles.length) {
-      return titles.join(' · ');
+      return titles.join(', ');
     }
     return section.entries.length ? 'Unnamed entries' : 'Nothing added yet';
   }

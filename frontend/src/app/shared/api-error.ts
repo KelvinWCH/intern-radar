@@ -117,7 +117,7 @@ function label(path: readonly (string | number)[], indices: readonly number[]): 
       parts.push(text.charAt(0).toUpperCase() + text.slice(1));
     }
   }
-  return parts.join(' › ');
+  return parts.join(' > ');
 }
 
 function positions(indices: readonly number[]): string {
@@ -133,7 +133,7 @@ function positions(indices: readonly number[]): string {
     ranges.push(
       start === previous
         ? `#${String(start + 1)}`
-        : `#${String(start + 1)}–#${String(previous + 1)}`,
+        : `#${String(start + 1)}-#${String(previous + 1)}`,
     );
     start = index;
     previous = index;

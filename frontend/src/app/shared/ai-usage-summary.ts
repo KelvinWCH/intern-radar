@@ -35,7 +35,7 @@ import type { AiUsage } from './models/ai.models';
       overflow-wrap: anywhere;
     }
     .usage span + span::before {
-      content: '·';
+      content: '|';
       margin-right: 6px;
     }
   `,

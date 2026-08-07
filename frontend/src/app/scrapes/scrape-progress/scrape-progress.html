@@ -1,0 +1,81 @@
+@let current = task();
+<section class="scrape-progress">
+  <div class="overall-summary">
+    <span>Overall progress</span>
+    <span class="source-count">
+      @if (current) {
+        {{ current.progress.sources_finished }} / {{ current.progress.sources_total }} sources
+      } @else {
+        Ready when you are
+      }
+    </span>
+    <strong>{{ percent() }}<small>%</small></strong>
+  </div>
+  <div class="overall-track" [attr.data-working]="active() && percent() === 0">
+    <progress max="100" [attr.value]="active() && percent() === 0 ? null : percent()"></progress>
+  </div>
+  <ol class="stage-flow">
+    @for (stage of stages; track stage.label; let index = $index) {
+      <li [attr.data-active]="stageIndex() === index">
+        <span class="stage-icon"><i [class]="'pi ' + stage.icon"></i></span>
+        <span>{{ stage.label }}</span>
+        <span class="stage-dot"></span>
+      </li>
+    }
+  </ol>
+  <div class="page-heading">
+    <h4>
+      Recent pages <span>{{ pages().length }}</span>
+    </h4>
+    <span class="current-source" [title]="current?.progress?.current_source ?? ''">{{
+      current?.progress?.current_source ?? 'Download → extract'
+    }}</span>
+  </div>
+  <div class="page-list">
+    @for (page of pages(); track page.key) {
+      <div class="page-card" [attr.data-state]="page.state" [title]="page.message">
+        <span class="page-icon"
+          ><i
+            [class]="
+              isPageWorking(page.state)
+                ? 'pi pi-file'
+                : page.state === 'completed'
+                  ? 'pi pi-check'
+                  : page.state === 'failed' || page.state === 'review'
+                    ? 'pi pi-exclamation-triangle'
+                    : 'pi pi-minus'
+            "
+          ></i
+        ></span>
+        <div class="page-copy">
+          <strong>{{ page.host }}</strong>
+          <span class="page-path">{{ page.path }}</span>
+        </div>
+        <div class="page-status">
+          <span>{{ labels[page.state] }}</span>
+          <span class="page-steps">
+            <i
+              [attr.data-done]="page.downloaded"
+              [attr.data-working]="page.state === 'downloading'"
+            ></i>
+            <i
+              [attr.data-done]="page.state === 'completed' || page.state === 'unmatched'"
+              [attr.data-working]="page.state === 'reading' || page.state === 'cached'"
+            ></i>
+          </span>
+        </div>
+      </div>
+    } @empty {
+      <div class="pages-empty">
+        <i class="pi pi-compass"></i>
+        <span>{{
+          active()
+            ? 'Finding pages. Individual steps will appear here.'
+            : current
+              ? 'No individual page steps in this run.'
+              : 'Each job page gets a little progress card here.'
+        }}</span>
+      </div>
+    }
+  </div>
+</section>
