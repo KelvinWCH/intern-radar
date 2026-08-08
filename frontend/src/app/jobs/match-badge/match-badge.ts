@@ -23,5 +23,5 @@ export class MatchBadge {
     const value = this.match();
     return value ? matchLabels[value.band] : '';
   });
-  protected readonly reasons = computed((): string => this.match()?.reasons.join(' · ') ?? '');
+  protected readonly reasons = computed((): string => this.match()?.reasons.join(', ') ?? '');
 }

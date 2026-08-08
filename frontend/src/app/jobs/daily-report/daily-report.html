@@ -1,0 +1,267 @@
+<section
+  class="daily-report"
+  [attr.data-panel-state]="state().status === 'loading' ? 'running' : null"
+>
+  <header class="panel-header">
+    <div>
+      <h2 id="report-heading">
+        <span class="report-mark"><i class="pi pi-calendar"></i></span>
+        <span>Daily report</span>
+      </h2>
+    </div>
+    <nav class="day-navigation">
+      <button class="icon-button" type="button" title="Previous day" (click)="changeDay(-1)">
+        <i class="pi pi-chevron-left"></i>
+      </button>
+      <div class="selected-date">
+        <time
+          [attr.datetime]="selectedDay() | date: 'yyyy-MM-dd'"
+          [title]="'Days in ' + timezone"
+          >{{ selectedDay() | date: 'EEE, MMM d' }}</time
+        >
+      </div>
+      <button
+        class="icon-button"
+        type="button"
+        title="Next day"
+        [disabled]="isToday()"
+        (click)="changeDay(1)"
+      >
+        <i class="pi pi-chevron-right"></i>
+      </button>
+      <div class="date-tools">
+        <input
+          id="report-date"
+          type="date"
+          name="report-date"
+          [max]="latestDate"
+          [ngModel]="selectedDate()"
+          (ngModelChange)="selectDay($event)"
+        />
+        <button
+          class="button-secondary button-sm"
+          type="button"
+          [disabled]="isToday()"
+          (click)="goToToday()"
+        >
+          Today
+        </button>
+      </div>
+    </nav>
+    <button
+      class="icon-button"
+      type="button"
+      title="Refresh jobs"
+      (click)="refresh()"
+      [disabled]="state().status === 'loading'"
+    >
+      <i class="pi pi-refresh" [class.refreshing]="state().status === 'loading'"></i>
+    </button>
+  </header>
+  <app-daily-statistics [state]="statistics()" />
+  <div class="report-filters" title="Filters apply to this page of jobs">
+    <div class="area-toggle">
+      <button
+        type="button"
+        [class.pressed]="filters().area === 'gta'"
+        (click)="setFilter({ area: 'gta' })"
+      >
+        <i class="pi pi-map-marker"></i> GTA
+        <span class="count">{{ gtaCount() }}</span>
+      </button>
+      <button
+        type="button"
+        [class.pressed]="filters().area === 'canada'"
+        (click)="setFilter({ area: 'canada' })"
+      >
+        All Canada <span class="count">{{ state().jobs.length }}</span>
+      </button>
+    </div>
+    <label class="filter-search"
+      ><i class="pi pi-search"></i
+      ><input
+        type="search"
+        name="report-search"
+        placeholder="Role, company, or city"
+        [ngModel]="filters().search"
+        (ngModelChange)="setFilter({ search: $event })"
+    /></label>
+    <select
+      name="report-source"
+      [ngModel]="filters().source"
+      (ngModelChange)="setFilter({ source: $event })"
+    >
+      <option value="all">All sources</option>
+      <option value="scraped">Scraped</option>
+      <option value="mine">Added by me</option>
+    </select>
+    <div class="filter-checks">
+      <label class="filter-check"
+        ><input
+          type="checkbox"
+          name="report-prestige-first"
+          [ngModel]="filters().prestigeFirst"
+          (ngModelChange)="setFilter({ prestigeFirst: $event })"
+        />
+        <i class="pi pi-star-fill prestige-star"></i> Prestige first</label
+      >
+      <label class="filter-check"
+        ><input
+          type="checkbox"
+          name="report-hide-applied"
+          [ngModel]="filters().hideApplied"
+          (ngModelChange)="setFilter({ hideApplied: $event })"
+        />
+        Not yet applied</label
+      >
+      <label class="filter-check"
+        ><input
+          type="checkbox"
+          name="report-group-by-company"
+          [ngModel]="filters().groupByCompany"
+          (ngModelChange)="setFilter({ groupByCompany: $event })"
+        />
+        Group by company</label
+      >
+    </div>
+    @if (hasFilters()) {
+      <button class="text-button" type="button" (click)="clearFilters()">Clear filters</button>
+    }
+  </div>
+  <div class="feed-content">
+    @switch (state().status) {
+      @case ('loading') {
+        <div class="loading-list">
+          <div class="skeleton-grid">
+            @for (row of [1, 2, 3, 4, 5, 6]; track row) {
+              <div class="skeleton-row">
+                <div class="skeleton square"></div>
+                <div class="skeleton-copy">
+                  <div class="skeleton short"></div>
+                  <div class="skeleton long"></div>
+                  <div class="skeleton medium"></div>
+                </div>
+              </div>
+            }
+          </div>
+        </div>
+      }
+      @case ('error') {
+        <div class="message-panel">
+          <i class="pi pi-wifi message-icon"></i>
+          <h3>We couldn't load your jobs</h3>
+          <p>{{ state().error }}</p>
+          <button class="primary-button" type="button" (click)="refresh()">Try again</button>
+        </div>
+      }
+      @case ('ready') {
+        @if (state().jobs.length === 0) {
+          <div class="message-panel">
+            <i class="pi pi-inbox message-icon"></i>
+            <h3>No open jobs for this day</h3>
+            <div class="empty-actions">
+              <button class="primary-button" type="button" (click)="changeDay(-1)">
+                Explore previous day
+              </button>
+              <a class="text-button" routerLink="/jobs/new">Add a job</a>
+            </div>
+          </div>
+        } @else if (visibleJobs().length === 0) {
+          <div class="message-panel">
+            <i class="pi pi-filter-slash message-icon"></i>
+            <h3>
+              {{
+                filters().area === 'gta'
+                  ? 'No GTA jobs match on this page'
+                  : 'No jobs match your filters'
+              }}
+            </h3>
+            <p>{{ state().jobs.length }} other open listings are on this page.</p>
+            <button class="primary-button" type="button" (click)="clearFilters()">
+              Show all of Canada
+            </button>
+          </div>
+        } @else {
+          @if (filters().groupByCompany) {
+            <div class="company-groups">
+              @for (group of companyGroups(); track group.company) {
+                <section class="company-group">
+                  <h3 class="company-group-title">
+                    {{ group.company }}
+                    <span class="company-group-count">{{ group.jobs.length }}</span>
+                  </h3>
+                  <ul class="job-list">
+                    @for (job of group.jobs; track job.id) {
+                      <li>
+                        <app-job-card [job]="job" />
+                      </li>
+                    }
+                  </ul>
+                </section>
+              }
+            </div>
+          } @else {
+            <ul class="job-list">
+              @for (job of visibleJobs(); track job.id) {
+                <li>
+                  <app-job-card [job]="job" />
+                </li>
+              }
+            </ul>
+          }
+        }
+      }
+    }
+  </div>
+  @let page = state().page;
+  <nav class="pagination">
+    <p class="result-count">
+      @switch (state().status) {
+        @case ('loading') {
+          Loading jobs...
+        }
+        @case ('error') {
+          Jobs unavailable
+        }
+        @case ('ready') {
+          <strong>{{ visibleJobs().length }}</strong>
+          @if (filtered()) {
+            of {{ state().jobs.length }}
+          }
+          {{ visibleJobs().length === 1 ? 'open listing' : 'open listings' }}
+        }
+      }
+    </p>
+    <span class="page-range">
+      @if (page) {
+        {{ page.offset + (page.items.length ? 1 : 0) }}-{{ page.offset + page.items.length }} of
+        {{ page.total }}
+      } @else {
+        -
+      }
+    </span>
+    <button
+      type="button"
+      class="button-secondary button-sm page-button"
+      title="Previous jobs"
+      [disabled]="!page || page.offset === 0 || state().status === 'loading'"
+      (click)="changePage(-1)"
+    >
+      <i class="pi pi-chevron-left"></i>
+    </button>
+    <button
+      type="button"
+      class="button-secondary button-sm page-button"
+      title="Next jobs"
+      [disabled]="
+        !page || page.offset + page.items.length >= page.total || state().status === 'loading'
+      "
+      (click)="changePage(1)"
+    >
+      <i class="pi pi-chevron-right"></i>
+    </button>
+    <a class="all-jobs-link" routerLink="/jobs"
+      >Search all jobs <i class="pi pi-arrow-up-right"></i
+    ></a>
+  </nav>
+</section>
