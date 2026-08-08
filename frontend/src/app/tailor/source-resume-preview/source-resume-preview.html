@@ -5,7 +5,7 @@
   <header>
     <div>
       <h2 id="source-preview-title">Current resume</h2>
-      <p>{{ profile().name }} · Saved source</p>
+      <p>{{ profile().name }}, saved source</p>
     </div>
     <button
       class="close-button"
@@ -21,7 +21,7 @@
     <div class="preview-message">
       <i class="pi pi-spinner pi-spin"></i>
       <h3>Preparing your resume</h3>
-      <p>Building a PDF from your saved experience…</p>
+      <p>Building a PDF from your saved experience...</p>
     </div>
   } @else if (error()) {
     <div class="preview-message">

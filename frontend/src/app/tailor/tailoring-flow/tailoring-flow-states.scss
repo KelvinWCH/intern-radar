@@ -1,1 +1,53 @@
 [data-status='running'] {
+  --state-ink: #174e38;
+  --state-edge: #3b8060;
+  --state-fill: #dfefe5;
+}
+[data-status='awaiting_review'],
+[data-status='paused'],
+[data-status='disconnected'] {
+  --state-ink: #75430a;
+  --state-edge: #b67a23;
+  --state-fill: #fff0cf;
+}
+[data-status='failed'],
+[data-status='not_started'] {
+  --state-ink: #913044;
+  --state-edge: #ba5268;
+  --state-fill: #fce8ed;
+}
+[data-status='cancelled'] {
+  --state-ink: #4f5a54;
+  --state-edge: #8a958f;
+  --state-fill: #eef1ef;
+}
+.call-steps {
+  display: grid;
+  gap: 0.2rem;
+  margin: 0.15rem 0 0;
+  padding: 0;
+  list-style: none;
+  font-size: 0.78rem;
+}
+.call-steps li {
+  display: flex;
+  gap: 0.4rem;
+  align-items: center;
+  opacity: 0.65;
+}
+.call-steps i {
+  font-size: 0.7rem;
+}
+.call-steps [data-state='done'] {
+  color: #3d6b2c;
+  opacity: 1;
+}
+.call-steps [data-state='current'] {
+  color: #4b3a8f;
+  font-weight: 600;
+  opacity: 1;
+}
+.call-steps [data-state='failed'] {
+  color: #913044;
+  opacity: 1;
+}

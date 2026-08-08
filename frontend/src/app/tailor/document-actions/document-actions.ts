@@ -15,9 +15,9 @@ import { DocumentsService } from '../documents.service';
   template: `@if (compact()) {
       <div class="compact">
         <button type="button" class="text-button" [disabled]="busy()" (click)="download('pdf')">
-          {{ busy() === 'pdf' ? 'Preparing…' : 'PDF' }}</button
+          {{ busy() === 'pdf' ? 'Preparing...' : 'PDF' }}</button
         ><button type="button" class="text-button" [disabled]="busy()" (click)="download('tex')">
-          {{ busy() === 'tex' ? 'Preparing…' : '.tex' }}
+          {{ busy() === 'tex' ? 'Preparing...' : '.tex' }}
         </button>
       </div>
     } @else {
@@ -30,7 +30,7 @@ import { DocumentsService } from '../documents.service';
         >
           <i class="pi pi-download"></i
           >{{
-            busy() === 'pdf' ? 'Preparing PDF…' : draft() ? 'Download draft PDF' : 'Download PDF'
+            busy() === 'pdf' ? 'Preparing PDF...' : draft() ? 'Download draft PDF' : 'Download PDF'
           }}</button
         ><button
           type="button"
@@ -38,7 +38,7 @@ import { DocumentsService } from '../documents.service';
           [disabled]="busy()"
           (click)="download('tex')"
         >
-          {{ busy() === 'tex' ? 'Preparing…' : 'LaTeX (.tex)' }}
+          {{ busy() === 'tex' ? 'Preparing...' : 'LaTeX (.tex)' }}
         </button>
       </div>
     }
