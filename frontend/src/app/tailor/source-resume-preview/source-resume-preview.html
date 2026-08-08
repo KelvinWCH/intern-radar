@@ -1,0 +1,44 @@
+<button class="button-secondary preview-button" type="button" (click)="open()">
+  <i class="pi pi-file-pdf"></i> Preview current resume
+</button>
+<dialog #previewDialog (close)="clearPreview()">
+  <header>
+    <div>
+      <h2 id="source-preview-title">Current resume</h2>
+      <p>{{ profile().name }} · Saved source</p>
+    </div>
+    <button
+      class="close-button"
+      type="button"
+      title="Close resume preview"
+      (click)="close()"
+      autofocus
+    >
+      <i class="pi pi-times"></i>
+    </button>
+  </header>
+  @if (loading()) {
+    <div class="preview-message">
+      <i class="pi pi-spinner pi-spin"></i>
+      <h3>Preparing your resume</h3>
+      <p>Building a PDF from your saved experience…</p>
+    </div>
+  } @else if (error()) {
+    <div class="preview-message">
+      <i class="pi pi-file-pdf"></i>
+      <h3>Preview unavailable</h3>
+      <p>{{ error() }}</p>
+      <button class="button-secondary" type="button" (click)="load()">Retry preview</button>
+    </div>
+  } @else if (previewUrl(); as url) {
+    <iframe [src]="url" title="Saved source resume PDF"></iframe>
+  }
+  <footer>
+    <p>Generated from saved data; formatting may differ from your upload.</p>
+    @if (downloadUrl(); as url) {
+      <a class="button-primary" [href]="url" download="source-resume.pdf">
+        <i class="pi pi-download"></i> Download PDF
+      </a>
+    }
+  </footer>
+</dialog>
