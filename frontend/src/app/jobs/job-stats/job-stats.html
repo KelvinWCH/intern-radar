@@ -1,0 +1,65 @@
+<details class="panel stats-panel">
+  <summary>
+    <i class="pi pi-history"></i> Source & history
+    <i class="pi pi-chevron-down disclosure-chevron"></i>
+  </summary>
+  <dl class="date-list">
+    @for (date of dates(); track date.label) {
+      <div>
+        <dt [title]="date.help">{{ date.label }}</dt>
+        <dd>
+          @if (date.value === null || date.value === undefined) {
+            --
+          } @else {
+            <time
+              [attr.datetime]="date.value * 1000 | date: 'yyyy-MM-ddTHH:mm:ssZZZZZ'"
+              [title]="tooltip(date)"
+              >{{
+                date.dateOnly
+                  ? (date.value * 1000 | date: 'MMM d, y' : 'UTC')
+                  : (date.value * 1000 | date: 'MMM d, y, h:mm:ss a')
+              }}</time
+            >
+          }
+        </dd>
+      </div>
+    }
+  </dl>
+  <p class="timezone-note">Times in {{ timezone }}</p>
+  <dl class="source-list">
+    <div>
+      <dt>Source</dt>
+      <dd>{{ job().metadata?.source || '--' }}</dd>
+    </div>
+    <div>
+      <dt>Employer job ID</dt>
+      <dd>{{ job().details?.source_job_id || '--' }}</dd>
+    </div>
+    <div>
+      <dt>Posting status</dt>
+      <dd>
+        <span
+          [class.open]="job().details?.active === true"
+          [class.closed]="job().details?.active === false"
+          [title]="job().metadata?.closedDetail ?? ''"
+          >{{
+            job().details?.active === null || job().details?.active === undefined
+              ? '--'
+              : job().details?.active
+                ? 'Open'
+                : 'Closed'
+          }}</span
+        >
+      </dd>
+    </div>
+    @if (job().metadata?.linkCheck; as check) {
+      <div>
+        <dt title="The latest on-demand check of the posting page">Last link check</dt>
+        <dd [title]="check.detail">
+          {{ check.status === 'open' ? 'Open' : check.status === 'closed' ? 'Closed' : 'Unclear' }}
+          · {{ check.checkedAt * 1000 | date: 'MMM d, h:mm a' }}
+        </dd>
+      </div>
+    }
+  </dl>
+</details>
