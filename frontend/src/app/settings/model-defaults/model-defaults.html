@@ -1,0 +1,105 @@
+<section class="model-defaults">
+  <header class="section-heading">
+    <span class="section-icon"><i class="pi pi-sparkles"></i></span>
+    <div>
+      <h3 id="model-defaults-title">AI model defaults</h3>
+    </div>
+  </header>
+
+  <form (ngSubmit)="save()">
+    <div class="shared-default">
+      <div class="default-description">
+        <label for="default-ai-model">Default model</label>
+        <p>Used unless a feature has its own model.</p>
+        <span class="backend-default"
+          >Backend default:
+          <strong>{{ serverModel() || 'Configured on your server' }}</strong></span
+        >
+      </div>
+      <div class="model-field">
+        <p-select
+          inputId="default-ai-model"
+          [options]="choices()"
+          [editable]="true"
+          [filter]="true"
+          filterPlaceholder="Search models"
+          [showClear]="true"
+          [fluid]="true"
+          appendTo="body"
+          placeholder="Use backend default"
+          [ngModel]="draft().default"
+          (ngModelChange)="change('default', $event)"
+          name="default-model"
+        />
+        <span id="model-choice-help" class="field-hint">Select or enter a model ID.</span>
+      </div>
+    </div>
+
+    <div class="overrides-heading">
+      <div>
+        <h4>Customize by feature</h4>
+        <span>{{ overridden() }} of {{ tasks.length }} customized</span>
+      </div>
+      <button class="refresh-button" type="button" (click)="loadModels()" [disabled]="loading()">
+        <i class="pi pi-refresh" [class.pi-spin]="loading()"></i>
+        {{ loading() ? 'Loading models…' : 'Refresh models' }}
+      </button>
+    </div>
+    @if (warning()) {
+      <p class="catalog-notice"><i class="pi pi-info-circle"></i>{{ warning() }}</p>
+    }
+    @for (group of groups; track group) {
+      <section class="task-group">
+        <h5>{{ group }}</h5>
+        @for (task of tasks; track task.id) {
+          @if (task.group === group) {
+            <div class="task-row" [class.customized]="draft()[task.id]">
+              <span class="task-icon"><i [class]="'pi ' + task.icon"></i></span>
+              <div class="task-description">
+                <label [for]="task.id + '-default-model'">{{ task.label }}</label>
+              </div>
+              <p-select
+                [inputId]="task.id + '-default-model'"
+                [options]="choices()"
+                [editable]="true"
+                [filter]="true"
+                filterPlaceholder="Search models"
+                [showClear]="true"
+                [fluid]="true"
+                appendTo="body"
+                [placeholder]="
+                  recommended[task.id] ? 'Recommended · ' + recommended[task.id] : inheritedLabel()
+                "
+                [ngModel]="draft()[task.id]"
+                (ngModelChange)="change(task.id, $event)"
+                [name]="task.id + '-model'"
+              />
+            </div>
+          }
+        }
+      </section>
+    }
+    <footer class="model-save-row">
+      <div class="save-note">
+        @if (saved() && !dirty()) {
+          <span class="saved-message"
+            ><i class="pi pi-check-circle"></i> Model defaults saved.</span
+          >
+        } @else if (dirty()) {
+          <span class="pending-message">You have unsaved model changes.</span>
+        } @else {
+          <span>Saved in this browser for new requests.</span>
+        }
+      </div>
+      <div class="save-actions">
+        <button type="button" class="reset-button" (click)="reset()">Reset defaults</button>
+        <button type="submit" class="button-primary" [disabled]="!dirty()">
+          <i class="pi pi-check"></i> Save model defaults
+        </button>
+      </div>
+    </footer>
+    @if (error()) {
+      <p class="save-error">{{ error() }}</p>
+    }
+  </form>
+</section>
