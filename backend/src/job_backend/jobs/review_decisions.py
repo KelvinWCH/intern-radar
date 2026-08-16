@@ -114,7 +114,7 @@ def decide_review(
         row.finished_at = None
         user.active_document_id = row.id
         message = (
-            "Your choices were saved · revising selected findings"
+            "Your choices were saved, revising the selected findings"
             if revise
             else "You chose to keep the current documents with findings acknowledged"
         )

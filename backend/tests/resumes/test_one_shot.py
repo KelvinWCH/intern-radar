@@ -105,7 +105,7 @@ def test_one_shot_single_call(tmp_path: Path, omit_resume: bool) -> None:
         assert saved.status == "completed"
         assert saved.mode == "one_shot" and saved.one_shot_step == "revise"
         assert any(
-            event.message == "Research · One call · revising into the final documents"
+            event.message == "Research: One call revising into the final documents"
             for event in saved.events
         )
         assert saved.resume is not None and saved.cover_letter is not None
