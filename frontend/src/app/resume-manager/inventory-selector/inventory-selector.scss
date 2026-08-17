@@ -1,0 +1,177 @@
+:host {
+  display: block;
+}
+.stack-editor {
+  padding: 14px;
+  border: 1px solid var(--line);
+  border-radius: 10px;
+  background: var(--surface);
+}
+.stack-heading {
+  display: flex;
+  align-items: start;
+  justify-content: space-between;
+  gap: 12px;
+}
+.stack-label {
+  font-size: 13px;
+  font-weight: 600;
+}
+p {
+  margin: 4px 0 10px;
+  color: var(--muted);
+  font-size: 12px;
+  line-height: 1.5;
+}
+.stack-count {
+  white-space: nowrap;
+  color: var(--muted);
+  font-size: 12px;
+}
+.stack-chips,
+.default-chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+.stack-chip,
+.default-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  border: 1px solid var(--line);
+  border-radius: 7px;
+  background: var(--surface);
+  color: inherit;
+  padding: 5px 9px;
+  font: inherit;
+  font-size: 12px;
+}
+.stack-chip {
+  cursor: pointer;
+}
+.stack-chip.chosen {
+  border-color: var(--accent);
+  background: var(--accent-soft);
+  color: var(--accent);
+}
+.stack-add {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+  flex-wrap: wrap;
+  margin-top: 12px;
+}
+.stack-add input {
+  flex: 1;
+  min-width: 160px;
+  padding: 8px 10px;
+  border: 1px solid var(--line);
+  border-radius: 6px;
+  font: inherit;
+  font-size: 12px;
+  background: var(--surface);
+  color: inherit;
+}
+.subtle-button {
+  padding: 4px;
+  border: 0;
+  background: none;
+  color: var(--accent);
+  font: inherit;
+  font-size: 12px;
+  cursor: pointer;
+}
+.stack-defaults {
+  margin-top: 14px;
+  padding-top: 12px;
+  border-top: 1px solid var(--line);
+}
+.default-chips {
+  margin-top: 8px;
+}
+.default-chip {
+  padding: 4px 6px 4px 8px;
+}
+.order {
+  color: var(--muted);
+  font-size: 12px;
+}
+.default-chip button {
+  border: 0;
+  background: transparent;
+  color: var(--accent);
+  font-size: 20px;
+  line-height: 1;
+  cursor: pointer;
+  padding: 2px 4px;
+}
+button:disabled {
+  opacity: 0.35;
+  cursor: default;
+}
+.stack-help {
+  margin: 10px 0 0;
+}
+.empty {
+  margin: 3px 0;
+}
+.inventory-edit {
+  padding: 12px;
+  margin-top: 10px;
+  border-radius: 7px;
+  background: var(--accent-soft);
+}
+.inventory-edit label {
+  font-size: 12px;
+}
+.inventory-edit textarea {
+  display: block;
+  width: 100%;
+  margin-top: 6px;
+  padding: 8px;
+  border: 1px solid var(--line);
+  border-radius: 6px;
+  font: inherit;
+  font-size: 12px;
+  background: var(--surface);
+  color: inherit;
+  resize: vertical;
+}
+.inventory-edit > div {
+  display: flex;
+  gap: 10px;
+}
+@media (max-width: 500px) {
+  .stack-heading {
+    flex-direction: column;
+    gap: 0;
+  }
+  .stack-add input {
+    flex-basis: 100%;
+  }
+}
+
+.stack-chips {
+  max-height: 190px;
+  overflow-y: auto;
+  align-content: start;
+  padding: 2px;
+  scrollbar-width: thin;
+}
+.stack-search {
+  width: 100%;
+  padding: 7px 10px;
+  margin: 0 0 8px;
+  border: 1px solid var(--line);
+  border-radius: 6px;
+  background: var(--surface);
+  color: inherit;
+  font: inherit;
+  font-size: 12px;
+}
+.stack-chip {
+  max-width: 100%;
+  overflow-wrap: anywhere;
+  text-align: left;
+}
