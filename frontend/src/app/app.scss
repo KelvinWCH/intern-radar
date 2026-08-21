@@ -1,0 +1,220 @@
+:host {
+  display: block;
+  isolation: isolate;
+  max-width: 1480px;
+  margin: 0 auto;
+  padding: 14px 24px 32px;
+}
+:host.wide-workspace {
+  max-width: 1840px;
+  padding-bottom: 20px;
+  .app-header {
+    max-width: none;
+  }
+}
+.app-header {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  max-width: 1416px;
+  margin: 0 auto 16px;
+  padding: 6px 6px 6px 8px;
+  background: #ffffffc4;
+  border: 1px solid var(--line);
+  border-radius: 14px;
+  box-shadow: 0 2px 4px #173e2803;
+}
+.navigation-progress {
+  position: absolute;
+  inset: auto 12px -2px;
+  height: 3px;
+  overflow: hidden;
+  border-radius: 3px;
+  background: var(--accent-soft);
+}
+.navigation-progress i {
+  display: block;
+  width: 35%;
+  height: 100%;
+  border-radius: inherit;
+  background: var(--accent);
+}
+.navigation-progress i {
+  animation: navigation-scan 1.2s ease-in-out infinite alternate;
+}
+@keyframes navigation-scan {
+  to {
+    transform: translateX(190%);
+  }
+}
+.brand,
+.header-actions,
+nav,
+.workspace-link {
+  display: flex;
+  align-items: center;
+}
+.brand {
+  gap: 10px;
+  text-decoration: none;
+  color: var(--text);
+  flex-shrink: 0;
+}
+.brand-mark {
+  display: grid;
+  place-items: center;
+  width: 34px;
+  height: 34px;
+  background: var(--accent);
+  color: white;
+  border-radius: 10px;
+  box-shadow:
+    0 3px 8px #1f6f4a20,
+    inset 0 1px 0 #ffffff24;
+  transition: transform 180ms ease;
+}
+.brand:hover .brand-mark {
+  transform: rotate(-5deg);
+}
+h1 {
+  margin: 0;
+  font-size: 18px;
+  font-weight: 600;
+  letter-spacing: -0.03em;
+  white-space: nowrap;
+}
+.header-actions {
+  gap: 6px;
+  margin-left: auto;
+  flex-shrink: 0;
+}
+.settings-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  min-height: 38px;
+  padding: 6px 10px;
+  border-radius: 9px;
+  color: var(--muted);
+  font-size: 13px;
+  font-weight: 500;
+  text-decoration: none;
+  white-space: nowrap;
+}
+.settings-link:hover,
+.settings-link.active {
+  color: var(--accent);
+  background: #f1f6f2;
+}
+.tailor-link {
+  min-height: 38px;
+  white-space: nowrap;
+}
+nav {
+  position: relative;
+  isolation: isolate;
+  flex: 1;
+  min-width: 0;
+  gap: 2px;
+}
+.workspace-link {
+  gap: 7px;
+  padding: 8px 11px;
+  min-height: 38px;
+  border-radius: 9px;
+  color: var(--muted);
+  text-decoration: none;
+  font-size: 14px;
+  font-weight: 500;
+  white-space: nowrap;
+  transition:
+    background 160ms ease,
+    color 160ms ease,
+    box-shadow 160ms ease;
+}
+.workspace-link i {
+  font-size: 13px;
+  transition: transform 300ms cubic-bezier(0.22, 1, 0.36, 1);
+}
+@media (hover: hover) {
+  .workspace-link:hover i {
+    transform: translateY(-2px) rotate(-6deg);
+  }
+}
+.workspace-link:hover {
+  color: var(--accent);
+  background: #f1f6f2;
+}
+.workspace-link.active {
+  color: var(--accent);
+  background: #e7f2e9;
+  box-shadow: inset 0 0 0 1px #d4e5d8;
+}
+.menu-toggle {
+  display: none;
+  width: 38px;
+  height: 38px;
+  border: 1px solid var(--line);
+  border-radius: 9px;
+  color: var(--accent);
+  background: var(--surface);
+  cursor: pointer;
+}
+main {
+  min-width: 0;
+}
+@media (max-width: 1300px) {
+  .workspace-link i {
+    display: none;
+  }
+}
+@media (max-width: 1120px) {
+  :host {
+    padding: 12px 12px 24px;
+  }
+  .menu-toggle {
+    display: grid;
+    place-items: center;
+  }
+  nav {
+    display: none;
+    position: absolute;
+    top: calc(100% + 6px);
+    left: 0;
+    right: 0;
+    z-index: 60;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 4px;
+    padding: 6px;
+    background: var(--surface);
+    border: 1px solid var(--line);
+    border-radius: 14px;
+    box-shadow: var(--shadow-raised);
+  }
+  nav.is-open {
+    display: grid;
+  }
+  .workspace-link {
+    padding: 10px 12px;
+  }
+  .workspace-link i {
+    display: inline-block;
+  }
+}
+@media (max-width: 550px) {
+  .app-header {
+    gap: 8px;
+  }
+  h1 {
+    font-size: 16px;
+  }
+  .settings-link span,
+  .tailor-link i {
+    display: none;
+  }
+  .tailor-link {
+    padding-inline: 10px;
+    font-size: 13px;
+  }
+}
