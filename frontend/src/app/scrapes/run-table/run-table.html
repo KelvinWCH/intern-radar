@@ -1,0 +1,100 @@
+<div class="table-scroll">
+  <table class="data-table">
+    <thead>
+      <tr>
+        <th>Source / started</th>
+        <th>Started by</th>
+        <th>Outcome</th>
+        <th class="num">Time</th>
+        <th class="num">Fetched</th>
+        <th class="num">Matched</th>
+        <th class="num">New</th>
+        <th class="num">Duplicates</th>
+        <th class="num">Updated</th>
+        <th></th>
+      </tr>
+    </thead>
+    <tbody>
+      @for (run of runs(); track run.id) {
+        @let open = isOpen(run);
+        <tr class="run-row" [class.open]="open" (click)="toggle(run)">
+          <td class="run-source">
+            <strong>{{ run.source }}</strong>
+            <span class="started">{{ run.started_at * 1000 | date: 'MMM d · h:mm:ss a' }}</span>
+          </td>
+          <td>{{ scrapeTriggerLabel(run.trigger) }}</td>
+          <td>
+            <span class="status-pill" [attr.data-status]="run.status">{{
+              run.status === 'completed' && run.failureCount
+                ? 'Completed with errors'
+                : run.status === 'not_modified'
+                  ? 'Cached'
+                  : (run.status | titlecase)
+            }}</span>
+            @if (run.status === 'running') {
+              <span class="started">{{ run.phase || 'Processing' }}</span>
+            }
+          </td>
+          <td class="num">{{ duration(run.elapsed_seconds) }}</td>
+          <td class="num" [class.zero]="!run.fetched">{{ run.fetched }}</td>
+          <td class="num" [class.zero]="!run.matched">{{ run.matched }}</td>
+          <td class="num new" [class.zero]="!run.created">{{ run.created }}</td>
+          <td class="num" [class.zero]="!run.unchanged">{{ run.unchanged }}</td>
+          <td class="num" [class.zero]="!run.updated">{{ run.updated }}</td>
+          <td class="toggle-cell">
+            <button
+              type="button"
+              class="row-toggle"
+              [title]="open ? 'Hide details' : 'Timings & diagnostics'"
+              (click)="$event.stopPropagation(); toggle(run)"
+            >
+              <i class="pi pi-chevron-down"></i>
+            </button>
+          </td>
+        </tr>
+        @if (open) {
+          <tr class="detail-row">
+            <td colspan="10">
+              <p class="run-times">
+                <span
+                  >Run <code>{{ run.id }}</code></span
+                >
+                <span>Started {{ run.started_at * 1000 | date: 'medium' }}</span>
+                <span
+                  >Finished
+                  {{
+                    run.finished_at ? (run.finished_at * 1000 | date: 'medium') : 'Still running'
+                  }}</span
+                >
+              </p>
+              <app-failure-details [details]="run" [error]="run.error" />
+              <div class="metrics">
+                @for (metric of run.performance; track metric.label) {
+                  <div>
+                    <strong
+                      >{{ metric.value | number: '1.0-2' }}{{ metric.seconds ? 's' : '' }}</strong
+                    ><span>{{ metric.label }}</span>
+                  </div>
+                } @empty {
+                  <p class="hint">
+                    Detailed performance counters were not recorded for this attempt.
+                  </p>
+                }
+              </div>
+              @if (run.performance.length) {
+                <p class="hint">
+                  Operation durations may overlap when work runs concurrently. Total wall time is
+                  the elapsed duration.
+                </p>
+              }
+            </td>
+          </tr>
+        }
+      } @empty {
+        <tr>
+          <td colspan="10" class="empty-state">No source attempts recorded yet.</td>
+        </tr>
+      }
+    </tbody>
+  </table>
+</div>

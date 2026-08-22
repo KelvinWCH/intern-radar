@@ -1,6 +1,6 @@
 <section class="model-defaults">
   <header class="section-heading">
-    <span class="section-icon"><i class="pi pi-sparkles"></i></span>
+    <span class="section-icon"><i class="pi pi-microchip-ai"></i></span>
     <div>
       <h3 id="model-defaults-title">AI model defaults</h3>
     </div>
@@ -42,7 +42,7 @@
       </div>
       <button class="refresh-button" type="button" (click)="loadModels()" [disabled]="loading()">
         <i class="pi pi-refresh" [class.pi-spin]="loading()"></i>
-        {{ loading() ? 'Loading models…' : 'Refresh models' }}
+        {{ loading() ? 'Loading models...' : 'Refresh models' }}
       </button>
     </div>
     @if (warning()) {
@@ -68,7 +68,7 @@
                 [fluid]="true"
                 appendTo="body"
                 [placeholder]="
-                  recommended[task.id] ? 'Recommended · ' + recommended[task.id] : inheritedLabel()
+                  recommended[task.id] ? 'Recommended: ' + recommended[task.id] : inheritedLabel()
                 "
                 [ngModel]="draft()[task.id]"
                 (ngModelChange)="change(task.id, $event)"
