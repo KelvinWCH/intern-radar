@@ -34,9 +34,9 @@
 .page-heading .target-company {
   margin: 0 0 2px;
   color: #518052;
-  font:
-    17px/1.3 Georgia,
-    serif;
+  font-size: 15px;
+  font-weight: 500;
+  line-height: 1.3;
   overflow-wrap: anywhere;
 }
 .tailor-steps {
@@ -246,7 +246,6 @@ summary > span {
 }
 .closed-warning {
   border: 1px solid #e7ca8c;
-  border-left: 3px solid #b5832a;
   border-radius: 10px;
   background: #fffbf2;
   padding: 12px 14px;
@@ -256,7 +255,6 @@ summary > span {
 }
 .error-message {
   border: 1px solid #efd1d5;
-  border-left: 3px solid #a23e50;
   border-radius: 10px;
   background: #fff4f5;
   color: #913647;
@@ -478,16 +476,7 @@ input[type='file'] {
   cursor: pointer;
   color: var(--accent);
   font-size: 13px;
-  list-style: none;
   padding: 4px 0;
-}
-
-.text-preview > summary::before {
-  content: '▸ ';
-}
-
-.text-preview[open] > summary::before {
-  content: '▾ ';
 }
 
 .text-preview[open] > summary {

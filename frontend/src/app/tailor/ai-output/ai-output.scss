@@ -1,0 +1,283 @@
+:host {
+  display: block;
+  min-width: 0;
+}
+.ai-card {
+  border: 1px solid var(--line);
+  border-radius: 14px;
+  background: #fffffd;
+  box-shadow: var(--shadow-soft);
+  overflow: hidden;
+}
+.ai-card[data-state='writing'] {
+  border-color: #b9d4c0;
+}
+.ai-head {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 14px;
+  border-bottom: 1px solid var(--line);
+  background: radial-gradient(ellipse at 90% 0%, #eef5df, transparent 70%);
+}
+.ai-mark {
+  display: grid;
+  place-items: center;
+  flex: 0 0 28px;
+  width: 28px;
+  height: 28px;
+  border: 1px solid #c4dcc8;
+  border-radius: 9px;
+  background: #e6f2e7;
+  color: #397354;
+  font-size: 12px;
+}
+.ai-heading {
+  display: grid;
+  flex: 1;
+  min-width: 0;
+}
+.ai-heading strong {
+  font-size: 14px;
+  font-weight: 600;
+}
+.ai-heading time {
+  color: var(--muted);
+  font-size: 12px;
+  font-variant-numeric: tabular-nums;
+}
+.ai-state {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 3px 9px;
+  border-radius: 999px;
+  background: #f1f4ef;
+  color: var(--muted);
+  font-size: 12px;
+  white-space: nowrap;
+}
+[data-state='writing'] .ai-state {
+  background: #e3f1e6;
+  color: var(--accent);
+}
+[data-state='stopped'] .ai-state {
+  background: #fff3d9;
+  color: #7a4710;
+}
+.thinking {
+  margin: 12px 14px 0;
+  border: 1px solid #ddd9f2;
+  border-radius: 12px;
+  background: #f8f7fd;
+}
+.thinking summary {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 12px;
+  color: #574d8a;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  list-style: none;
+}
+.thinking summary::-webkit-details-marker {
+  display: none;
+}
+.thinking summary span {
+  color: #857eaa;
+  font-size: 12px;
+  font-weight: 400;
+}
+.thinking summary .pi-chevron-down {
+  margin-left: auto;
+  font-size: 12px;
+  transition: transform 200ms ease;
+}
+.thinking[open] summary .pi-chevron-down {
+  transform: rotate(180deg);
+}
+.thinking-body {
+  max-height: 260px;
+  overflow: auto;
+  padding: 0 12px 10px;
+  color: #4b4766;
+  font-size: 13px;
+  line-height: 1.65;
+}
+.thinking-body p {
+  margin: 0 0 8px;
+}
+.thinking-body strong {
+  color: #3a3363;
+  font-weight: 600;
+}
+.ai-sections {
+  display: grid;
+  gap: 14px;
+  padding: 12px 14px 14px;
+}
+.ai-section h5 {
+  margin: 0 0 6px;
+  color: var(--muted);
+  font-size: 13px;
+  font-weight: 600;
+}
+.ai-text {
+  margin: 0;
+  font-size: 13.5px;
+  line-height: 1.65;
+  white-space: pre-wrap;
+}
+.ai-items {
+  display: grid;
+  gap: 6px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+.ai-items li {
+  position: relative;
+  padding-left: 14px;
+  font-size: 13.5px;
+  line-height: 1.6;
+  overflow-wrap: anywhere;
+}
+.ai-items li::before {
+  content: '';
+  position: absolute;
+  left: 2px;
+  top: 0.62em;
+  width: 5px;
+  height: 5px;
+  border-radius: 50%;
+  background: #9bbfa6;
+}
+.ai-items small {
+  display: block;
+  margin-top: 2px;
+  color: var(--muted);
+  font-size: 12px;
+  font-style: italic;
+}
+.ai-tag {
+  display: inline-block;
+  margin-left: 6px;
+  padding: 0 7px;
+  border-radius: 6px;
+  background: #f1f4ef;
+  color: var(--muted);
+  font-size: 12px;
+  line-height: 1.7;
+  vertical-align: 1px;
+  white-space: nowrap;
+}
+.ai-tag[data-tone='accent'] {
+  background: #e3f1e6;
+  color: var(--accent);
+}
+.ai-tag[data-tone='good'] {
+  background: #e6f4dc;
+  color: #3f6b1f;
+}
+.ai-tag[data-tone='warn'] {
+  background: #fff3d9;
+  color: #7a4710;
+}
+.ai-tag[data-tone='bad'] {
+  background: #fff1f2;
+  color: #913647;
+}
+.ai-chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+.ai-chips li {
+  padding: 2px 9px;
+  border: 1px solid #d6e4d8;
+  border-radius: 999px;
+  background: #f5f9f3;
+  font-size: 12px;
+}
+.ai-group {
+  margin-top: 8px;
+  padding: 10px 12px;
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  background: #fafbf6;
+}
+.ai-group:first-of-type {
+  margin-top: 0;
+}
+.ai-group-head {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 4px;
+  margin-bottom: 6px;
+}
+.ai-group-head strong {
+  font-size: 13.5px;
+  font-weight: 600;
+}
+.ai-group .ai-chips {
+  margin-bottom: 8px;
+}
+.ai-subtitle {
+  margin: 0 0 8px;
+  color: var(--muted);
+  font-size: 12.5px;
+}
+.ai-waiting {
+  margin: 12px 14px;
+  color: var(--muted);
+  font-size: 13px;
+}
+.ai-sections .ai-waiting {
+  margin: 0;
+}
+.ai-caret {
+  display: block;
+  width: 8px;
+  height: 15px;
+  border-radius: 2px;
+  background: var(--accent);
+  animation: ai-caret 1s steps(2, start) infinite;
+}
+@keyframes ai-caret {
+  to {
+    visibility: hidden;
+  }
+}
+.ai-raw {
+  margin: 0 14px 12px;
+}
+.ai-raw summary {
+  color: var(--accent);
+  font-size: 12px;
+  cursor: pointer;
+}
+.ai-raw pre,
+.ai-raw-text {
+  max-height: 280px;
+  overflow: auto;
+  margin: 8px 0 0;
+  padding: 10px 12px;
+  border-radius: 10px;
+  background: #f4f6f2;
+  font:
+    12px/1.55 ui-monospace,
+    'Cascadia Code',
+    Consolas,
+    monospace;
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+}
+.ai-raw-text {
+  margin: 12px 14px 14px;
+}

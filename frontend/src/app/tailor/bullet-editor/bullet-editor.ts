@@ -48,15 +48,15 @@ export class BulletEditor {
     const amount = `about ${String(layout.characters)}`;
     switch (layout.issue) {
       case 'wrapped':
-        return `${length} · runs past two lines; cut ${amount}`;
+        return `${length}. Runs past two lines, cut ${amount}`;
       case 'dangling':
-        return `${length} · a few words spill onto line 2; cut ${amount} to fit one line`;
+        return `${length}. A few words spill onto line 2, cut ${amount} to fit one line`;
       case 'late':
-        return `${length} · its number prints on line 2; move it earlier`;
+        return `${length}. Its number prints on line 2, move it earlier`;
       case 'short':
-        return `${length} · 1 line, with room for ${amount} more`;
+        return `${length}. 1 line, with room for ${amount} more`;
       case null:
-        return `${length} · ${String(layout.lines)} line${layout.lines === 1 ? '' : 's'}`;
+        return `${length}, ${String(layout.lines)} line${layout.lines === 1 ? '' : 's'}`;
     }
   }
 
