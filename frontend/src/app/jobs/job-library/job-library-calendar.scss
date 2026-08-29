@@ -1,2 +1,3 @@
 .calendar-workspace {
   display: grid;
+  grid-template-columns: auto minmax(0, 1fr) auto;
