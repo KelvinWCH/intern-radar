@@ -1,0 +1,67 @@
+:host {
+  display: block;
+  min-width: 0;
+}
+.unfitted {
+  display: grid;
+  gap: 12px;
+}
+.unfitted-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+.unfitted-head h4 {
+  margin: 0;
+  font-size: 15px;
+  font-weight: 600;
+}
+.unfitted-tools {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 10px;
+}
+.unfitted-note {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  margin: 0;
+  padding: 10px 12px;
+  border: 1px solid #e7ca8c;
+  border-left: 3px solid #c98a1c;
+  border-radius: 10px;
+  background: #fff8e8;
+  color: #6b4511;
+  font-size: 13px;
+  line-height: 1.6;
+}
+.unfitted-note .pi {
+  margin-top: 3px;
+  color: #b37514;
+}
+.unfitted-note strong {
+  font-weight: 600;
+}
+
+.text-preview > summary {
+  cursor: pointer;
+  color: var(--accent);
+  font-size: 13px;
+  list-style: none;
+  padding: 4px 0;
+}
+
+.text-preview > summary::before {
+  content: '▸ ';
+}
+
+.text-preview[open] > summary::before {
+  content: '▾ ';
+}
+
+.text-preview[open] > summary {
+  margin-bottom: 12px;
+}
