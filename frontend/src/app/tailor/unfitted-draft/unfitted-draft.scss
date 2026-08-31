@@ -31,7 +31,6 @@
   margin: 0;
   padding: 10px 12px;
   border: 1px solid #e7ca8c;
-  border-left: 3px solid #c98a1c;
   border-radius: 10px;
   background: #fff8e8;
   color: #6b4511;
@@ -50,16 +49,7 @@
   cursor: pointer;
   color: var(--accent);
   font-size: 13px;
-  list-style: none;
   padding: 4px 0;
-}
-
-.text-preview > summary::before {
-  content: '▸ ';
-}
-
-.text-preview[open] > summary::before {
-  content: '▾ ';
 }
 
 .text-preview[open] > summary {
