@@ -1,0 +1,38 @@
+:host {
+  display: grid;
+  justify-items: end;
+  gap: 6px;
+  min-width: 0;
+  margin-left: auto;
+}
+.controls {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 8px;
+}
+.note {
+  font-size: 13px;
+  color: #75430a;
+}
+.stop {
+  color: #913044;
+}
+.stop:hover:not(:disabled) {
+  background: #fce8ed;
+}
+.error {
+  margin: 0;
+  font-size: 13px;
+  color: #913044;
+}
+@media (max-width: 600px) {
+  :host {
+    margin-left: 0;
+    justify-items: start;
+  }
+  .controls {
+    justify-content: flex-start;
+  }
+}
