@@ -1,0 +1,59 @@
+<section class="transcript">
+  <div class="eyebrow" id="transcript-heading">Transcript</div>
+  @if (transcript(); as saved) {
+    <div class="file">
+      <i class="pi pi-file-pdf"></i>
+      <span>
+        <strong [title]="saved.filename">{{ saved.filename }}</strong>
+        <small
+          >{{ saved.page_count }} {{ saved.page_count === 1 ? 'page' : 'pages' }} ·
+          {{ saved.size / 1024 | number: '1.0-0' }} KB ·
+          {{ saved.uploaded_at * 1000 | date: 'MMM d' }}</small
+        >
+      </span>
+    </div>
+    <div class="actions">
+      <button type="button" class="button-secondary" [disabled]="!!busy()" (click)="download()">
+        <i class="pi pi-download"></i>
+        {{ busy() === 'download' ? 'Preparing…' : 'Download' }}
+      </button>
+      <label class="button-secondary" [class.disabled]="!!busy()">
+        <input
+          type="file"
+          accept="application/pdf,.pdf"
+          hidden
+          [disabled]="!!busy()"
+          (change)="upload(picker)"
+          #picker
+        />
+        {{ busy() === 'upload' ? 'Uploading…' : 'Replace' }}
+      </label>
+      <button
+        type="button"
+        class="icon-button"
+        title="Remove transcript"
+        [disabled]="!!busy()"
+        (click)="remove()"
+      >
+        <i class="pi pi-trash"></i>
+      </button>
+    </div>
+  } @else if (transcript() === null) {
+    <p class="hint">Add your transcript PDF to include it when you download an application.</p>
+    <label class="button-secondary upload" [class.disabled]="!!busy()">
+      <input
+        type="file"
+        accept="application/pdf,.pdf"
+        hidden
+        [disabled]="!!busy()"
+        (change)="upload(picker)"
+        #picker
+      />
+      <i class="pi pi-file-arrow-up"></i>
+      {{ busy() === 'upload' ? 'Uploading…' : 'Upload transcript' }}
+    </label>
+  }
+  @if (error()) {
+    <p class="notice error">{{ error() }}</p>
+  }
+</section>
