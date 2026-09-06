@@ -1,0 +1,226 @@
+:host {
+  display: block;
+  width: 100%;
+  min-width: 0;
+}
+.scrape-panel {
+  padding: 16px;
+  max-height: var(--workspace-panel-height, 680px);
+  overflow: auto;
+  scrollbar-width: thin;
+  border-color: #d6e2d3;
+  background: radial-gradient(ellipse at 95% 0%, #eaf2cd70, transparent 45%), #fcfdf7;
+  border-radius: 20px;
+}
+header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 16px;
+}
+h2 {
+  font-size: 17px;
+  margin: 0;
+  letter-spacing: -0.02em;
+}
+fieldset {
+  border: 0;
+  margin: 12px 0 0;
+  padding: 0;
+  min-width: 0;
+}
+.source-toolbar {
+  display: flex;
+  gap: 2px;
+  align-items: center;
+  margin: 8px 0 6px;
+  min-height: 24px;
+  font-size: 13px;
+  color: var(--muted);
+}
+.source-toolbar span {
+  margin-right: auto;
+}
+.source-toolbar button {
+  border: none;
+  padding: 5px 8px;
+  border-radius: 7px;
+  background: none;
+  color: var(--accent);
+  cursor: pointer;
+  font-size: 13px;
+  font-weight: 600;
+}
+.source-toolbar button:hover {
+  background: var(--accent-soft);
+}
+.source-list {
+  height: 148px;
+  overflow: auto;
+  background: #f5f9f6;
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  padding: 4px 10px;
+  scrollbar-width: thin;
+  scrollbar-gutter: stable;
+}
+.source-skeleton {
+  display: grid;
+  gap: 16px;
+  padding: 8px 0;
+}
+.source-skeleton span {
+  height: 16px;
+  width: 75%;
+  background: #e1ebe4;
+  border-radius: 4px;
+}
+.source-list label {
+  display: flex;
+  align-items: start;
+  gap: 9px;
+  padding: 7px 0;
+  font-size: 14px;
+  line-height: 1.4;
+}
+.source-list small {
+  display: block;
+  font-size: 13px;
+  color: var(--muted);
+  margin-top: 3px;
+}
+.source-list input {
+  accent-color: var(--accent);
+}
+.unavailable {
+  opacity: 0.6;
+}
+.advanced {
+  margin: 8px 0;
+  font-size: 14px;
+}
+.advanced summary {
+  color: var(--accent);
+  cursor: pointer;
+  min-height: 32px;
+  line-height: 32px;
+}
+.advanced[open] summary {
+  margin-bottom: 12px;
+}
+.run-button {
+  width: 100%;
+}
+.current-run {
+  margin-top: 12px;
+  border: 1px solid #d4e1c4;
+  border-radius: 13px;
+  padding: 10px;
+  background: linear-gradient(150deg, #f6f9ee, #fffefa);
+}
+.run-progress {
+  margin: 8px 0;
+  --p-progressbar-height: 6px;
+}
+.run-progress-head {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 6px;
+  font-size: 14px;
+}
+.run-progress-head strong {
+  color: var(--accent);
+}
+.run-progress .hint {
+  margin: 6px 0 0;
+}
+.current-run > div:first-child {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  font-size: 15px;
+}
+.run-usage {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 8px;
+  margin: 10px 0 6px;
+}
+.run-usage div {
+  padding: 0 10px;
+  border-left: 1px solid var(--line);
+}
+.run-usage dt {
+  font-size: 13px;
+  color: var(--muted);
+}
+.run-usage dd {
+  margin: 2px 0 0;
+  font-size: 15px;
+  font-weight: 600;
+}
+
+.ai-choice {
+  display: flex;
+  gap: 12px;
+  padding: 0;
+  margin: 12px 0;
+  cursor: pointer;
+  input {
+    margin-top: 3px;
+    accent-color: var(--accent);
+  }
+  strong {
+    display: block;
+    font-size: 14px;
+  }
+  small {
+    display: block;
+    margin-top: 2px;
+    color: var(--muted);
+    font-size: 13px;
+    line-height: 1.5;
+  }
+}
+.scrape-panel .field-grid {
+  gap: 12px;
+}
+.scrape-panel .field label {
+  margin-bottom: 6px;
+  font-size: 14px;
+}
+.scrape-panel .field input,
+.scrape-panel .field select {
+  min-height: 40px;
+  padding: 8px 10px;
+}
+.run-mode,
+.run-details {
+  color: var(--muted);
+  font-size: 13px;
+}
+.run-details summary {
+  color: var(--accent);
+  cursor: pointer;
+  line-height: 24px;
+}
+.run-usage div:first-child {
+  padding-left: 0;
+  border-left: 0;
+}
+.connection-error {
+  display: flex;
+  gap: 12px;
+  align-items: center;
+  margin-top: 12px;
+  font-size: 14px;
+  color: var(--accent);
+}
+.connection-error span {
+  flex: 1;
+}
+@media (max-width: 1000px) {
+  .scrape-panel {
+    max-height: none;
+  }
+}
