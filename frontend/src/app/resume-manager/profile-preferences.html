@@ -1,0 +1,61 @@
+<div class="preferences-grid">
+  @for (field of listFields; track field.key) {
+    <div class="field">
+      <label [for]="'preference-' + field.key">{{ field.label }}</label>
+      <textarea
+        [id]="'preference-' + field.key"
+        rows="2"
+        [placeholder]="field.placeholder"
+        [ngModel]="value()[field.key].join('\n')"
+        [ngModelOptions]="{ standalone: true }"
+        (ngModelChange)="updateList(field.key, $event)"
+      ></textarea>
+    </div>
+  }
+</div>
+<p class="hint" id="preference-lists-hint">One item per line.</p>
+<details class="eligibility">
+  <summary>Eligibility <span>Education & work authorization</span></summary>
+  <p class="hint">Leave anything you're unsure about blank or unknown.</p>
+  <div class="eligibility-numbers">
+    @for (field of numberFields; track field.key) {
+      <div class="field">
+        <label [for]="'preference-' + field.key">{{ field.label }}</label>
+        <input
+          [id]="'preference-' + field.key"
+          type="number"
+          [min]="field.min"
+          [max]="field.max"
+          [step]="field.step"
+          [(ngModel)]="value()[field.key]"
+          [ngModelOptions]="{ standalone: true }"
+        />
+      </div>
+    }
+  </div>
+  <div class="preferences-grid eligibility-choices">
+    @for (field of booleanFields; track field.key) {
+      <div class="field">
+        <label [for]="'preference-' + field.key">{{ field.label }}</label>
+        <select
+          [id]="'preference-' + field.key"
+          [(ngModel)]="value()[field.key]"
+          [ngModelOptions]="{ standalone: true }"
+        >
+          <option [ngValue]="null">Unknown</option>
+          <option [ngValue]="true">Yes</option>
+          <option [ngValue]="false">No</option>
+        </select>
+      </div>
+    }
+    <div class="field authorization">
+      <label for="preference-work-authorization">Work authorization details</label>
+      <textarea
+        id="preference-work-authorization"
+        rows="2"
+        [(ngModel)]="value().work_authorization"
+        [ngModelOptions]="{ standalone: true }"
+      ></textarea>
+    </div>
+  </div>
+</details>

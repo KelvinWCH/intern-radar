@@ -20,7 +20,7 @@
         <tr class="run-row" [class.open]="open" (click)="toggle(run)">
           <td class="run-source">
             <strong>{{ run.source }}</strong>
-            <span class="started">{{ run.started_at * 1000 | date: 'MMM d · h:mm:ss a' }}</span>
+            <span class="started">{{ run.started_at * 1000 | date: 'MMM d, h:mm:ss a' }}</span>
           </td>
           <td>{{ scrapeTriggerLabel(run.trigger) }}</td>
           <td>
