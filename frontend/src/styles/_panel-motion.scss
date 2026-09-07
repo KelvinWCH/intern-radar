@@ -1,0 +1,65 @@
+[data-panel-state='running'] {
+  position: relative;
+}
+[data-panel-state='running']::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 20px;
+  right: 20px;
+  height: 3px;
+  border-radius: 4px;
+  pointer-events: none;
+  background: linear-gradient(90deg, transparent, #79ad8a, #d3da9d, transparent);
+  background-size: 200% 100%;
+}
+.console-status[data-active='true']::before {
+  content: '';
+  display: inline-block;
+  width: 7px;
+  height: 7px;
+  margin-right: 7px;
+  border-radius: 50%;
+  background: #9ad6af;
+}
+.compact-next-step[data-actionable='true'] {
+  border-radius: 12px;
+  padding-inline: 12px;
+  background: #f8faf6;
+}
+[data-panel-state='running']::after {
+  animation: panel-working 3s linear infinite paused;
+}
+[data-panel-state='running'][data-in-view]::after {
+  animation-play-state: running;
+}
+.console-panel[data-in-view] .console-status[data-active='true']::before {
+  animation: live-breath 2.5s ease-in-out infinite;
+}
+.panel[data-in-view] .compact-next-step[data-actionable='true'] .pi-compass {
+  border-radius: 50%;
+  animation: action-breath 5s ease-in-out infinite;
+}
+.panel:focus-within .compact-next-step .pi-compass {
+  animation-play-state: paused;
+}
+.p-progressbar-value {
+  transition: width 850ms cubic-bezier(0.22, 1, 0.36, 1);
+}
+@keyframes panel-working {
+  to {
+    background-position: -200% 0;
+  }
+}
+@keyframes live-breath {
+  50% {
+    box-shadow: 0 0 0 5px #9ad6af16;
+    opacity: 0.6;
+  }
+}
+@keyframes action-breath {
+  50% {
+    box-shadow: 0 0 0 7px #bda86916;
+    color: #8b712e;
+  }
+}
