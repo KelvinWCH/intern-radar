@@ -7,13 +7,13 @@ import type {
 
 export const contextFields: readonly EditorFieldDefinition[] = [
   ['context.company_mission', 'Company or organization mission', false, true],
-  ['context.team_purpose', 'Team purpose · who did the work help?', false, true],
+  ['context.team_purpose', 'Team purpose (who did the work help?)', false, true],
   ['context.contribution', 'What I personally did', false, true],
-  ['context.impact', 'Impact · results, measurements, and who benefited', false, true],
+  ['context.impact', 'Impact (results, numbers and who benefited)', false, true],
   ['context.challenges', 'Challenges and decisions', false, true],
   ['context.learnings', 'What I learned', false, true],
-  ['context.tools', 'Tools I used · one per line', false, true],
-  ['context.evidence', 'Evidence links and notes · one per line', false, true],
+  ['context.tools', 'Tools I used (one per line)', false, true],
+  ['context.evidence', 'Evidence links and notes (one per line)', false, true],
 ];
 
 export const dateFieldDefinitions: readonly EditorFieldDefinition[] = [
@@ -37,7 +37,7 @@ export const sectionFieldDefinitions: Record<ResumeSectionKey, readonly EditorFi
     ['location', 'Location', false],
     ...dateFieldDefinitions,
     ['bullets', 'Resume bullet points', false, true],
-    ['raw_description', 'Context for tailoring · paste a brag sheet', true, true],
+    ['raw_description', 'Context for tailoring (paste a brag sheet)', true, true],
     ...contextFields,
   ],
   projects: [
@@ -46,7 +46,7 @@ export const sectionFieldDefinitions: Record<ResumeSectionKey, readonly EditorFi
     ['technologies', 'Project tech stack: most relevant first', false, true],
     ...dateFieldDefinitions,
     ['bullets', 'Resume bullet points', false, true],
-    ['raw_description', 'Context for tailoring · paste a brag sheet', true, true],
+    ['raw_description', 'Context for tailoring (paste a brag sheet)', true, true],
     ...contextFields,
   ],
   skills: [
@@ -55,7 +55,7 @@ export const sectionFieldDefinitions: Record<ResumeSectionKey, readonly EditorFi
   ],
   additional_sections: [
     ['title', 'Section title', true],
-    ['items', 'Entries · one per line', true, true],
+    ['items', 'Entries (one per line)', true, true],
   ],
   stories: [
     ['title', 'Story title', true],
@@ -65,8 +65,8 @@ export const sectionFieldDefinitions: Record<ResumeSectionKey, readonly EditorFi
     ['action', 'What I did', true, true],
     ['result', 'Result and impact', false, true],
     ['learning', 'What I learned', false, true],
-    ['skills', 'Skills demonstrated · one per line', false, true],
-    ['evidence', 'Evidence references · one per line', false, true],
+    ['skills', 'Skills demonstrated (one per line)', false, true],
+    ['evidence', 'Evidence references (one per line)', false, true],
   ],
   answers: [
     ['question', 'Question', true, true],
