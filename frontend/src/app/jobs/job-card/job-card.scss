@@ -1,0 +1,206 @@
+@use '../../../styles/badges';
+:host {
+  display: block;
+}
+.job-row {
+  display: grid;
+  grid-template-columns: 34px minmax(0, 1fr) auto;
+  align-items: center;
+  gap: 8px 12px;
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  padding: 10px 12px;
+  background: linear-gradient(135deg, #ffffff, #f7faf6);
+}
+.job-row:hover,
+.job-row:focus-within {
+  border-color: #acc4b4;
+  box-shadow: 0 4px 14px #183e2c08;
+}
+.company-mark {
+  display: grid;
+  place-items: center;
+  align-self: start;
+  width: 34px;
+  height: 34px;
+  border-radius: 10px;
+  background: var(--accent-soft);
+  color: var(--accent);
+  font-size: 17px;
+  font-weight: 500;
+}
+.job-row.prestige {
+  border-color: #e8d9b4;
+  background: #fff9e8;
+}
+.prestige .company-mark,
+.prestige-badge {
+  color: #735418;
+  background: #f7edce;
+}
+.prestige-badge,
+.term {
+  @include badges.label;
+}
+.job-content {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  column-gap: 12px;
+  min-width: 0;
+  overflow-wrap: anywhere;
+}
+.job-content > * {
+  flex-basis: 100%;
+}
+.job-content > .job-meta,
+.job-content > .job-badges {
+  flex-basis: auto;
+}
+.job-content > .job-badges {
+  margin-top: 4px;
+}
+.company-name {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 6px;
+  font-size: 13px;
+  color: var(--muted);
+  margin: 0 0 1px;
+}
+h3 {
+  font-size: 15px;
+  line-height: 1.4;
+  margin: 0;
+  font-weight: 500;
+}
+h3 a {
+  color: var(--text);
+  text-decoration: none;
+}
+h3 a:hover {
+  color: var(--accent);
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+.job-summary {
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  margin: 7px 0 0;
+  font-size: 13px;
+  line-height: 1.6;
+  color: var(--muted);
+}
+.location {
+  display: inline-flex;
+  align-items: baseline;
+  gap: 5px;
+  line-height: 1.6;
+}
+.job-meta {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 4px 10px;
+  margin-top: 4px;
+  font-size: 13px;
+  color: var(--muted);
+}
+.term {
+  background: var(--accent-soft);
+  color: var(--accent);
+}
+.application-status {
+  @include badges.status;
+}
+.job-description {
+  font-size: 13px;
+  margin-top: 6px;
+}
+.job-actions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: flex-end;
+  grid-column: 3;
+  grid-row: 1;
+  gap: 6px;
+}
+.job-action {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 7px;
+  min-height: 34px;
+  padding: 6px 11px;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  background: var(--surface);
+  color: var(--accent);
+  font-size: 13px;
+  font-weight: 600;
+  text-decoration: none;
+}
+.job-action:hover {
+  background: var(--accent-soft);
+  border-color: var(--accent);
+}
+.job-action.primary {
+  background: var(--accent);
+  border-color: var(--accent);
+  color: #fff;
+}
+.job-action.primary:hover {
+  background: var(--accent-hover);
+}
+.job-action .pi {
+  font-size: 13px;
+}
+.job-link {
+  width: 34px;
+  padding: 6px;
+}
+.job-description summary {
+  width: fit-content;
+  cursor: pointer;
+  color: var(--accent);
+}
+.job-description p {
+  white-space: pre-wrap;
+  line-height: 1.7;
+  max-height: 240px;
+  overflow-y: auto;
+}
+.job-row.tech {
+  border-color: #ecdce0;
+  background: #fff7f8;
+}
+.tech .company-mark {
+  color: #994c5b;
+  background: #f9ebee;
+}
+.tech .prestige-badge {
+  color: #a33f4b;
+  background: #fcebed;
+  border-color: #f1cfd4;
+}
+@container (max-width: 720px) {
+  .job-row {
+    grid-template-columns: 34px minmax(0, 1fr);
+  }
+  .job-actions {
+    grid-column: 2;
+    grid-row: auto;
+    justify-content: flex-start;
+  }
+}
+.job-row,
+.job-action {
+  transition:
+    background-color 160ms ease,
+    border-color 160ms ease,
+    box-shadow 160ms ease;
+}

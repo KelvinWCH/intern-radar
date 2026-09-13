@@ -121,7 +121,9 @@ def generate_one_page(
                     return accept(best[0], best[1], best[3])
                 raise AiCompletionError(error.summary) from None
             feedback = base + "\n# Required revision\n" + str(error)
-            report_progress(on_progress, "retry", f"Revising writing · draft {attempt + 2} of 3")
+            report_progress(
+                on_progress, "retry", f"Revising the writing (draft {attempt + 2} of 3)"
+            )
             continue
         except DocumentLayoutError as error:
             stalled = (
@@ -163,7 +165,9 @@ def generate_one_page(
                     "Could not produce a readable one-page document after three drafts. "
                     "Shorten the source metadata or select less content; no document was returned."
                 ) from None
-            report_progress(on_progress, "retry", f"Tightening page fit · draft {attempt + 2} of 3")
+            report_progress(
+                on_progress, "retry", f"Tightening the page fit (draft {attempt + 2} of 3)"
+            )
             feedback = base + (
                 "\n# Required revision after actual PDF compilation\n"
                 + str(error)
@@ -219,7 +223,7 @@ def generate_one_page(
             on_progress,
             "retry",
             f"{'Fixing bullet line breaks' if problems else 'Filling the page'}"
-            f" · draft {attempt + 2} of 3",
+            f" (draft {attempt + 2} of 3)",
         )
     raise RuntimeError("Unreachable generation state")
 
