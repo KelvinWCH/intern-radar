@@ -1,0 +1,106 @@
+<div class="workspace-page">
+  <header class="page-head">
+    <div>
+      <h2>Scrape history</h2>
+    </div>
+    <button
+      type="button"
+      class="button-secondary button-sm"
+      (click)="load(0, true)"
+      [disabled]="loading()"
+    >
+      <i class="pi pi-refresh" [class.pi-spin]="loading()"></i>
+      {{ loading() ? 'Refreshing...' : 'Refresh' }}
+    </button>
+  </header>
+  @if (error()) {
+    <p class="notice error">{{ error() }}</p>
+  }
+  @if (scrapeTasks().length) {
+    <h3>Recent workspace runs</h3>
+    <div class="task-list">
+      @for (task of scrapeTasks(); track task.id) {
+        <details class="panel">
+          <summary>
+            <span class="status-pill" [attr.data-status]="task.status">{{
+              task.status | titlecase
+            }}</span
+            ><strong>{{ task.created_at * 1000 | date: 'MMM d, y, h:mm a' }}</strong
+            ><span
+              >{{ task.settings.sources.length }} sources,
+              {{ duration(task.elapsed_seconds) }}</span
+            >
+          </summary>
+          <div class="task-meta">
+            <span
+              >Started
+              {{ task.started_at ? (task.started_at * 1000 | date: 'medium') : 'Queued' }}</span
+            ><span
+              >Finished
+              {{ task.finished_at ? (task.finished_at * 1000 | date: 'medium') : 'Pending' }}</span
+            ><span>Time cap {{ duration(task.settings.max_runtime_seconds) }}</span
+            ><span>Up to {{ task.settings.max_ai_calls }} AI calls per source</span
+            ><span>Up to {{ task.settings.max_downloads }} downloads per source</span>
+          </div>
+          <p class="hint">Selected: {{ task.settings.sources.join(', ') }}</p>
+          @if (task.error) {
+            <p class="notice error">{{ task.error }}</p>
+          }
+          <app-run-table [runs]="task.runs" />
+        </details>
+      }
+    </div>
+  }
+  <section class="panel table-panel attempts">
+    <form
+      class="attempts-head"
+      title="Filters apply to each page of 20 attempts. Duplicate counts include repeated encounters."
+      (ngSubmit)="load()"
+    >
+      <h3>All source attempts</h3>
+      <input
+        id="history-source"
+        name="source"
+        [(ngModel)]="source"
+        placeholder="Source name (exact)"
+      />
+      <select id="history-status" name="status" [(ngModel)]="status">
+        <option value="">All outcomes</option>
+        <option value="completed">Completed</option>
+        <option value="not_modified">Cached / not modified</option>
+        <option value="running">Running</option>
+        <option value="failed">Failed</option>
+      </select>
+      <button class="button-secondary button-sm" type="submit" [disabled]="loading()">Apply</button>
+    </form>
+    @if (historyPage(); as results) {
+      @if (!results.items.length && results.nextCursor) {
+        <p class="hint empty-page">
+          No matches on this page. Older attempts are available with Next.
+        </p>
+      }
+      <app-run-table [runs]="results.items" />
+      <div class="pagination">
+        <button
+          type="button"
+          class="button-secondary button-sm"
+          [disabled]="
+            loading() || historyNavigation.cursor(results.offset - results.limit) === undefined
+          "
+          (click)="load(results.offset - results.limit)"
+        >
+          <i class="pi pi-chevron-left"></i> Previous</button
+        ><span
+          >Page {{ results.offset / results.limit + 1 }}, {{ results.items.length }} matches</span
+        ><button
+          type="button"
+          class="button-secondary button-sm"
+          [disabled]="loading() || !results.nextCursor"
+          (click)="load(results.offset + results.limit)"
+        >
+          Next <i class="pi pi-chevron-right"></i>
+        </button>
+      </div>
+    }
+  </section>
+</div>
