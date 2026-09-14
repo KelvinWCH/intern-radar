@@ -66,7 +66,7 @@ export class DocumentHistory {
       documentId: item.id,
       kind,
       title: kind === 'resume' ? 'Tailored resume' : 'Cover letter',
-      subtitle: `${item.company} · ${item.title}`,
+      subtitle: `${item.title} at ${item.company}`,
     });
   }
   protected load(offset = 0): void {

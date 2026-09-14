@@ -3,8 +3,8 @@ import type { TailoringEvent } from '../models/document.models';
 export const tailoringStepIcons: Record<TailoringEvent['stage'], string> = {
   queued: 'pi-clock',
   prepare: 'pi-cog',
-  ai: 'pi-sparkles',
-  output: 'pi-sparkles',
+  ai: 'pi-microchip-ai',
+  output: 'pi-file',
   validate: 'pi-check-circle',
   compile: 'pi-file-pdf',
   retry: 'pi-refresh',

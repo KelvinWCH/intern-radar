@@ -1,0 +1,59 @@
+:host {
+  display: block;
+  min-width: 0;
+}
+.completion {
+  margin-top: 6px;
+  color: var(--muted);
+  font-size: 12px;
+  line-height: 1.5;
+}
+.has-suggestion {
+  border: 1px solid var(--border, #d7e4e3);
+  border-radius: 8px;
+  background: var(--surface, #fff);
+  padding: 12px;
+}
+.suggestion-heading,
+.completion-idle,
+.completion-actions {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+.suggestion-heading {
+  justify-content: space-between;
+}
+.suggestion-heading small {
+  overflow-wrap: anywhere;
+}
+.suggestion-text {
+  margin: 8px 0 12px;
+  color: var(--text, #213c3c);
+  font-size: 14px;
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+}
+.completion-idle > span {
+  flex: 1;
+}
+button {
+  border: 0;
+  background: transparent;
+  color: var(--muted);
+  cursor: pointer;
+  padding: 4px 0;
+  font-size: 12px;
+}
+button.accept {
+  color: var(--accent, #168279);
+  font-weight: 600;
+}
+kbd {
+  font: inherit;
+  padding: 2px 5px;
+  border: 1px solid var(--border, #d7e4e3);
+  border-radius: 4px;
+  margin-right: 4px;
+}
