@@ -1,0 +1,194 @@
+.scraped-scope {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 12px;
+}
+.scraped-scope,
+.search-toolbar {
+  .switch-track {
+    width: 30px;
+    height: 18px;
+    border-radius: 10px;
+    background: var(--muted);
+    padding: 3px;
+    &::after {
+      content: '';
+      display: block;
+      width: 12px;
+      height: 12px;
+      border-radius: 50%;
+      background: white;
+    }
+  }
+  .checked {
+    background: var(--accent-soft);
+    color: var(--accent);
+    .switch-track {
+      background: var(--accent);
+      &::after {
+        transform: translateX(12px);
+      }
+    }
+  }
+}
+.week-navigation,
+.deletion-notice {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: wrap;
+  margin: 12px 0 6px;
+}
+.library-options,
+.page-actions,
+.maintenance-actions {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+.library-options {
+  justify-content: space-between;
+  margin-bottom: 10px;
+}
+.maintenance-actions {
+  margin-right: auto;
+}
+.job-workspace .async-status {
+  height: 40px;
+  min-height: 0;
+  margin: 0;
+  overflow: auto;
+  justify-content: flex-end;
+  font-size: 14px;
+  gap: 8px;
+  .button-secondary {
+    min-height: 32px;
+    padding-block: 4px;
+  }
+}
+.view-toggle {
+  display: flex;
+  gap: 3px;
+  padding: 3px;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  background: white;
+}
+.view-toggle button {
+  min-height: 40px;
+  border: 0;
+  background: none;
+  padding: 8px 14px;
+  border-radius: 5px;
+  font: inherit;
+  font-size: 13px;
+  cursor: pointer;
+  color: var(--muted);
+}
+.view-toggle .selected {
+  background: var(--accent-soft);
+  color: var(--accent);
+}
+.week-navigation .range-heading {
+  flex: 1;
+  min-width: 170px;
+}
+.week-navigation strong {
+  font-size: 17px;
+}
+.week-navigation span {
+  display: block;
+  color: var(--muted);
+  font-size: 12px;
+  margin-top: 5px;
+}
+.calendar-zoom {
+  margin-left: 12px;
+}
+.view-toggle button:disabled {
+  cursor: default;
+  opacity: 0.6;
+}
+@media (max-width: 700px) {
+  .job-workspace .list-heading {
+    grid-template-columns: auto minmax(0, 1fr);
+    > span {
+      display: none;
+    }
+  }
+  .calendar-zoom {
+    margin-left: 0;
+    width: 100%;
+    button {
+      flex: 1;
+    }
+  }
+}
+.card-actions {
+  display: flex;
+  flex-direction: row;
+  gap: 8px;
+}
+.job-workspace .delete-job {
+  color: #a45360;
+  cursor: pointer;
+}
+.job-workspace .delete-job:hover {
+  background: #fff0f1;
+  color: #943647;
+}
+.deletion-notice {
+  justify-content: space-between;
+}
+
+.job-workspace {
+  .filter-panel {
+    padding: 10px 12px;
+  }
+  .search-toolbar {
+    display: grid;
+    grid-template-columns: minmax(180px, 1fr) minmax(190px, 230px) minmax(150px, 180px) auto auto;
+    align-items: end;
+    gap: 10px;
+  }
+  .toronto-switch.checked {
+    background: var(--accent-soft);
+    color: var(--accent);
+  }
+  .search-input {
+    position: relative;
+    i {
+      position: absolute;
+      left: 12px;
+      top: 50%;
+      transform: translateY(-50%);
+      pointer-events: none;
+      color: var(--muted);
+      font-size: 13px;
+    }
+    input {
+      padding-left: 34px;
+    }
+  }
+  .filter-toggle.expanded {
+    background: var(--accent-soft);
+    color: var(--accent);
+  }
+  .advanced-fields {
+    border-top: 1px solid var(--line);
+    margin-top: 12px;
+    padding-top: 12px;
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 16px;
+  }
+  .filter-actions {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: flex-end;
+    gap: 8px;
+    margin-top: 16px;
+  }
+}

@@ -1,0 +1,15 @@
+SEARCH_PATH = "/hcmRestApi/resources/latest/recruitingCEJobRequisitions"
+DETAIL_PATH = "/hcmRestApi/resources/latest/recruitingCEJobRequisitionDetails"
+HOST_PATTERN = r"[a-z0-9-]+(?:\.[a-z0-9-]+)*\.oraclecloud\.com"
+SITE_PATH_PATTERN = r"/hcmUI/CandidateExperience/[a-z]{2}(?:-[A-Za-z]{2})?/sites/([A-Za-z0-9_-]+)/?"
+COUNTRY = "Canada"
+PAGE_SIZE = 50
+MAX_LISTING_PAGES = 200
+MAX_RESPONSE_BYTES = 8 * 1024 * 1024
+MAX_SNAPSHOT_BYTES = 64 * 1024 * 1024
+DETAIL_WORKERS = 3
+DETAIL_BATCH_DELAY_SECONDS = 1.0
+MAX_REQUEST_ATTEMPTS = 4
+RETRY_BASE_SECONDS = 5.0
+MAX_RETRY_DELAY_SECONDS = 60.0
+RETRYABLE_STATUS_CODES = frozenset({408, 429, 500, 502, 503, 504})
