@@ -151,7 +151,7 @@ describe('DailyReport', (): void => {
   it('retries after an error', async (): Promise<void> => {
     latest().error(new Error('Offline'));
     await fixture.whenStable();
-    expect(element.querySelector('.message-panel')?.textContent).toContain('couldn’t load');
+    expect(element.querySelector('.message-panel')?.textContent).toContain("couldn't load");
     button('Try again').click();
     await fixture.whenStable();
     expect(requests).toHaveLength(2);

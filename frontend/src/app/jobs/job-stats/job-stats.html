@@ -57,7 +57,7 @@
         <dt title="The latest on-demand check of the posting page">Last link check</dt>
         <dd [title]="check.detail">
           {{ check.status === 'open' ? 'Open' : check.status === 'closed' ? 'Closed' : 'Unclear' }}
-          · {{ check.checkedAt * 1000 | date: 'MMM d, h:mm a' }}
+          ({{ check.checkedAt * 1000 | date: 'MMM d, h:mm a' }})
         </dd>
       </div>
     }

@@ -1,0 +1,86 @@
+<section
+  title="Completed scrapes for this day. Duplicates are unchanged matches of saved listings."
+>
+  <dl class="statistics">
+    <div class="new-jobs">
+      <dt>New jobs</dt>
+      <dd [class.metric-loading]="state().status === 'loading'">
+        {{ state().summary?.created ?? '-' }}
+      </dd>
+    </div>
+    <div
+      title="Previously saved listings with unchanged content. Each repeat encounter counts; updates are separate."
+    >
+      <dt>Duplicates</dt>
+      <dd [class.metric-loading]="state().status === 'loading'">
+        {{ state().summary?.duplicates ?? '-' }}
+      </dd>
+    </div>
+    <div>
+      <dt>Updated</dt>
+      <dd [class.metric-loading]="state().status === 'loading'">
+        {{ state().summary?.updated ?? '-' }}
+      </dd>
+    </div>
+    <div>
+      <dt>Scrape runs</dt>
+      <dd [class.metric-loading]="state().status === 'loading'">
+        {{ state().summary?.runs ?? '-' }}
+      </dd>
+    </div>
+  </dl>
+  @let summary = state().summary;
+  <dl class="usage-row">
+    <div>
+      <dt>AI tokens</dt>
+      <dd
+        [class.metric-loading]="state().status === 'loading'"
+        [title]="
+          (summary?.inputTokens ?? 0 | number) +
+          ' in, ' +
+          (summary?.outputTokens ?? 0 | number) +
+          ' out'
+        "
+      >
+        {{ summary ? formatTokens(summary.inputTokens + summary.outputTokens) : '-' }}
+      </dd>
+    </div>
+    <div>
+      <dt>scraping</dt>
+      <dd [class.metric-loading]="state().status === 'loading'">
+        {{ summary ? duration(summary.scrapeSeconds) : '-' }}
+      </dd>
+    </div>
+  </dl>
+  <p class="statistics-note">
+    @switch (state().status) {
+      @case ('loading') {
+        <i class="pi pi-spinner pi-spin"></i>
+        Loading scrape statistics...
+      }
+      @case ('error') {
+        Statistics unavailable. Use Refresh to try again.
+      }
+      @case ('ready') {
+        @if (state().summary?.failedRuns) {
+          <a class="warning" routerLink="/scrapes"
+            ><i class="pi pi-exclamation-triangle"></i> {{ state().summary?.failedRuns }} failed
+            runs</a
+          >
+        }
+        @if (state().summary?.runningRuns) {
+          <span class="running"
+            ><span class="status-dot"></span>{{ state().summary?.runningRuns }} running</span
+          >
+        }
+        @if (
+          state().summary?.runs === 0 &&
+          !state().summary?.runningRuns &&
+          !state().summary?.failedRuns
+        ) {
+          No scrapes completed yet for this day.
+        }
+      }
+    }
+  </p>
+</section>
