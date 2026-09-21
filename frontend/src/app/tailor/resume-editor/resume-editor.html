@@ -1,0 +1,497 @@
+<div class="workspace-page resume-editor">
+  <a class="subtle-link back-link" [routerLink]="backLink()" [queryParams]="{ version: id }"
+    ><i class="pi pi-arrow-left"></i> Back to the job's documents</a
+  >
+  @if (loadError()) {
+    <p class="notice error">{{ loadError() }}</p>
+    <button class="button-secondary" type="button" (click)="load()">Retry</button>
+  }
+  @if (document(); as saved) {
+    <header class="page-head editor-head">
+      <div class="head-copy">
+        <p class="target-company">
+          <em>{{ saved.company }}</em>
+        </p>
+        <h2>Edit your <em>resume.</em><span class="heading-spark">✳</span></h2>
+        <p>
+          {{ saved.title }} ·
+          @if (saved.resume_edited_at; as edited) {
+            your edits, saved {{ edited * 1000 | date: 'MMM d · h:mm a' }}
+          } @else if (saved.resume) {
+            as tailoring wrote it
+          } @else {
+            the closest draft, which didn't fit one page
+          }
+        </p>
+      </div>
+      @if (saved.resume && !dirty()) {
+        <app-document-actions [documentId]="saved.id" kind="resume" />
+      }
+    </header>
+    @if (!editable()) {
+      <p class="notice">{{ lockedReason() }}</p>
+    } @else if (draft(); as fields) {
+      <div class="editor-layout">
+        <div class="editor-fields" (input)="changed()" (change)="changed()">
+          <div class="save-bar panel">
+            @if (issues().length) {
+              <ul class="issues">
+                @for (issue of issues(); track issue) {
+                  <li>{{ issue }}</li>
+                }
+              </ul>
+            }
+            @if (saveError()) {
+              <p class="notice error">{{ saveError() }}</p>
+            }
+            @if (message()) {
+              <p class="notice">{{ message() }}</p>
+            }
+            <div class="save-actions">
+              <span class="save-state">{{
+                dirty() ? 'Unsaved changes' : 'Everything is saved'
+              }}</span>
+              @if (saved.generated_resume) {
+                <button
+                  type="button"
+                  class="button-secondary"
+                  [disabled]="saving()"
+                  (click)="startFromGenerated()"
+                >
+                  Start from the generated version
+                </button>
+              }
+              <button
+                type="button"
+                class="button-secondary"
+                [disabled]="!dirty() || saving()"
+                (click)="discard()"
+              >
+                Discard changes
+              </button>
+              <button
+                type="button"
+                class="button-primary"
+                [disabled]="!dirty() || saving() || issues().length > 0"
+                (click)="save()"
+              >
+                {{ saving() ? 'Saving…' : 'Save resume' }}
+              </button>
+            </div>
+          </div>
+          <section class="panel detail-panel">
+            <header class="detail-heading">
+              <h3 class="detail-title" id="header-heading">
+                <span class="detail-mark"><i class="pi pi-id-card"></i></span>Header
+              </h3>
+            </header>
+            <div class="meta-grid">
+              <div class="field span-6">
+                <label for="resume-name">Name *</label>
+                <input id="resume-name" required [(ngModel)]="fields.header.name" />
+              </div>
+              <div class="field span-3">
+                <label for="resume-email">Email</label>
+                <input id="resume-email" type="email" [(ngModel)]="fields.header.email" />
+              </div>
+              <div class="field span-3">
+                <label for="resume-phone">Phone</label>
+                <input id="resume-phone" type="tel" [(ngModel)]="fields.header.phone" />
+              </div>
+              <div class="field span-2">
+                <label for="resume-location">Location</label>
+                <input id="resume-location" [(ngModel)]="fields.header.location" />
+              </div>
+              <div class="field span-2">
+                <label for="resume-linkedin">LinkedIn</label>
+                <input
+                  id="resume-linkedin"
+                  spellcheck="false"
+                  placeholder="linkedin.com/in/your-name"
+                  [(ngModel)]="fields.header.linkedin"
+                />
+              </div>
+              <div class="field span-2">
+                <label for="resume-github">GitHub</label>
+                <input
+                  id="resume-github"
+                  spellcheck="false"
+                  placeholder="github.com/your-username"
+                  [(ngModel)]="fields.header.github"
+                />
+              </div>
+            </div>
+            <app-bullet-editor
+              [items]="fields.header.links"
+              label="Other links"
+              noun="link"
+              name="the header"
+              idPrefix="resume-link"
+              addLabel="Add link"
+              placeholder="https://your-portfolio.dev"
+              [rows]="1"
+              (changed)="changed()"
+            />
+          </section>
+
+          <section class="panel detail-panel">
+            <header class="detail-heading">
+              <h3 class="detail-title" id="education-heading">
+                <span class="detail-mark"><i class="pi pi-graduation-cap"></i></span>Education
+              </h3>
+              <button
+                type="button"
+                class="button-secondary button-sm"
+                (click)="add(fields.education, newEducation())"
+              >
+                <i class="pi pi-plus"></i> Add school
+              </button>
+            </header>
+            @for (entry of fields.education; track $index; let index = $index) {
+              <div class="entry">
+                <div class="entry-head">
+                  <strong [id]="'education-' + index">{{
+                    entry.institution || 'New school'
+                  }}</strong>
+                  <app-entry-tools
+                    [items]="fields.education"
+                    [index]="index"
+                    [name]="entry.institution || 'school ' + (index + 1)"
+                    (changed)="changed()"
+                  />
+                </div>
+                <div class="meta-grid">
+                  <div class="field span-6">
+                    <label [for]="'education-' + index + '-school'">School *</label>
+                    <input
+                      [id]="'education-' + index + '-school'"
+                      required
+                      [(ngModel)]="entry.institution"
+                    />
+                  </div>
+                  <div class="field span-3">
+                    <label [for]="'education-' + index + '-degree'">Degree</label>
+                    <input [id]="'education-' + index + '-degree'" [(ngModel)]="entry.degree" />
+                  </div>
+                  <div class="field span-3">
+                    <label [for]="'education-' + index + '-field'">Field of study</label>
+                    <input
+                      [id]="'education-' + index + '-field'"
+                      [(ngModel)]="entry.fieldOfStudy"
+                    />
+                  </div>
+                  <div class="field span-2">
+                    <label [for]="'education-' + index + '-location'">Location</label>
+                    <input [id]="'education-' + index + '-location'" [(ngModel)]="entry.location" />
+                  </div>
+                  <div class="field span-2 date">
+                    <label [for]="'education-' + index + '-start'">Start</label>
+                    <input [id]="'education-' + index + '-start'" [(ngModel)]="entry.startDate" />
+                  </div>
+                  <div class="field span-2 date">
+                    <label [for]="'education-' + index + '-end'">End</label>
+                    <input [id]="'education-' + index + '-end'" [(ngModel)]="entry.endDate" />
+                  </div>
+                  <div class="field span-6">
+                    <label [for]="'education-' + index + '-courses'">Relevant coursework</label>
+                    <input
+                      [id]="'education-' + index + '-courses'"
+                      [(ngModel)]="entry.coursework"
+                    />
+                    <p class="field-note" [id]="'education-' + index + '-courses-note'">
+                      {{
+                        printedNote('education', index, entry.coursework) ||
+                          'Separate courses with commas, most relevant first.'
+                      }}
+                    </p>
+                  </div>
+                </div>
+                <app-bullet-editor
+                  [items]="entry.bullets"
+                  label="Highlights"
+                  noun="highlight"
+                  [name]="entry.institution || 'school ' + (index + 1)"
+                  [idPrefix]="'education-' + index + '-highlight'"
+                  addLabel="Add highlight"
+                  placeholder="GPA, honours, or another highlight"
+                  [rows]="1"
+                  (changed)="changed()"
+                />
+              </div>
+            } @empty {
+              <p class="hint">No education on this resume.</p>
+            }
+          </section>
+
+          <section class="panel detail-panel">
+            <header class="detail-heading">
+              <h3 class="detail-title" id="experience-heading">
+                <span class="detail-mark"><i class="pi pi-briefcase"></i></span>Experience
+              </h3>
+              <button
+                type="button"
+                class="button-secondary button-sm"
+                (click)="add(fields.experience, newExperience())"
+              >
+                <i class="pi pi-plus"></i> Add job
+              </button>
+            </header>
+            @for (entry of fields.experience; track $index; let index = $index) {
+              <div class="entry">
+                <div class="entry-head">
+                  <strong [id]="'experience-' + index"
+                    >{{ entry.title || 'New job'
+                    }}{{ entry.company ? ' · ' + entry.company : '' }}</strong
+                  >
+                  <app-entry-tools
+                    [items]="fields.experience"
+                    [index]="index"
+                    [name]="entry.title || 'job ' + (index + 1)"
+                    (changed)="changed()"
+                  />
+                </div>
+                <div class="meta-grid">
+                  <div class="field span-3">
+                    <label [for]="'experience-' + index + '-title'">Job title *</label>
+                    <input
+                      [id]="'experience-' + index + '-title'"
+                      required
+                      [(ngModel)]="entry.title"
+                    />
+                  </div>
+                  <div class="field span-3">
+                    <label [for]="'experience-' + index + '-company'">Company *</label>
+                    <input
+                      [id]="'experience-' + index + '-company'"
+                      required
+                      [(ngModel)]="entry.company"
+                    />
+                  </div>
+                  <div class="field span-2">
+                    <label [for]="'experience-' + index + '-location'">Location</label>
+                    <input
+                      [id]="'experience-' + index + '-location'"
+                      [(ngModel)]="entry.location"
+                    />
+                  </div>
+                  <div class="field span-2 date">
+                    <label [for]="'experience-' + index + '-start'">Start</label>
+                    <input [id]="'experience-' + index + '-start'" [(ngModel)]="entry.startDate" />
+                  </div>
+                  <div class="field span-2 date">
+                    <label [for]="'experience-' + index + '-end'">End</label>
+                    <input [id]="'experience-' + index + '-end'" [(ngModel)]="entry.endDate" />
+                  </div>
+                </div>
+                <app-bullet-editor
+                  [items]="entry.bullets"
+                  [name]="entry.title || 'job ' + (index + 1)"
+                  [idPrefix]="'experience-' + index + '-bullet'"
+                  section="experience"
+                  [entry]="index"
+                  [layouts]="layouts()"
+                  placeholder="What you did and what it changed"
+                  (changed)="changed()"
+                />
+              </div>
+            } @empty {
+              <p class="hint">No experience on this resume.</p>
+            }
+          </section>
+
+          <section class="panel detail-panel">
+            <header class="detail-heading">
+              <h3 class="detail-title" id="projects-heading">
+                <span class="detail-mark"><i class="pi pi-code"></i></span>Projects
+              </h3>
+              <button
+                type="button"
+                class="button-secondary button-sm"
+                (click)="add(fields.projects, newProject())"
+              >
+                <i class="pi pi-plus"></i> Add project
+              </button>
+            </header>
+            @for (entry of fields.projects; track $index; let index = $index) {
+              <div class="entry">
+                <div class="entry-head">
+                  <strong [id]="'project-' + index">{{ entry.name || 'New project' }}</strong>
+                  <app-entry-tools
+                    [items]="fields.projects"
+                    [index]="index"
+                    [name]="entry.name || 'project ' + (index + 1)"
+                    (changed)="changed()"
+                  />
+                </div>
+                <div class="meta-grid">
+                  <div class="field span-3">
+                    <label [for]="'project-' + index + '-name'">Name *</label>
+                    <input [id]="'project-' + index + '-name'" required [(ngModel)]="entry.name" />
+                  </div>
+                  <div class="field span-3">
+                    <label [for]="'project-' + index + '-url'">Link</label>
+                    <input
+                      [id]="'project-' + index + '-url'"
+                      spellcheck="false"
+                      placeholder="https://github.com/you/project"
+                      [(ngModel)]="entry.url"
+                    />
+                  </div>
+                  <div class="field span-4">
+                    <label [for]="'project-' + index + '-stack'">Technologies</label>
+                    <input [id]="'project-' + index + '-stack'" [(ngModel)]="entry.technologies" />
+                    <p class="field-note" [id]="'project-' + index + '-stack-note'">
+                      {{
+                        printedNote('projects', index, entry.technologies) ||
+                          'Separate with commas, most relevant first.'
+                      }}
+                    </p>
+                  </div>
+                  <div class="field span-1 date">
+                    <label [for]="'project-' + index + '-start'">Start</label>
+                    <input [id]="'project-' + index + '-start'" [(ngModel)]="entry.startDate" />
+                  </div>
+                  <div class="field span-1 date">
+                    <label [for]="'project-' + index + '-end'">End</label>
+                    <input [id]="'project-' + index + '-end'" [(ngModel)]="entry.endDate" />
+                  </div>
+                </div>
+                <app-bullet-editor
+                  [items]="entry.bullets"
+                  [name]="entry.name || 'project ' + (index + 1)"
+                  [idPrefix]="'project-' + index + '-bullet'"
+                  section="projects"
+                  [entry]="index"
+                  [layouts]="layouts()"
+                  placeholder="What you built, for whom, and the result"
+                  (changed)="changed()"
+                />
+              </div>
+            } @empty {
+              <p class="hint">No projects on this resume.</p>
+            }
+          </section>
+
+          <section class="panel detail-panel">
+            <header class="detail-heading">
+              <h3 class="detail-title" id="skills-heading">
+                <span class="detail-mark"><i class="pi pi-star"></i></span>Technical skills
+              </h3>
+              <button
+                type="button"
+                class="button-secondary button-sm"
+                (click)="add(fields.skills, { category: '', items: '' })"
+              >
+                <i class="pi pi-plus"></i> Add category
+              </button>
+            </header>
+            @for (group of fields.skills; track $index; let index = $index) {
+              <div class="skill-row">
+                <div class="field">
+                  <label [for]="'skill-' + index + '-category'">Category</label>
+                  <input [id]="'skill-' + index + '-category'" [(ngModel)]="group.category" />
+                </div>
+                <div class="field">
+                  <label [for]="'skill-' + index + '-items'">Skills</label>
+                  <input [id]="'skill-' + index + '-items'" [(ngModel)]="group.items" />
+                </div>
+                <app-entry-tools
+                  [items]="fields.skills"
+                  [index]="index"
+                  [name]="group.category || 'skill category ' + (index + 1)"
+                  (changed)="changed()"
+                />
+              </div>
+            }
+            <p class="hint">Separate skills with commas. A category with no skills is left off.</p>
+          </section>
+
+          <section class="panel detail-panel">
+            <header class="detail-heading">
+              <h3 class="detail-title" id="sections-heading">
+                <span class="detail-mark"><i class="pi pi-th-large"></i></span>Other sections
+              </h3>
+              <button
+                type="button"
+                class="button-secondary button-sm"
+                (click)="add(fields.additionalSections, { title: '', items: [''] })"
+              >
+                <i class="pi pi-plus"></i> Add section
+              </button>
+            </header>
+            @for (section of fields.additionalSections; track $index; let index = $index) {
+              <div class="entry">
+                <div class="entry-head">
+                  <strong [id]="'section-' + index">{{ section.title || 'New section' }}</strong>
+                  <app-entry-tools
+                    [items]="fields.additionalSections"
+                    [index]="index"
+                    [name]="section.title || 'section ' + (index + 1)"
+                    (changed)="changed()"
+                  />
+                </div>
+                <div class="field">
+                  <label [for]="'section-' + index + '-title'">Title</label>
+                  <input
+                    [id]="'section-' + index + '-title'"
+                    placeholder="Awards"
+                    [(ngModel)]="section.title"
+                  />
+                </div>
+                <app-bullet-editor
+                  [items]="section.items"
+                  label="Items"
+                  noun="item"
+                  [name]="section.title || 'section ' + (index + 1)"
+                  [idPrefix]="'section-' + index + '-item'"
+                  addLabel="Add item"
+                  [rows]="1"
+                  (changed)="changed()"
+                />
+              </div>
+            } @empty {
+              <p class="hint">No awards, certifications, or other sections.</p>
+            }
+          </section>
+        </div>
+
+        <aside class="preview-column">
+          <section class="panel detail-panel">
+            <header class="detail-heading">
+              <h3 class="detail-title" id="preview-heading">
+                <span class="detail-mark"><i class="pi pi-file-pdf"></i></span>Preview
+              </h3>
+              <button
+                type="button"
+                class="button-secondary button-sm"
+                [disabled]="previewing()"
+                (click)="refreshPreview()"
+              >
+                <i class="pi pi-refresh"></i> Refresh
+              </button>
+            </header>
+            <p class="fit" [attr.data-state]="fit()?.state">
+              {{ fit()?.label }}
+            </p>
+            @if (previewError()) {
+              <p class="notice error">{{ previewError() }}</p>
+            }
+            <div class="page-frame">
+              @if (previewUrl(); as url) {
+                <iframe [src]="url" title="PDF preview of your edited resume"></iframe>
+              } @else {
+                <p>{{ previewing() ? 'Building the PDF…' : 'The PDF appears here.' }}</p>
+              }
+            </div>
+            <p class="hint">
+              The notes under each bullet come from this preview. Aim for one or two full lines a
+              bullet; saving needs the resume to fit one page.
+            </p>
+          </section>
+        </aside>
+      </div>
+    }
+  } @else if (!loadError()) {
+    <p class="empty-state">Loading your resume…</p>
+  }
+</div>
