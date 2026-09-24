@@ -1,0 +1,69 @@
+@if (duplicates()?.items?.length) {
+  <details class="duplicates">
+    <summary>Duplicated jobs ({{ duplicates()?.items?.length }})</summary>
+    <p class="explanation">Compare the original postings to verify these matches.</p>
+    <ul>
+      @for (job of duplicates()?.items ?? []; track job.id) {
+        <li>
+          <h4>
+            <a [routerLink]="['/jobs', job.id]">{{ job.title }}</a> · {{ job.company }}
+          </h4>
+          <p class="evidence">{{ reason(job.matchReason) }}</p>
+          <p><app-posted-date [timestamp]="job.datePosted" /></p>
+          <dl>
+            <div>
+              <dt>Source</dt>
+              <dd>{{ job.source }}</dd>
+            </div>
+            <div>
+              <dt>Source record</dt>
+              <dd>{{ job.externalId }}</dd>
+            </div>
+            <div>
+              <dt>Employer ID</dt>
+              <dd>{{ job.sourceJobId ?? 'Not supplied' }}</dd>
+            </div>
+            <div>
+              <dt>First discovered</dt>
+              <dd>{{ job.firstSeenAt * 1000 | date: 'medium' }}</dd>
+            </div>
+          </dl>
+          <div class="links">
+            @if (job.listingUrl; as url) {
+              <a [href]="url" target="_blank" rel="noopener noreferrer">Discovery page ↗</a>
+            }
+            @if (job.applicationUrl; as url) {
+              <a [href]="url" target="_blank" rel="noopener noreferrer">Original posting ↗</a>
+            }
+            @if (job.sourceUrl; as url) {
+              <a [href]="url" target="_blank" rel="noopener noreferrer">Source page ↗</a>
+            }
+          </div>
+          @if (job.rawDescription) {
+            <details>
+              <summary>Compare saved description</summary>
+              <pre>{{ job.rawDescription }}</pre>
+            </details>
+          } @else if (descriptions().has(job.id)) {
+            <details open>
+              <summary>Compare saved description</summary>
+              <pre>{{ descriptions().get(job.id) ?? 'No description was saved.' }}</pre>
+            </details>
+          } @else {
+            @if (errors().get(job.id); as error) {
+              <p>{{ error }}</p>
+            }
+            <button
+              type="button"
+              class="button-secondary"
+              [disabled]="loading().has(job.id)"
+              (click)="loadDescription(job.id)"
+            >
+              {{ loading().has(job.id) ? 'Loading description…' : 'Compare saved description' }}
+            </button>
+          }
+        </li>
+      }
+    </ul>
+  </details>
+}
