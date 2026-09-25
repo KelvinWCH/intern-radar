@@ -1,5 +1,6 @@
 import { isRecord } from '../../shared/api-validation';
 import { parsePartialJson } from '../../shared/partial-json';
+import { eventSource } from '../event-message';
 import {
   defaultOutputKind,
   gapTags,
@@ -21,7 +22,7 @@ import type {
 
 export function outputKind(schema: string | null | undefined, message: string): OutputKind {
   const known = schema ? outputKinds[schema] : undefined;
-  return known ?? outputKindsByStep[message.split(' · ')[0] ?? ''] ?? defaultOutputKind;
+  return known ?? outputKindsByStep[eventSource(message) || message] ?? defaultOutputKind;
 }
 
 export function outputView(
@@ -131,7 +132,7 @@ function resumeSections(value: Record<string, unknown>, labels: OutputLabels): O
       withTags(
         {
           text: requirement,
-          note: shown.length ? `Shown in ${shown.join(' · ')}` : 'No supporting entry yet',
+          note: shown.length ? `Shown in ${shown.join(', ')}` : 'No supporting entry yet',
         },
         [importanceTags[text(row['importance']) ?? '']],
       ),
@@ -209,7 +210,7 @@ function reviewSections(value: Record<string, unknown>): OutputSection[] {
         }
         const quote = text(found['draft_quote']);
         const recommendation = text(found['recommendation']);
-        const note = [quote ? `“${quote}”` : '', recommendation ?? ''].filter(Boolean).join(' → ');
+        const note = [quote ? `"${quote}"` : '', recommendation ?? ''].filter(Boolean).join(' - ');
         const document = text(found['document']);
         const category = text(found['category']);
         return [
@@ -241,7 +242,7 @@ function genericSections(value: Record<string, unknown>): OutputSection[] {
           const [first, ...rest] = values;
           return {
             text: first ?? JSON.stringify(row),
-            ...(rest.length ? { note: rest.join(' · ') } : {}),
+            ...(rest.length ? { note: rest.join(', ') } : {}),
           };
         }),
       );
@@ -274,7 +275,7 @@ function finding(value: unknown): OutputItem | null {
     return null;
   }
   const quote = text(row['quote']);
-  return { text: claim, ...(quote ? { note: `“${quote}”` } : {}) };
+  return { text: claim, ...(quote ? { note: `"${quote}"` } : {}) };
 }
 
 function withTags(item: OutputItem, tags: readonly (OutputTag | undefined)[]): OutputItem {

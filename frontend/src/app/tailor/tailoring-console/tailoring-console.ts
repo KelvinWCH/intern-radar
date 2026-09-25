@@ -14,6 +14,7 @@ import { tailoringStepIcons, tailoringStepTones } from '../constants/tailoring-c
 import type { OutputLabels } from '../models/ai-output.models';
 import type { DocumentDetail, TailoringEvent } from '../models/document.models';
 import { TailoringFlow } from '../tailoring-flow/tailoring-flow';
+import { eventDetail, eventSource } from '../event-message';
 
 @Component({
   selector: 'app-tailoring-console',
@@ -55,7 +56,7 @@ export class TailoringConsole {
     const resume = document?.resume ?? document?.unfitted_resume?.document;
     return {
       experience: (resume?.experience ?? []).map(
-        (entry): string => `${entry.title} · ${entry.company}`,
+        (entry): string => `${entry.title} at ${entry.company}`,
       ),
     };
   });
@@ -101,11 +102,10 @@ export class TailoringConsole {
   }
 
   protected source(event: TailoringEvent): string {
-    const parts = event.message.split(' · ');
-    return parts.length > 1 ? (parts[0] ?? '') : '';
+    return eventSource(event.message);
   }
 
   protected detail(event: TailoringEvent): string {
-    return this.source(event) ? event.message.split(' · ').slice(1).join(' · ') : event.message;
+    return eventDetail(event.message);
   }
 }
