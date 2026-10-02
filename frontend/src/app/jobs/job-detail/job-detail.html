@@ -1,0 +1,338 @@
+<div class="workspace-page">
+  <a class="subtle-link back-link" routerLink="/jobs"><i class="pi pi-arrow-left"></i> All jobs</a>
+  @if (error()) {
+    <p class="notice error">{{ error() }}</p>
+    <button class="button-secondary" type="button" (click)="load()">Retry</button>
+  }
+  @if (job(); as item) {
+    <header class="job-header">
+      <div class="company-mark">
+        {{ item.company.slice(0, 1).toUpperCase() }}
+      </div>
+      <div class="job-heading">
+        <p class="company-line">
+          <em>{{ item.company }}</em>
+        </p>
+        <h2>{{ item.title }}<span class="heading-spark">✳</span></h2>
+        <ul class="job-meta">
+          <li>
+            <span class="status-pill" [attr.data-status]="status">{{
+              status === 'new' ? 'Untracked' : (status | titlecase)
+            }}</span>
+          </li>
+          @if (item.locations.length) {
+            <li><i class="pi pi-map-marker"></i>{{ item.locations.join(' · ') }}</li>
+          }
+          @if (item.terms.length) {
+            <li><i class="pi pi-calendar"></i>{{ item.terms.join(' · ') }}</li>
+          }
+          @if (item.category) {
+            <li><i class="pi pi-briefcase"></i>{{ item.category }}</li>
+          }
+          @if (item.details?.sponsorship) {
+            <li><i class="pi pi-globe"></i>{{ item.details?.sponsorship }}</li>
+          }
+          <li>
+            <i class="pi pi-clock"></i><app-posted-date [timestamp]="item.details?.date_posted" />
+          </li>
+          @if (item.match) {
+            <li><app-match-badge [match]="item.match" /></li>
+          }
+        </ul>
+      </div>
+      <div class="header-actions">
+        @if (item.applyUrl && item.applyUrl !== item.applicationUrl) {
+          <a class="button-primary" [href]="item.applyUrl" target="_blank" rel="noopener noreferrer"
+            >Open application <i class="pi pi-arrow-up-right"></i
+          ></a>
+        }
+        @if (item.applicationUrl) {
+          <a
+            [class.button-primary]="!item.applyUrl || item.applyUrl === item.applicationUrl"
+            [class.button-secondary]="!!item.applyUrl && item.applyUrl !== item.applicationUrl"
+            [href]="item.applicationUrl"
+            target="_blank"
+            rel="noopener noreferrer"
+            >Employer posting <i class="pi pi-external-link"></i
+          ></a>
+        }
+        @if (item.applicationUrl || item.applyUrl) {
+          <button
+            type="button"
+            class="button-secondary"
+            [disabled]="checkingLink()"
+            title="Read the posting page now to see whether it still accepts applications"
+            (click)="checkLink()"
+          >
+            <i class="pi pi-sync" [class.pi-spin]="checkingLink()"></i>
+            {{ checkingLink() ? 'Checking…' : 'Check if open' }}
+          </button>
+        }
+      </div>
+    </header>
+    <nav class="section-nav">
+      <a [routerLink]="['/jobs', item.id]" fragment="application"
+        ><i class="pi pi-bookmark"></i> Application</a
+      >
+      <a [routerLink]="['/jobs', item.id]" fragment="documents"
+        ><i class="pi pi-folder-open"></i> Documents
+        @if (item.user.documents.length) {
+          <span class="section-count">{{ item.user.documents.length }}</span>
+        }
+      </a>
+      <a [routerLink]="['/jobs', item.id]" fragment="job-details"
+        ><i class="pi pi-file-edit"></i> Job details</a
+      >
+      <a [routerLink]="['/jobs', item.id]" fragment="application-answers"
+        ><i class="pi pi-comments"></i> Questions</a
+      >
+      <a [routerLink]="['/jobs', item.id]" fragment="match"
+        ><i class="pi pi-bolt"></i> Match & history</a
+      >
+    </nav>
+    @if (linkMessage()) {
+      <p class="notice">{{ linkMessage() }}</p>
+    }
+    @if (linkError()) {
+      <p class="notice error">{{ linkError() }}</p>
+    }
+    @if (item.details?.active === false) {
+      <section class="panel closed-panel">
+        <h3><i class="pi pi-ban"></i> This posting looks closed</h3>
+        <p>
+          {{ item.metadata?.closedDetail || 'Its status is set to closed.' }}
+          @if (item.metadata?.closedAt; as closedAt) {
+            Detected {{ closedAt * 1000 | date: 'MMM d, y' }}.
+          }
+        </p>
+        <p class="hint">
+          Confirm on the employer site before tailoring. A posting that is listed again reopens
+          automatically; you can also set its posting status in the job details.
+        </p>
+      </section>
+    }
+    <form class="panel tracker" id="application" (ngSubmit)="save()">
+      <div class="tracker-head">
+        <h3><i class="pi pi-bookmark"></i> Your application</h3>
+        <span class="hint save-status">
+          <i class="pi" [class.pi-check-circle]="!saving()" [class.pi-clock]="saving()"></i>
+          {{ saving() ? 'Saving…' : saved() ? 'Saved' : 'Changes save automatically' }}
+        </span>
+      </div>
+      <div class="tracker-fields">
+        <div class="field">
+          <div class="status-field-label">
+            <label for="application-status">Status</label>
+            @if (status === 'saved' || status === 'applied') {
+              <button
+                type="button"
+                class="undo-application"
+                [disabled]="saving()"
+                (click)="changeStatus(status === 'saved' ? 'new' : 'saved')"
+              >
+                {{ status === 'saved' ? 'Unsave' : 'Undo applied' }}
+              </button>
+            }
+          </div>
+          <select
+            id="application-status"
+            name="status"
+            [ngModel]="status"
+            (ngModelChange)="changeStatus($event)"
+          >
+            @for (stage of statuses; track stage) {
+              <option [value]="stage">
+                {{ stage === 'new' ? 'Untracked' : (stage | titlecase) }}
+              </option>
+            }
+          </select>
+        </div>
+        <div class="field">
+          <div class="status-field-label"><label for="applied-date">Applied on</label></div>
+          <input
+            id="applied-date"
+            name="applied"
+            type="date"
+            [ngModel]="appliedDate"
+            (ngModelChange)="appliedDate = $event; applicationChanged()"
+            (change)="save()"
+          />
+        </div>
+        <div class="field">
+          <div class="status-field-label"><label for="follow-up">Follow up</label></div>
+          <input
+            id="follow-up"
+            name="follow"
+            type="date"
+            [ngModel]="followUp"
+            (ngModelChange)="followUp = $event; applicationChanged()"
+            (change)="save()"
+          />
+        </div>
+        <div class="field notes-field">
+          <div class="status-field-label"><label for="application-notes">Notes</label></div>
+          <textarea
+            id="application-notes"
+            name="notes"
+            rows="1"
+            maxlength="50000"
+            [ngModel]="notes"
+            (ngModelChange)="notes = $event; applicationChanged()"
+            (blur)="save()"
+            placeholder="Contacts, interview details, next steps…"
+          ></textarea>
+        </div>
+      </div>
+      @if (saveError()) {
+        <div class="tracker-error">
+          <p class="notice error">{{ saveError() }}</p>
+          <button type="button" class="button-secondary" [disabled]="saving()" (click)="save()">
+            Retry
+          </button>
+          <button type="button" class="button-secondary" [disabled]="saving()" (click)="load(true)">
+            Reload saved details
+          </button>
+        </div>
+      }
+    </form>
+    @if (item.reviewReason) {
+      <section class="panel review-panel">
+        @if (item.reviewReason === 'linkedin_blocked') {
+          <h3><i class="pi pi-flag"></i> Flagged: LinkedIn posting</h3>
+          <p>
+            The scraper never opens LinkedIn, so this posting has only the details its feed listed.
+            Review the original link, then paste or correct the description below.
+          </p>
+        } @else if (item.reviewReason === 'robots_disallowed') {
+          <h3><i class="pi pi-flag"></i> Flagged: robots.txt</h3>
+          <p>
+            The site's robots.txt asks crawlers not to open this page, so the scraper didn't. It has
+            only the details its feed listed. Review the original link, then paste or correct the
+            description below.
+          </p>
+        } @else {
+          <h3><i class="pi pi-flag"></i> Flagged: security challenge</h3>
+          <p>
+            The scraper could not access this posting. Review the original link, then paste or
+            correct the description below. Any previously saved details have been kept.
+          </p>
+        }
+        <div class="header-actions">
+          @if (item.applicationUrl) {
+            <a
+              class="button-primary"
+              [href]="item.applicationUrl"
+              target="_blank"
+              rel="noopener noreferrer"
+              >Open original posting</a
+            >
+          }
+          @if (item.reviewReason === 'security_challenge') {
+            <button
+              type="button"
+              class="button-secondary"
+              [disabled]="reviewing() || retrying()"
+              (click)="retryScrape()"
+            >
+              {{ retrying() ? 'Retrying scrape…' : 'Retry scrape' }}
+            </button>
+          }
+          <button
+            type="button"
+            class="button-secondary"
+            [disabled]="reviewing() || retrying()"
+            (click)="markReviewed()"
+          >
+            {{ reviewing() ? 'Saving…' : 'Mark reviewed' }}
+          </button>
+        </div>
+        @if (item.reviewReason === 'security_challenge') {
+          <p class="hint">
+            A successful scrape also clears this flag. A later access challenge may flag it again.
+            Browser verification may not transfer to the scraper's separate session.
+          </p>
+        }
+        @if (reviewError()) {
+          <p class="notice error">{{ reviewError() }}</p>
+        }
+      </section>
+    }
+    @if (retryMessage()) {
+      <p class="notice">{{ retryMessage() }}</p>
+    }
+    <app-job-documents
+      [company]="item.company"
+      [title]="item.title"
+      [documents]="item.user.documents"
+      [live]="tailorPanel()?.consoleDocument() ?? null"
+      [liveWorking]="tailorPanel()?.consoleWorking() ?? false"
+      [liveError]="tailorPanel()?.consoleError() ?? ''"
+      [starting]="!!tailorPanel()?.consoleVisible() && !tailorPanel()?.consoleDocument()"
+      [requestedVersion]="requestedVersion()"
+      (liveChanged)="tailorPanel()?.controlled($event)"
+      (liveUpdated)="tailorPanel()?.researchUpdated($event)"
+      (changed)="load()"
+    >
+      <app-job-tailor
+        [jobId]="item.id"
+        [hasDescription]="!!(item.cleanedDescription ?? item.rawDescription)?.trim()"
+        [cleanedDescription]="item.cleanedDescription ?? null"
+        [documents]="item.user.documents"
+        (completed)="load()"
+        (attempted)="load()"
+      />
+    </app-job-documents>
+    <div class="job-layout">
+      <div class="main-column">
+        @for (id of [item.id]; track id) {
+          <app-job-editor id="job-details" [job]="item" (saved)="job.set($event)" />
+          <app-application-question id="application-answers" [job]="item" />
+        }
+        @if (item.duplicatedJobs?.items?.length) {
+          <app-duplicated-jobs [duplicates]="item.duplicatedJobs" />
+        }
+      </div>
+      <aside id="match">
+        <app-match-panel [match]="item.match" />
+        <app-job-stats [job]="item" />
+      </aside>
+    </div>
+  } @else if (!error()) {
+    <div class="job-loading">
+      <div class="job-header loading-heading">
+        <div class="company-mark"><app-skeleton width="28px" height="28px" /></div>
+        <div class="loading-copy">
+          <app-skeleton width="120px" height="18px" />
+          <app-skeleton width="85%" height="34px" />
+          <app-skeleton width="320px" height="22px" />
+        </div>
+        <div class="header-actions">
+          <app-skeleton width="160px" height="40px" />
+        </div>
+      </div>
+      <div class="panel tracker loading-tracker">
+        <app-skeleton width="160px" height="20px" /><app-skeleton height="40px" />
+      </div>
+      <div class="panel loading-documents">
+        <app-skeleton width="30%" height="22px" />
+        <div class="loading-versions">
+          <app-skeleton height="58px" /><app-skeleton height="58px" />
+        </div>
+        <app-skeleton height="120px" />
+      </div>
+      <div class="job-layout">
+        <div class="main-column">
+          <div class="panel loading-overview">
+            <app-skeleton width="35%" height="22px" /><app-skeleton height="44px" />
+            @for (line of [0, 1, 2, 3]; track line) {
+              <app-skeleton [width]="line === 3 ? '70%' : '100%'" />
+            }
+          </div>
+        </div>
+        <div class="panel loading-tailor">
+          <app-skeleton width="50%" height="22px" /><app-skeleton /><app-skeleton />
+        </div>
+      </div>
+    </div>
+  }
+</div>
