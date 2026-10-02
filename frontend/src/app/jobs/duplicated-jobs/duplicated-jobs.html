@@ -6,7 +6,7 @@
       @for (job of duplicates()?.items ?? []; track job.id) {
         <li>
           <h4>
-            <a [routerLink]="['/jobs', job.id]">{{ job.title }}</a> · {{ job.company }}
+            <a [routerLink]="['/jobs', job.id]">{{ job.title }}</a> at {{ job.company }}
           </h4>
           <p class="evidence">{{ reason(job.matchReason) }}</p>
           <p><app-posted-date [timestamp]="job.datePosted" /></p>
@@ -30,13 +30,13 @@
           </dl>
           <div class="links">
             @if (job.listingUrl; as url) {
-              <a [href]="url" target="_blank" rel="noopener noreferrer">Discovery page ↗</a>
+              <a [href]="url" target="_blank" rel="noopener noreferrer">Discovery page</a>
             }
             @if (job.applicationUrl; as url) {
-              <a [href]="url" target="_blank" rel="noopener noreferrer">Original posting ↗</a>
+              <a [href]="url" target="_blank" rel="noopener noreferrer">Original posting</a>
             }
             @if (job.sourceUrl; as url) {
-              <a [href]="url" target="_blank" rel="noopener noreferrer">Source page ↗</a>
+              <a [href]="url" target="_blank" rel="noopener noreferrer">Source page</a>
             }
           </div>
           @if (job.rawDescription) {
@@ -59,7 +59,7 @@
               [disabled]="loading().has(job.id)"
               (click)="loadDescription(job.id)"
             >
-              {{ loading().has(job.id) ? 'Loading description…' : 'Compare saved description' }}
+              {{ loading().has(job.id) ? 'Loading description...' : 'Compare saved description' }}
             </button>
           }
         </li>

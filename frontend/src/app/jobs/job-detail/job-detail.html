@@ -11,9 +11,9 @@
       </div>
       <div class="job-heading">
         <p class="company-line">
-          <em>{{ item.company }}</em>
+          {{ item.company }}
         </p>
-        <h2>{{ item.title }}<span class="heading-spark">✳</span></h2>
+        <h2>{{ item.title }}</h2>
         <ul class="job-meta">
           <li>
             <span class="status-pill" [attr.data-status]="status">{{
@@ -21,10 +21,10 @@
             }}</span>
           </li>
           @if (item.locations.length) {
-            <li><i class="pi pi-map-marker"></i>{{ item.locations.join(' · ') }}</li>
+            <li><i class="pi pi-map-marker"></i>{{ item.locations.join(', ') }}</li>
           }
           @if (item.terms.length) {
-            <li><i class="pi pi-calendar"></i>{{ item.terms.join(' · ') }}</li>
+            <li><i class="pi pi-calendar"></i>{{ item.terms.join(', ') }}</li>
           }
           @if (item.category) {
             <li><i class="pi pi-briefcase"></i>{{ item.category }}</li>
@@ -65,7 +65,7 @@
             (click)="checkLink()"
           >
             <i class="pi pi-sync" [class.pi-spin]="checkingLink()"></i>
-            {{ checkingLink() ? 'Checking…' : 'Check if open' }}
+            {{ checkingLink() ? 'Checking...' : 'Check if open' }}
           </button>
         }
       </div>
@@ -116,7 +116,7 @@
         <h3><i class="pi pi-bookmark"></i> Your application</h3>
         <span class="hint save-status">
           <i class="pi" [class.pi-check-circle]="!saving()" [class.pi-clock]="saving()"></i>
-          {{ saving() ? 'Saving…' : saved() ? 'Saved' : 'Changes save automatically' }}
+          {{ saving() ? 'Saving...' : saved() ? 'Saved' : 'Changes save automatically' }}
         </span>
       </div>
       <div class="tracker-fields">
@@ -179,7 +179,7 @@
             [ngModel]="notes"
             (ngModelChange)="notes = $event; applicationChanged()"
             (blur)="save()"
-            placeholder="Contacts, interview details, next steps…"
+            placeholder="Contacts, interview details, next steps..."
           ></textarea>
         </div>
       </div>
@@ -234,7 +234,7 @@
               [disabled]="reviewing() || retrying()"
               (click)="retryScrape()"
             >
-              {{ retrying() ? 'Retrying scrape…' : 'Retry scrape' }}
+              {{ retrying() ? 'Retrying scrape...' : 'Retry scrape' }}
             </button>
           }
           <button
@@ -243,7 +243,7 @@
             [disabled]="reviewing() || retrying()"
             (click)="markReviewed()"
           >
-            {{ reviewing() ? 'Saving…' : 'Mark reviewed' }}
+            {{ reviewing() ? 'Saving...' : 'Mark reviewed' }}
           </button>
         </div>
         @if (item.reviewReason === 'security_challenge') {

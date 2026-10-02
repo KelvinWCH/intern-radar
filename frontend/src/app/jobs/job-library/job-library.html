@@ -1,1 +1,607 @@
 <div class="workspace-page job-workspace" [class.calendar-workspace]="view() === 'week'">
+  <header class="page-head">
+    <h2>
+      @if (view() === 'week') {
+        Job calendar
+      } @else if (tracker) {
+        Applications
+      } @else {
+        All jobs
+      }
+    </h2>
+    <div class="page-actions">
+      @if (!tracker && !filters.deleted) {
+        <div class="view-toggle">
+          <button type="button" [class.selected]="view() === 'week'" (click)="setView('week')">
+            <i class="pi pi-calendar"></i> Calendar
+          </button>
+          <button type="button" [class.selected]="view() === 'list'" (click)="setView('list')">
+            <i class="pi pi-list"></i> List
+          </button>
+        </div>
+      }
+      <a class="button-primary" routerLink="/jobs/new"><i class="pi pi-plus"></i> Add job</a>
+    </div>
+  </header>
+  <div class="library-options">
+    @if (view() === 'week') {
+      <select
+        class="calendar-status"
+        [ngModel]="filters.application_status"
+        (ngModelChange)="selectStatus($event)"
+      >
+        <option value="">All stages</option>
+        @for (status of statuses; track status) {
+          <option [value]="status">
+            {{ status === 'new' ? 'Untracked' : (status | titlecase) }}
+          </option>
+        }
+      </select>
+    } @else {
+      <nav class="stage-tabs">
+        <button
+          type="button"
+          class="stage-tab"
+          [class.selected]="!filters.application_status"
+          (click)="selectStatus('')"
+        >
+          All {{ tracker ? 'applications' : 'jobs' }}
+          <span class="stage-count">
+            @if (overview()) {
+              <span>{{ totalCount() }}</span>
+            } @else {
+              <span>-</span>
+            }
+          </span>
+        </button>
+        @for (status of statuses; track status) {
+          @if (!tracker || status !== 'new') {
+            <button
+              type="button"
+              class="stage-tab"
+              [attr.data-status]="status"
+              [class.selected]="filters.application_status === status"
+              (click)="selectStatus(status)"
+            >
+              <span class="stage-dot"></span
+              >{{ status === 'new' ? 'Untracked' : (status | titlecase) }}
+              <span class="stage-count">
+                @if (overview()) {
+                  <span>{{ overview()?.statuses?.[status] ?? 0 }}</span>
+                } @else {
+                  <span>-</span>
+                }
+              </span>
+            </button>
+          }
+        }
+      </nav>
+    }
+    @if (!tracker) {
+      <div class="scraped-scope">
+        <button
+          type="button"
+          class="button-secondary"
+          [class.checked]="filters.scope === 'all'"
+          (click)="toggleAllScraped()"
+        >
+          <span class="switch-track"></span> All scraped jobs
+        </button>
+      </div>
+    }
+  </div>
+  @if (view() !== 'week') {}
+  <section class="panel filter-panel">
+    <form (ngSubmit)="load()">
+      <div class="search-toolbar">
+        <div class="field search-field">
+          <div class="search-input">
+            <i class="pi pi-search"></i
+            ><input
+              id="search-jobs"
+              name="q"
+              [(ngModel)]="filters.q"
+              (ngModelChange)="typed()"
+              placeholder="Search role, company, or description"
+            />
+          </div>
+        </div>
+        <div class="field sort-field">
+          <select id="sort-jobs" name="sort" [(ngModel)]="filters.sort" (ngModelChange)="load()">
+            <option value="match">Best match for your profile</option>
+            <option value="recent">Recently discovered</option>
+            <option value="posted">Date posted, newest first</option>
+            <option value="company">Company A-Z</option>
+            <option value="title">Job title A-Z</option>
+            <option value="location">Location A-Z</option>
+          </select>
+        </div>
+        <div class="field match-field">
+          <select
+            id="filter-match"
+            name="match"
+            [(ngModel)]="filters.match"
+            (ngModelChange)="load()"
+          >
+            <option value="">Any match</option>
+            <option value="60">Fair or better (60+)</option>
+            <option value="75">Good or better (75+)</option>
+            <option value="85">Strong only (85+)</option>
+          </select>
+        </div>
+        <button
+          type="button"
+          class="button-secondary toronto-switch"
+          [class.checked]="!!filters.toronto"
+          (click)="filters.toronto = !filters.toronto; load()"
+        >
+          <span class="switch-track"></span> Toronto only
+        </button>
+        <button
+          type="button"
+          class="button-secondary filter-toggle"
+          [class.expanded]="advanced()"
+          (click)="advanced.set(!advanced())"
+        >
+          <i class="pi pi-sliders-h"></i> Filters
+        </button>
+        <button type="submit" hidden>Search</button>
+      </div>
+      <div id="advanced-filters" [hidden]="!advanced()">
+        <div class="advanced-fields">
+          <div class="field">
+            <label for="filter-company">Company</label
+            ><input
+              id="filter-company"
+              name="company"
+              [(ngModel)]="filters.company"
+              (ngModelChange)="typed()"
+              placeholder="Any company"
+            />
+          </div>
+          <div class="field">
+            <label for="filter-location">Location</label
+            ><input
+              id="filter-location"
+              name="location"
+              [(ngModel)]="filters.location"
+              (ngModelChange)="typed()"
+              placeholder="Any location"
+            />
+          </div>
+          <div class="field">
+            <label for="filter-source">Source</label
+            ><select
+              id="filter-source"
+              name="source"
+              [(ngModel)]="filters.source"
+              (ngModelChange)="load()"
+            >
+              <option value="">All sources</option>
+              @for (source of overview()?.sources ?? []; track source) {
+                <option [value]="source">{{ source }}</option>
+              }
+            </select>
+          </div>
+          <div class="field">
+            <label for="filter-activity">Listing status</label
+            ><select
+              id="filter-activity"
+              name="activity"
+              [(ngModel)]="filters.activity"
+              (ngModelChange)="load()"
+            >
+              <option value="all">All listings</option>
+              <option value="open">Open / unknown</option>
+              <option value="closed">Closed</option>
+            </select>
+          </div>
+          @if (view() === 'list') {
+            <div class="field">
+              <label for="filter-from">Discovered from</label
+              ><input
+                id="filter-from"
+                type="date"
+                name="from"
+                [(ngModel)]="filters.from"
+                (ngModelChange)="load()"
+              />
+            </div>
+            <div class="field">
+              <label for="filter-before">Through</label
+              ><input
+                id="filter-before"
+                type="date"
+                name="before"
+                [(ngModel)]="filters.before"
+                (ngModelChange)="load()"
+              />
+            </div>
+          }
+        </div>
+        <div class="filter-actions">
+          <div class="maintenance-actions">
+            <button type="button" class="button-secondary" (click)="toggleFlagged()">
+              <i class="pi pi-flag"></i>
+              {{ filters.flagged ? 'Clear flagged filter' : 'Flagged jobs' }}
+            </button>
+            <button type="button" class="button-secondary" (click)="toggleDeleted()">
+              {{ filters.deleted ? 'Back to jobs' : 'Deleted jobs' }}
+            </button>
+          </div>
+          <button class="button-secondary" type="button" (click)="resetFilters()">
+            Clear filters
+          </button>
+        </div>
+      </div>
+    </form>
+  </section>
+  @if (filters.deleted) {
+    <p class="loading-message">
+      Deleted jobs stay hidden after future scrapes. Restore any job to bring back its notes and
+      documents.
+    </p>
+  }
+  @if (filters.flagged) {
+    <p class="notice">
+      These postings encountered a security challenge. Open the saved link to review each job
+      manually.
+    </p>
+  }
+  @if (deletedJob(); as removed) {
+    <div class="notice deletion-notice">
+      <span>Deleted {{ removed.title }} at {{ removed.company }}.</span>
+      <button
+        class="button-secondary"
+        type="button"
+        [disabled]="pendingIds().includes(removed.id)"
+        (click)="restoreJob(removed)"
+      >
+        Undo
+      </button>
+    </div>
+  }
+  @if (view() === 'week') {
+    <nav class="week-navigation">
+      <button
+        type="button"
+        class="button-secondary"
+        [title]="dayCount() === 1 ? 'Previous day' : 'Previous ' + dayCount() + ' days'"
+        [disabled]="loading()"
+        (click)="changeRange(-1)"
+      >
+        <i class="pi pi-chevron-left"></i>
+      </button>
+      <div class="range-heading">
+        <strong>
+          @if (dayCount() === 1) {
+            {{ rangeStart() | date: 'EEE, MMM d, y' }}
+          } @else {
+            {{ rangeStart() | date: 'MMM d' }} - {{ rangeEnd() | date: 'MMM d, y' }}
+          }
+        </strong>
+        <span class="calendar-mode-help" id="calendar-mode-help">{{ calendarDescription() }}</span>
+      </div>
+      <div class="view-toggle calendar-date-mode">
+        @for (mode of calendarDateModes; track mode.value) {
+          <button
+            type="button"
+            [class.selected]="dateBasis() === mode.value"
+            (click)="setDateBasis(mode.value)"
+          >
+            <i [class]="'pi ' + mode.icon"></i>{{ mode.label }}
+          </button>
+        }
+      </div>
+      <button
+        type="button"
+        class="button-secondary"
+        [disabled]="loading() || currentRange()"
+        (click)="changeRange(0)"
+      >
+        Today
+      </button>
+      <button
+        type="button"
+        class="button-secondary"
+        [title]="dayCount() === 1 ? 'Next day' : 'Next ' + dayCount() + ' days'"
+        [disabled]="loading() || currentRange()"
+        (click)="changeRange(1)"
+      >
+        <i class="pi pi-chevron-right"></i>
+      </button>
+      <div class="view-toggle calendar-zoom">
+        @for (days of calendarDayCounts; track days) {
+          <button
+            type="button"
+            [class.selected]="dayCount() === days"
+            [disabled]="loading()"
+            (click)="setDayCount(days)"
+          >
+            {{ days }} {{ days === 1 ? 'day' : 'days' }}
+          </button>
+        }
+      </div>
+    </nav>
+  }
+  @if (displayPage(); as results) {
+    @if (view() !== 'week') {
+      <div class="list-heading">
+        <p class="result-summary">
+          @if (loading()) {
+            <app-skeleton width="110px" />
+          } @else {
+            <strong>{{ page() ? results.total : '-' }}</strong>
+            {{
+              filters.deleted
+                ? results.total === 1
+                  ? 'deleted job'
+                  : 'deleted jobs'
+                : tracker
+                  ? results.total === 1
+                    ? 'application'
+                    : 'applications'
+                  : results.total === 1
+                    ? 'opportunity'
+                    : 'opportunities'
+            }}
+          }
+        </p>
+        <div class="async-status">
+          @if (error() || actionError()) {
+            <span>{{ error() || actionError() }}</span
+            ><button type="button" class="button-secondary" (click)="load()">Retry</button>
+          } @else if (loading()) {
+            <app-loading-indicator [compact]="true" label="Loading opportunities..." />
+          } @else if (statusMessage()) {
+            <span>{{ statusMessage() }}</span>
+          }
+        </div>
+      </div>
+    }
+    @if (view() === 'week') {
+      <div class="calendar-week">
+        <app-job-week
+          [start]="rangeStart()"
+          [dayCount]="dayCount()"
+          [dateBasis]="dateBasis()"
+          [jobs]="results.items"
+          [total]="results.total"
+          [loading]="loading()"
+          [unavailable]="!!error()"
+          [pendingIds]="pendingIds()"
+          (deleteJob)="deleteJob($event)"
+        />
+      </div>
+      <div class="pagination">
+        <button
+          type="button"
+          class="button-secondary"
+          [disabled]="loading() || results.offset === 0"
+          (click)="load(results.offset - results.limit)"
+        >
+          Previous jobs
+        </button>
+        <span class="calendar-feedback">
+          @if (error() || actionError()) {
+            <span>{{ error() || actionError() }}</span>
+            <button type="button" class="button-secondary" (click)="load()">Retry</button>
+          } @else if (loading()) {
+            <app-loading-indicator [compact]="true" label="Loading jobs..." />
+          } @else {
+            {{ results.offset + (results.items.length ? 1 : 0) }}-{{
+              results.offset + results.items.length
+            }}
+            of {{ results.total }} in this range
+          }
+        </span>
+        <button
+          type="button"
+          class="button-secondary"
+          [disabled]="loading() || results.offset + results.items.length >= results.total"
+          (click)="load(results.offset + results.limit)"
+        >
+          Next jobs
+        </button>
+      </div>
+    } @else {
+      <section class="job-list">
+        @if (loading()) {
+          @for (row of [1, 2, 3, 4, 5]; track row) {
+            <div class="job-card list-skeleton">
+              <app-skeleton width="40px" height="40px" />
+              <div>
+                <app-skeleton width="35%" /><app-skeleton width="80%" height="18px" /><app-skeleton
+                  width="65%"
+                />
+              </div>
+            </div>
+          }
+        } @else if (error()) {
+          <div class="empty-results">
+            <h3>Jobs unavailable</h3>
+            <p>Use Retry above to reconnect.</p>
+          </div>
+        } @else {
+          @for (group of listGroups(); track group.job.id) {
+            @let job = group.job;
+            <article
+              class="job-card"
+              [class.prestige]="job.prestige"
+              [class.tech]="job.companyTier === 'tech'"
+              [attr.data-status]="job.user.status"
+            >
+              <div class="company-avatar" [attr.data-color]="companyColor(job.company)">
+                {{ initials(job.company) }}
+              </div>
+              <div class="job-main">
+                <div class="company-line">
+                  <span>{{ job.company }}</span>
+                  <app-match-badge [match]="job.match" />
+                  @if ((job.copies ?? 1) > 1) {
+                    <span class="copies-badge" [title]="'Saved from ' + job.copies + ' job boards'"
+                      ><i class="pi pi-copy"></i> {{ job.copies }} boards</span
+                    >
+                  }
+                  @if (job.prestige) {
+                    <span
+                      class="prestige-badge"
+                      title="On your curated list of recognizable employers"
+                    >
+                      <i class="pi pi-star-fill"></i>
+                      {{ job.companyTier === 'tech' ? 'Tech' : 'Known name' }}
+                    </span>
+                  }
+                  @if (job.reviewReason) {
+                    <span class="review-badge" title="Security challenge, review the source posting"
+                      ><i class="pi pi-flag"></i> Flagged</span
+                    >
+                  }
+                </div>
+                <a class="job-title" [routerLink]="['/jobs', job.id]">{{ job.title }}</a>
+                <div class="job-meta">
+                  <app-posted-date [timestamp]="job.details?.date_posted" />
+                  <span
+                    ><i class="pi pi-map-marker"></i>
+                    {{ job.locations.join(', ') || 'Location not specified' }}</span
+                  >
+                  @if (job.terms.length) {
+                    <span>{{ job.terms.join(', ') }}</span>
+                  }
+                  @if (job.details?.active === false) {
+                    <span class="closed-label">Listing closed</span>
+                  }
+                  @if (job.user.follow_up_at; as followUp) {
+                    <span class="follow-up"
+                      ><i class="pi pi-calendar"></i> Follow up
+                      {{ followUp * 1000 | date: 'MMM d' }}</span
+                    >
+                  }
+                </div>
+                <app-related-postings [postings]="group.postings" />
+              </div>
+              <div class="job-progress">
+                @if (!filters.deleted) {
+                  <select
+                    #statusControl
+                    class="job-status"
+                    [ngModel]="job.user.status"
+                    [disabled]="pendingIds().includes(job.id)"
+                    (change)="selectJobStatus(job, statusControl)"
+                  >
+                    @for (status of statuses; track status) {
+                      <option [value]="status">
+                        {{ status === 'new' ? 'Untracked' : (status | titlecase) }}
+                      </option>
+                    }
+                  </select>
+                  <div class="status-action">
+                    @if (pendingIds().includes(job.id)) {
+                      <span><i class="pi pi-spinner pi-spin"></i> Saving...</span>
+                    } @else if (job.user.status === 'saved' || job.user.status === 'applied') {
+                      <button
+                        type="button"
+                        class="undo-status"
+                        [title]="job.user.status === 'saved' ? 'Unsave' : 'Undo applied'"
+                        (click)="changeStatus(job, job.user.status === 'saved' ? 'new' : 'saved')"
+                      >
+                        <i class="pi pi-undo"></i>
+                      </button>
+                    }
+                  </div>
+                  <app-quick-generate [job]="job" />
+                } @else {
+                  <span class="status-pill" [attr.data-status]="job.user.status">{{
+                    job.user.status === 'new' ? 'Untracked' : (job.user.status | titlecase)
+                  }}</span>
+                }
+              </div>
+              <div class="card-actions">
+                <a
+                  class="open-job"
+                  [routerLink]="['/jobs', job.id]"
+                  [title]="'View ' + job.title + ' at ' + job.company"
+                  ><i class="pi pi-arrow-up-right"></i
+                ></a>
+                @if (filters.deleted) {
+                  <button
+                    class="open-job"
+                    type="button"
+                    title="Restore job"
+                    [disabled]="pendingIds().includes(job.id)"
+                    (click)="restoreJob(job)"
+                  >
+                    <i class="pi pi-undo"></i>
+                  </button>
+                } @else {
+                  <button
+                    class="open-job delete-job"
+                    type="button"
+                    title="Delete job"
+                    [disabled]="pendingIds().includes(job.id)"
+                    (click)="deleteJob(job)"
+                  >
+                    <i class="pi pi-trash"></i>
+                  </button>
+                }
+              </div>
+            </article>
+          } @empty {
+            <div class="empty-results">
+              <i class="pi pi-briefcase"></i>
+              <h3>{{ filters.deleted ? 'No deleted jobs' : 'No opportunities here yet' }}</h3>
+              <p>
+                {{
+                  filters.deleted
+                    ? 'Jobs you delete will appear here until you restore them.'
+                    : tracker
+                      ? 'Save a job or tailor documents to start tracking. If you have already started, try clearing your filters.'
+                      : 'Try a broader search, clear your filters, or add a job.'
+                }}
+              </p>
+              <div>
+                @if (filters.deleted) {
+                  <button class="button-secondary" type="button" (click)="toggleDeleted()">
+                    Back to jobs
+                  </button>
+                } @else {
+                  <button class="button-secondary" type="button" (click)="resetFilters()">
+                    Clear filters</button
+                  ><a class="button-primary" [routerLink]="tracker ? '/jobs' : '/jobs/new'">{{
+                    tracker ? 'Browse jobs' : 'Add a job'
+                  }}</a>
+                }
+              </div>
+            </div>
+          }
+        }
+      </section>
+      @if (results.total > results.limit || results.offset > 0) {
+        <div class="pagination">
+          <button
+            type="button"
+            class="button-secondary"
+            [disabled]="loading() || results.offset === 0"
+            (click)="load(results.offset - results.limit)"
+          >
+            Previous
+          </button>
+          <span
+            >{{ results.offset + (results.items.length ? 1 : 0) }}-{{
+              results.offset + results.items.length
+            }}
+            of {{ results.total }}</span
+          >
+          <button
+            type="button"
+            class="button-secondary"
+            [disabled]="loading() || results.offset + results.items.length >= results.total"
+            (click)="load(results.offset + results.limit)"
+          >
+            Next
+          </button>
+        </div>
+      }
+    }
+  }
+</div>
