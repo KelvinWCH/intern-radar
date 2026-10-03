@@ -10,13 +10,13 @@
     <header class="page-head editor-head">
       <div class="head-copy">
         <p class="target-company">
-          <em>{{ saved.company }}</em>
+          {{ saved.company }}
         </p>
-        <h2>Edit your <em>resume.</em><span class="heading-spark">✳</span></h2>
+        <h2>Edit your resume</h2>
         <p>
-          {{ saved.title }} ·
+          {{ saved.title }},
           @if (saved.resume_edited_at; as edited) {
-            your edits, saved {{ edited * 1000 | date: 'MMM d · h:mm a' }}
+            your edits, saved {{ edited * 1000 | date: 'MMM d, h:mm a' }}
           } @else if (saved.resume) {
             as tailoring wrote it
           } @else {
@@ -75,7 +75,7 @@
                 [disabled]="!dirty() || saving() || issues().length > 0"
                 (click)="save()"
               >
-                {{ saving() ? 'Saving…' : 'Save resume' }}
+                {{ saving() ? 'Saving...' : 'Save resume' }}
               </button>
             </div>
           </div>
@@ -241,7 +241,7 @@
                 <div class="entry-head">
                   <strong [id]="'experience-' + index"
                     >{{ entry.title || 'New job'
-                    }}{{ entry.company ? ' · ' + entry.company : '' }}</strong
+                    }}{{ entry.company ? ' at ' + entry.company : '' }}</strong
                   >
                   <app-entry-tools
                     [items]="fields.experience"
@@ -480,7 +480,7 @@
               @if (previewUrl(); as url) {
                 <iframe [src]="url" title="PDF preview of your edited resume"></iframe>
               } @else {
-                <p>{{ previewing() ? 'Building the PDF…' : 'The PDF appears here.' }}</p>
+                <p>{{ previewing() ? 'Building the PDF...' : 'The PDF appears here.' }}</p>
               }
             </div>
             <p class="hint">
@@ -492,6 +492,6 @@
       </div>
     }
   } @else if (!loadError()) {
-    <p class="empty-state">Loading your resume…</p>
+    <p class="empty-state">Loading your resume...</p>
   }
 </div>

@@ -47,7 +47,7 @@
               required
               [(ngModel)]="maxWords"
             />
-            <small id="word-limit-hint">1–1,000 words</small>
+            <small id="word-limit-hint">1 to 1,000 words</small>
           </div>
           <div class="field">
             <label for="answer-context">Your extra context <span>(optional)</span></label>
@@ -58,7 +58,7 @@
               rows="3"
               maxlength="20000"
               [(ngModel)]="context"
-              placeholder="Your motivation, a relevant example, or availability…"
+              placeholder="Your motivation, a relevant example, or availability..."
             ></textarea>
             <app-context-completion
               [textarea]="contextInput"
@@ -87,9 +87,13 @@
       </details>
       <div class="generate-row">
         <button class="button-primary" type="submit" [disabled]="busy() || !validRequest()">
-          <i [class]="busy() ? 'pi pi-spin pi-spinner' : 'pi pi-sparkles'"></i>
+          <i [class]="busy() ? 'pi pi-spin pi-spinner' : 'pi pi-pencil'"></i>
           {{
-            busy() ? 'Writing your draft…' : response() ? 'Draft another answer' : 'Draft an answer'
+            busy()
+              ? 'Writing your draft...'
+              : response()
+                ? 'Draft another answer'
+                : 'Draft an answer'
           }}
         </button>
       </div>
@@ -105,7 +109,7 @@
       </div>
       <p class="hint">
         @if (busy()) {
-          Writing and checking your draft against your sources…
+          Writing and checking your draft against your sources...
         } @else if (error() && response()?.answer) {
           Your previous answer is kept below.
         } @else if (response()?.answer) {
@@ -132,7 +136,7 @@
               ></textarea>
             </div>
             <div class="answer-footer">
-              <p class="hint">Copy your answer before leaving; drafts aren’t saved.</p>
+              <p class="hint">Copy your answer before leaving; drafts aren't saved.</p>
               <button
                 type="button"
                 class="button-secondary"

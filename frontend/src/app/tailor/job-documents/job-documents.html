@@ -1,0 +1,334 @@
+<section class="panel detail-panel documents-workspace" id="documents">
+  <app-pdf-preview-dialog #pdfPreview />
+  <header class="detail-heading">
+    <h3 class="detail-title" id="documents-heading">
+      <span class="detail-mark"><i class="pi pi-folder-open"></i></span>
+      <span>Documents</span>
+      @if (completedCount()) {
+        <span class="version-count"
+          >{{ completedCount() }} {{ completedCount() === 1 ? 'version' : 'versions' }}</span
+        >
+      }
+    </h3>
+    <a class="subtle-link" routerLink="/documents">Every job's documents →</a>
+  </header>
+  <div class="documents-grid">
+    <nav class="version-list">
+      @if (starting() && !live()) {
+        <div class="version-row selected">
+          <span class="version-name"><i class="pi pi-spinner pi-spin"></i></span>
+          <span class="version-body"><strong>New version</strong><small>Starting…</small></span>
+        </div>
+      }
+      @for (version of versions(); track version.summary.id) {
+        <button
+          type="button"
+          class="version-row"
+          [class.selected]="version.summary.id === selectedId()"
+          (click)="select(version.summary.id)"
+        >
+          <span class="version-name" [attr.data-status]="version.summary.status">
+            @if (version.number !== null) {
+              v{{ version.number }}
+            } @else if (version.summary.status === 'running') {
+              <i class="pi pi-spinner pi-spin"></i>
+            } @else if (version.summary.status === 'awaiting_review') {
+              <i class="pi pi-pause"></i>
+            } @else {
+              <i class="pi pi-times"></i>
+            }
+          </span>
+          <span class="version-body">
+            <strong>{{ contents(version.summary) }}</strong>
+            <small
+              ><time
+                [attr.datetime]="
+                  version.summary.created_at * 1000 | date: 'yyyy-MM-ddTHH:mm:ssZZZZZ'
+                "
+                [title]="version.summary.created_at * 1000 | date: 'MMM d, y · h:mm a'"
+                >{{ ago(version.summary.created_at, 1) }}</time
+              ></small
+            >
+          </span>
+          @if (version.latest) {
+            <span class="status-pill" data-status="completed">Latest</span>
+          } @else if (version.summary.status !== 'completed') {
+            <span class="status-pill" [attr.data-status]="version.summary.status">{{
+              statusLabels[version.summary.status]
+            }}</span>
+          }
+        </button>
+      } @empty {
+        @if (!starting()) {
+          <p class="versions-empty">No tailored documents yet.</p>
+        }
+      }
+    </nav>
+    <div class="generator"><ng-content /></div>
+    <div class="version-detail">
+      @if (selected(); as version) {
+        <header class="version-head">
+          <div class="version-copy">
+            <h4>
+              {{ versionName(version) }}
+              @if (version.latest) {
+                <span class="status-pill" data-status="completed">Latest</span>
+              } @else if (version.summary.status !== 'completed') {
+                <span class="status-pill" [attr.data-status]="version.summary.status">{{
+                  statusLabels[version.summary.status]
+                }}</span>
+              }
+              @if (detail()?.resume_edited_at; as edited) {
+                <span
+                  class="status-pill edited-pill"
+                  [title]="edited * 1000 | date: 'MMM d, y · h:mm a'"
+                  >Resume edited {{ ago(edited, 1) }}</span
+                >
+              }
+            </h4>
+            <p class="version-meta">
+              <span
+                ><i class="pi pi-clock"></i> Generated
+                <time
+                  [attr.datetime]="
+                    version.summary.created_at * 1000 | date: 'yyyy-MM-ddTHH:mm:ssZZZZZ'
+                  "
+                  >{{ ago(version.summary.created_at) }}</time
+                >
+                · {{ version.summary.created_at * 1000 | date: 'MMM d, y · h:mm a' }}</span
+              >
+              @if (duration(version.summary); as took) {
+                <span>· took {{ took }}</span>
+              }
+              <span>· {{ contents(version.summary) }}</span>
+            </p>
+            @if (version.summary.ai_usage) {
+              <app-ai-usage-summary [usage]="version.summary.ai_usage" />
+            }
+          </div>
+          @if (
+            version.summary.status === 'completed' &&
+            (version.summary.has_resume || version.summary.has_cover_letter)
+          ) {
+            <div class="package">
+              <button
+                type="button"
+                class="button-primary package-button"
+                [disabled]="packageBusy()"
+                (click)="downloadPackage(version.summary.id)"
+              >
+                <i
+                  class="pi"
+                  [class.pi-download]="!packageBusy()"
+                  [class.pi-spinner]="packageBusy()"
+                  [class.pi-spin]="packageBusy()"
+                ></i>
+                {{ packageBusy() ? 'Preparing download…' : 'Download application' }}
+              </button>
+              <div class="package-options">
+                <div class="format-toggle">
+                  <button
+                    type="button"
+                    [class.checked]="packageFormat() === 'pdf'"
+                    (click)="packageFormat.set('pdf')"
+                  >
+                    One PDF
+                  </button>
+                  <button
+                    type="button"
+                    [class.checked]="packageFormat() === 'zip'"
+                    (click)="packageFormat.set('zip')"
+                  >
+                    Separate files (.zip)
+                  </button>
+                </div>
+                @if (transcript()) {
+                  <label class="transcript-toggle" for="package-transcript"
+                    ><p-checkbox
+                      [binary]="true"
+                      inputId="package-transcript"
+                      [ngModel]="includeTranscript()"
+                      (ngModelChange)="includeTranscript.set($event)"
+                    />
+                    Transcript</label
+                  >
+                }
+              </div>
+              <small class="package-note">{{ packageSummary(version.summary) }}</small>
+              @if (packageError()) {
+                <p class="notice error">{{ packageError() }}</p>
+              }
+            </div>
+          }
+        </header>
+        @if (version.summary.status === 'running') {
+          <p class="notice">
+            Tailoring continues in the background. Progress and saved documents appear here
+            automatically.
+          </p>
+        } @else if (version.summary.status === 'cancelled') {
+          <p class="notice">
+            This attempt was cancelled. Its reports and any finished draft are kept below.
+          </p>
+        }
+        @if (version.summary.error) {
+          <p class="notice error">{{ version.summary.error }}</p>
+        }
+      }
+      @if (consoleShown() && !finished()) {
+        <app-tailoring-console
+          [document]="detail()"
+          [pending]="consolePending()"
+          [connected]="consoleConnected()"
+          [error]="consoleError()"
+          (changed)="consoleChanged($event)"
+        />
+      }
+      @if (detail(); as saved) {
+        @if (saved.resume || saved.cover_letter) {
+          <div class="file-grid">
+            @if (saved.resume; as resume) {
+              <article class="file-card">
+                <header>
+                  <h5><i class="pi pi-file"></i> Resume</h5>
+                  <div class="file-tools">
+                    @if (canEditResume(saved)) {
+                      <a
+                        class="button-secondary button-sm"
+                        [routerLink]="['/documents', saved.id, 'resume']"
+                        ><i class="pi pi-pencil"></i> Edit</a
+                      >
+                    }
+                    <button
+                      type="button"
+                      class="button-secondary button-sm"
+                      (click)="
+                        pdfPreview.open({
+                          documentId: saved.id,
+                          kind: 'resume',
+                          title: 'Tailored resume',
+                          subtitle: company() + ' · ' + title(),
+                        })
+                      "
+                    >
+                      <i class="pi pi-eye"></i> Preview
+                    </button>
+                    <app-document-actions [documentId]="saved.id" kind="resume" compact />
+                  </div>
+                </header>
+                <details class="text-preview">
+                  <summary>Show the resume text</summary>
+                  <app-resume-preview [resume]="resume" />
+                </details>
+              </article>
+            }
+            @if (saved.cover_letter; as letter) {
+              <article class="file-card">
+                <header>
+                  <h5><i class="pi pi-envelope"></i> Cover letter</h5>
+                  <div class="file-tools">
+                    <button
+                      type="button"
+                      class="button-secondary button-sm"
+                      (click)="
+                        pdfPreview.open({
+                          documentId: saved.id,
+                          kind: 'cover-letter',
+                          title: 'Cover letter',
+                          subtitle: company() + ' · ' + title(),
+                        })
+                      "
+                    >
+                      <i class="pi pi-eye"></i> Preview
+                    </button>
+                    <app-document-actions [documentId]="saved.id" kind="cover-letter" compact />
+                  </div>
+                </header>
+                <details class="text-preview">
+                  <summary>Show the letter text</summary>
+                  <app-cover-letter-preview [letter]="letter" />
+                </details>
+              </article>
+            }
+            @if (saved.status === 'completed') {
+              <p class="transcript-row">
+                <i class="pi pi-graduation-cap"></i>
+                <span>Transcript</span>
+                @if (transcript()) {
+                  <button
+                    type="button"
+                    class="text-button"
+                    [disabled]="transcriptBusy()"
+                    (click)="downloadTranscript()"
+                  >
+                    {{ transcriptBusy() ? 'Preparing…' : 'PDF' }}
+                  </button>
+                } @else if (transcript() === null) {
+                  <a class="text-button" routerLink="/profile">Add in profile</a>
+                }
+              </p>
+            }
+          </div>
+        }
+        @if (saved.unfitted_resume; as draft) {
+          <section class="panel detail-panel draft-section">
+            <app-unfitted-draft
+              [documentId]="saved.id"
+              [resume]="draft"
+              [editable]="canEditResume(saved)"
+            />
+          </section>
+        }
+        @if (saved.unfitted_cover_letter; as draft) {
+          <section class="panel detail-panel draft-section">
+            <app-unfitted-draft [documentId]="saved.id" [letter]="draft" />
+          </section>
+        }
+        <app-tailoring-reports
+          [document]="saved"
+          [expanded]="saved.status === 'awaiting_review'"
+          (updated)="selectedIsLive() ? liveUpdated.emit($event) : loadedChanged($event)"
+        />
+        <details class="original-target">
+          <summary>
+            <i class="pi pi-briefcase"></i> Posting text this version used · profile version
+            {{ saved.profile_revision }}
+          </summary>
+          <div class="context">
+            {{ saved.job_description || 'No job description was saved with this version.' }}
+          </div>
+        </details>
+        @if (consoleShown() && finished()) {
+          <details class="original-target activity-log">
+            <summary>
+              <i class="pi pi-chart-line"></i> How this version was made · progress and AI activity
+            </summary>
+            <app-tailoring-console
+              [document]="saved"
+              [pending]="false"
+              [connected]="consoleConnected()"
+              [error]="consoleError()"
+              (changed)="consoleChanged($event)"
+            />
+          </details>
+        }
+      } @else if (selected() && !connecting()) {
+        @if (error()) {
+          <p class="notice error">{{ error() }}</p>
+          <button type="button" class="button-secondary" (click)="retry()">Retry</button>
+        } @else {
+          <p class="version-loading"><i class="pi pi-spinner pi-spin"></i> Loading this version…</p>
+        }
+      } @else if (!selected() && !starting()) {
+        <div class="versions-empty-state">
+          <span class="detail-mark"><i class="pi pi-sparkles"></i></span>
+          <h4>No tailored documents yet</h4>
+          <p>
+            Choose a resume, a cover letter, or both, then press Research &amp; tailor. Every run
+            becomes a numbered version here, with its documents, progress, and reports.
+          </p>
+        </div>
+      }
+    </div>
+  </div>
+</section>

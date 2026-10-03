@@ -6,10 +6,10 @@
         <a [href]="'mailto:' + email">{{ email }}</a>
       }
       @if (resume().phone; as phone) {
-        <span> · </span><a [href]="phoneUrl(phone)">{{ phone }}</a>
+        <span> | </span><a [href]="phoneUrl(phone)">{{ phone }}</a>
       }
       @if (resume().location; as location) {
-        <span> · {{ location }}</span>
+        <span> | {{ location }}</span>
       }
     </p>
     @if (contactLinks().length) {
@@ -27,7 +27,7 @@
             <span>{{ link.label }}</span>
           }
           @if (!last) {
-            <span> · </span>
+            <span> | </span>
           }
         }
       </p>
@@ -41,13 +41,13 @@
           <div class="entry-heading">
             <h4>{{ entry.institution }}</h4>
             <span
-              >{{ entry.start_date }}{{ entry.start_date && entry.end_date ? ' – ' : ''
+              >{{ entry.start_date }}{{ entry.start_date && entry.end_date ? ' - ' : ''
               }}{{ entry.end_date }}</span
             >
           </div>
           <p class="entry-detail">
             {{ entry.degree }}{{ entry.degree && entry.field_of_study ? ', ' : ''
-            }}{{ entry.field_of_study }}{{ entry.location ? ' · ' + entry.location : '' }}
+            }}{{ entry.field_of_study }}{{ entry.location ? ', ' + entry.location : '' }}
           </p>
           @if (entry.coursework.length) {
             <p class="entry-detail">
@@ -73,12 +73,12 @@
           <div class="entry-heading">
             <h4>{{ entry.title }}</h4>
             <span
-              >{{ entry.start_date }}{{ entry.start_date && entry.end_date ? ' – ' : ''
+              >{{ entry.start_date }}{{ entry.start_date && entry.end_date ? ' - ' : ''
               }}{{ entry.end_date }}</span
             >
           </div>
           <p class="entry-detail">
-            {{ entry.company }}{{ entry.location ? ' · ' + entry.location : '' }}
+            {{ entry.company }}{{ entry.location ? ', ' + entry.location : '' }}
           </p>
           <ul>
             @for (bullet of entry.bullets; track $index) {
@@ -97,7 +97,7 @@
           <div class="entry-heading">
             <h4>{{ entry.name }}</h4>
             <span
-              >{{ entry.start_date }}{{ entry.start_date && entry.end_date ? ' – ' : ''
+              >{{ entry.start_date }}{{ entry.start_date && entry.end_date ? ' - ' : ''
               }}{{ entry.end_date }}</span
             >
           </div>
