@@ -1,0 +1,145 @@
+<article class="resume-paper">
+  <header>
+    <h2>{{ resume().name }}</h2>
+    <p>
+      @if (resume().email; as email) {
+        <a [href]="'mailto:' + email">{{ email }}</a>
+      }
+      @if (resume().phone; as phone) {
+        <span> · </span><a [href]="phoneUrl(phone)">{{ phone }}</a>
+      }
+      @if (resume().location; as location) {
+        <span> · {{ location }}</span>
+      }
+    </p>
+    @if (contactLinks().length) {
+      <p>
+        @for (link of contactLinks(); track $index; let last = $last) {
+          @if (link.url) {
+            <a
+              [href]="link.url"
+              [title]="link.original"
+              target="_blank"
+              rel="noopener noreferrer"
+              >{{ link.label }}</a
+            >
+          } @else {
+            <span>{{ link.label }}</span>
+          }
+          @if (!last) {
+            <span> · </span>
+          }
+        }
+      </p>
+    }
+  </header>
+  @if (resume().education.length) {
+    <section>
+      <h3>Education</h3>
+      @for (entry of resume().education; track $index) {
+        <div class="entry">
+          <div class="entry-heading">
+            <h4>{{ entry.institution }}</h4>
+            <span
+              >{{ entry.start_date }}{{ entry.start_date && entry.end_date ? ' – ' : ''
+              }}{{ entry.end_date }}</span
+            >
+          </div>
+          <p class="entry-detail">
+            {{ entry.degree }}{{ entry.degree && entry.field_of_study ? ', ' : ''
+            }}{{ entry.field_of_study }}{{ entry.location ? ' · ' + entry.location : '' }}
+          </p>
+          @if (entry.coursework.length) {
+            <p class="entry-detail">
+              <strong>Relevant Coursework:</strong> {{ entry.coursework.join(', ') }}
+            </p>
+          }
+          @if (entry.bullets.length) {
+            <ul>
+              @for (bullet of entry.bullets; track $index) {
+                <li>{{ bullet }}</li>
+              }
+            </ul>
+          }
+        </div>
+      }
+    </section>
+  }
+  @if (resume().experience.length) {
+    <section>
+      <h3>Experience</h3>
+      @for (entry of resume().experience; track $index) {
+        <div class="entry">
+          <div class="entry-heading">
+            <h4>{{ entry.title }}</h4>
+            <span
+              >{{ entry.start_date }}{{ entry.start_date && entry.end_date ? ' – ' : ''
+              }}{{ entry.end_date }}</span
+            >
+          </div>
+          <p class="entry-detail">
+            {{ entry.company }}{{ entry.location ? ' · ' + entry.location : '' }}
+          </p>
+          <ul>
+            @for (bullet of entry.bullets; track $index) {
+              <li>{{ bullet }}</li>
+            }
+          </ul>
+        </div>
+      }
+    </section>
+  }
+  @if (resume().projects.length) {
+    <section>
+      <h3>Projects</h3>
+      @for (entry of resume().projects; track $index) {
+        <div class="entry">
+          <div class="entry-heading">
+            <h4>{{ entry.name }}</h4>
+            <span
+              >{{ entry.start_date }}{{ entry.start_date && entry.end_date ? ' – ' : ''
+              }}{{ entry.end_date }}</span
+            >
+          </div>
+          @if (entry.technologies.length) {
+            <p class="entry-detail">{{ entry.technologies.join(', ') }}</p>
+          }
+          @if (entry.url) {
+            <p class="entry-detail">
+              @if (webLink(entry.url).url; as url) {
+                <a [href]="url" target="_blank" rel="noopener noreferrer">{{ entry.url }}</a>
+              } @else {
+                {{ entry.url }}
+              }
+            </p>
+          }
+          <ul>
+            @for (bullet of entry.bullets; track $index) {
+              <li>{{ bullet }}</li>
+            }
+          </ul>
+        </div>
+      }
+    </section>
+  }
+  @if (resume().skills.length) {
+    <section>
+      <h3>Technical skills</h3>
+      @for (group of resume().skills; track $index) {
+        <p>
+          <strong>{{ group.category }}:</strong> {{ group.items.join(', ') }}
+        </p>
+      }
+    </section>
+  }
+  @for (section of resume().additional_sections; track $index) {
+    <section>
+      <h3>{{ section.title }}</h3>
+      <ul>
+        @for (item of section.items; track $index) {
+          <li>{{ item }}</li>
+        }
+      </ul>
+    </section>
+  }
+</article>
