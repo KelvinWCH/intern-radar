@@ -1,0 +1,63 @@
+:host {
+  display: grid;
+  gap: 1.5rem;
+}
+h4 {
+  margin: 0 0 0.5rem;
+}
+.coverage {
+  display: grid;
+  gap: 0.5rem;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+.coverage li {
+  border: 1px solid var(--line);
+  border-left: 4px solid var(--accent);
+  border-radius: 12px;
+  padding: 0.75rem 1rem;
+  overflow-wrap: anywhere;
+}
+.coverage li[data-covered='false'] {
+  border-left-color: #8b5a17;
+}
+.coverage p {
+  margin: 0.35rem 0 0;
+  color: var(--muted);
+}
+.coverage-meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  align-items: baseline;
+}
+.tag {
+  font-size: 0.8rem;
+  color: var(--muted);
+}
+.keywords {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+.keywords li {
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  padding: 2px 10px;
+  font-size: 0.85rem;
+  overflow-wrap: anywhere;
+}
+.keywords li[data-state='used'] {
+  border-color: var(--accent);
+}
+.keywords li[data-state='missing'] {
+  border-color: #8b5a17;
+}
+.keywords li span {
+  color: var(--muted);
+  font-size: 0.75rem;
+}
