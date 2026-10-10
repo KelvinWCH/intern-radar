@@ -38,7 +38,7 @@ export class ModelDefaults {
   );
   protected readonly inheritedLabel = computed((): string => {
     const model = this.draft().default;
-    return model ? `Use default · ${model}` : 'Use default';
+    return model ? `Use default (${model})` : 'Use default';
   });
   protected readonly choices = computed((): string[] =>
     [

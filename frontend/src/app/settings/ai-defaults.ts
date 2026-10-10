@@ -66,7 +66,7 @@ export const aiTasks = [
   {
     id: 'scrape',
     label: 'Job enrichment',
-    icon: 'pi-sparkles',
+    icon: 'pi-microchip-ai',
     group: 'Job discovery',
   },
 ] as const satisfies readonly {
