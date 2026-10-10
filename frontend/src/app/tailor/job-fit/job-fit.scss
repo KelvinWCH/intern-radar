@@ -13,14 +13,13 @@ h4 {
   list-style: none;
 }
 .coverage li {
-  border: 1px solid var(--line);
-  border-left: 4px solid var(--accent);
+  border: 1px solid #b3cdb9;
   border-radius: 12px;
   padding: 0.75rem 1rem;
   overflow-wrap: anywhere;
 }
 .coverage li[data-covered='false'] {
-  border-left-color: #8b5a17;
+  border-color: #e7ca8c;
 }
 .coverage p {
   margin: 0.35rem 0 0;

@@ -17,7 +17,6 @@ import {
   oneShotFlowConnections,
   tailoringFlowColumns,
   tailoringFlowConnections,
-  tailoringFlowSnowflakes,
 } from '../constants/tailoring-flow.constants';
 import type { DocumentDetail, OneShotStep } from '../models/document.models';
 import type {
@@ -159,7 +158,6 @@ export class TailoringFlow {
     this.oneShot() ? oneShotFlowColumns : tailoringFlowColumns,
   );
   protected readonly callSteps = oneShotCallSteps;
-  protected readonly snowflakes = tailoringFlowSnowflakes;
   protected readonly wires = signal<FlowWire[]>([]);
   private readonly nodes = computed((): FlowNode[] =>
     this.columns().flatMap((column) => [...column.nodes]),

@@ -10,14 +10,14 @@
         >
       }
     </h3>
-    <a class="subtle-link" routerLink="/documents">Every job's documents →</a>
+    <a class="subtle-link" routerLink="/documents">Every job's documents</a>
   </header>
   <div class="documents-grid">
     <nav class="version-list">
       @if (starting() && !live()) {
         <div class="version-row selected">
           <span class="version-name"><i class="pi pi-spinner pi-spin"></i></span>
-          <span class="version-body"><strong>New version</strong><small>Starting…</small></span>
+          <span class="version-body"><strong>New version</strong><small>Starting...</small></span>
         </div>
       }
       @for (version of versions(); track version.summary.id) {
@@ -45,7 +45,7 @@
                 [attr.datetime]="
                   version.summary.created_at * 1000 | date: 'yyyy-MM-ddTHH:mm:ssZZZZZ'
                 "
-                [title]="version.summary.created_at * 1000 | date: 'MMM d, y · h:mm a'"
+                [title]="version.summary.created_at * 1000 | date: 'MMM d, y, h:mm a'"
                 >{{ ago(version.summary.created_at, 1) }}</time
               ></small
             >
@@ -81,7 +81,7 @@
               @if (detail()?.resume_edited_at; as edited) {
                 <span
                   class="status-pill edited-pill"
-                  [title]="edited * 1000 | date: 'MMM d, y · h:mm a'"
+                  [title]="edited * 1000 | date: 'MMM d, y, h:mm a'"
                   >Resume edited {{ ago(edited, 1) }}</span
                 >
               }
@@ -95,12 +95,12 @@
                   "
                   >{{ ago(version.summary.created_at) }}</time
                 >
-                · {{ version.summary.created_at * 1000 | date: 'MMM d, y · h:mm a' }}</span
+                ({{ version.summary.created_at * 1000 | date: 'MMM d, y, h:mm a' }})</span
               >
               @if (duration(version.summary); as took) {
-                <span>· took {{ took }}</span>
+                <span>took {{ took }}</span>
               }
-              <span>· {{ contents(version.summary) }}</span>
+              <span>{{ contents(version.summary) }}</span>
             </p>
             @if (version.summary.ai_usage) {
               <app-ai-usage-summary [usage]="version.summary.ai_usage" />
@@ -123,7 +123,7 @@
                   [class.pi-spinner]="packageBusy()"
                   [class.pi-spin]="packageBusy()"
                 ></i>
-                {{ packageBusy() ? 'Preparing download…' : 'Download application' }}
+                {{ packageBusy() ? 'Preparing download...' : 'Download application' }}
               </button>
               <div class="package-options">
                 <div class="format-toggle">
@@ -207,7 +207,7 @@
                           documentId: saved.id,
                           kind: 'resume',
                           title: 'Tailored resume',
-                          subtitle: company() + ' · ' + title(),
+                          subtitle: title() + ' at ' + company(),
                         })
                       "
                     >
@@ -235,7 +235,7 @@
                           documentId: saved.id,
                           kind: 'cover-letter',
                           title: 'Cover letter',
-                          subtitle: company() + ' · ' + title(),
+                          subtitle: title() + ' at ' + company(),
                         })
                       "
                     >
@@ -261,7 +261,7 @@
                     [disabled]="transcriptBusy()"
                     (click)="downloadTranscript()"
                   >
-                    {{ transcriptBusy() ? 'Preparing…' : 'PDF' }}
+                    {{ transcriptBusy() ? 'Preparing...' : 'PDF' }}
                   </button>
                 } @else if (transcript() === null) {
                   <a class="text-button" routerLink="/profile">Add in profile</a>
@@ -291,7 +291,7 @@
         />
         <details class="original-target">
           <summary>
-            <i class="pi pi-briefcase"></i> Posting text this version used · profile version
+            <i class="pi pi-briefcase"></i> Posting text and profile version this used
             {{ saved.profile_revision }}
           </summary>
           <div class="context">
@@ -300,9 +300,7 @@
         </details>
         @if (consoleShown() && finished()) {
           <details class="original-target activity-log">
-            <summary>
-              <i class="pi pi-chart-line"></i> How this version was made · progress and AI activity
-            </summary>
+            <summary><i class="pi pi-chart-line"></i> How this version was made</summary>
             <app-tailoring-console
               [document]="saved"
               [pending]="false"
@@ -317,11 +315,13 @@
           <p class="notice error">{{ error() }}</p>
           <button type="button" class="button-secondary" (click)="retry()">Retry</button>
         } @else {
-          <p class="version-loading"><i class="pi pi-spinner pi-spin"></i> Loading this version…</p>
+          <p class="version-loading">
+            <i class="pi pi-spinner pi-spin"></i> Loading this version...
+          </p>
         }
       } @else if (!selected() && !starting()) {
         <div class="versions-empty-state">
-          <span class="detail-mark"><i class="pi pi-sparkles"></i></span>
+          <span class="detail-mark"><i class="pi pi-file"></i></span>
           <h4>No tailored documents yet</h4>
           <p>
             Choose a resume, a cover letter, or both, then press Research &amp; tailor. Every run
