@@ -1,0 +1,162 @@
+<div #calendarViewport class="calendar-scroll">
+  <div class="week-grid">
+    @for (day of days(); track day.key) {
+      <section class="day-column" [class.today]="day.today" [id]="'column-' + day.key">
+        <header class="day-header">
+          <time [attr.datetime]="day.key" class="day-number">{{ day.date | date: 'd' }}</time>
+          <div class="day-label">
+            <h3 [id]="'day-' + day.key">{{ day.date | date: 'EEEE' }}</h3>
+            @if (day.today) {
+              <span class="today-label"><i></i>Today · {{ day.date | date: 'MMM' }}</span>
+            } @else {
+              <span>{{ day.date | date: 'MMM y' }}</span>
+            }
+          </div>
+          <span class="day-count">
+            @if (loading()) {
+              <app-skeleton width="28px" height="16px" />
+            } @else {
+              {{ unavailable() ? '—' : day.groups.length }}
+            }
+          </span>
+          <span class="day-meter"
+            ><span [style.transform]="'scaleX(' + day.groups.length / busiestDay() + ')'"></span
+          ></span>
+        </header>
+        <div class="day-jobs">
+          @if (loading()) {
+            @for (
+              row of dayCount() === 1 ? [1, 2, 3, 4, 5, 6, 7, 8, 9, 10] : [1, 2, 3, 4];
+              track row
+            ) {
+              <div class="calendar-card calendar-skeleton">
+                <div class="company-line">
+                  <app-skeleton width="30px" height="30px" /><app-skeleton
+                    width="45%"
+                    height="14px"
+                  />
+                </div>
+                <div class="title-skeleton">
+                  <app-skeleton width="90%" height="17px" /><app-skeleton
+                    width="65%"
+                    height="17px"
+                  />
+                </div>
+                <app-skeleton width="70%" height="14px" />
+                <footer>
+                  <app-skeleton width="45%" height="14px" /><app-skeleton
+                    width="70px"
+                    height="32px"
+                  />
+                </footer>
+              </div>
+            }
+          } @else {
+            @for (group of day.groups; track group.job.id; let index = $index) {
+              @let job = group.job;
+              <article
+                class="calendar-card"
+                [class.prestige]="job.prestige"
+                [class.tech]="job.companyTier === 'tech'"
+                [attr.data-status]="job.user.status"
+                [style.--card-delay]="(index < 6 ? index * 35 : 0) + 'ms'"
+              >
+                <div class="company-line">
+                  <span class="company-mark">{{ job.company.slice(0, 1).toUpperCase() }}</span>
+                  <span class="company-name">{{ job.company }}</span>
+                  @if ((job.copies ?? 1) > 1) {
+                    <span class="copies-badge" [title]="'Saved from ' + job.copies + ' job boards'"
+                      ><i class="pi pi-copy"></i> {{ job.copies }}</span
+                    >
+                  }
+                  @if (job.prestige) {
+                    <i
+                      class="pi pi-star-fill priority-icon"
+                      [title]="
+                        job.companyTier === 'tech'
+                          ? 'Priority technology company'
+                          : 'Known employer'
+                      "
+                    ></i>
+                  }
+                </div>
+                <a class="job-title" [routerLink]="['/jobs', job.id]">{{ job.title }}</a>
+                <div class="job-meta">
+                  <app-match-badge [match]="job.match" />
+                  <span class="location"
+                    ><i class="pi pi-map-marker"></i>
+                    {{ job.locations.join(' · ') || 'Location not specified' }}</span
+                  >
+                  @if (job.terms.length) {
+                    <span>{{ job.terms.join(' · ') }}</span>
+                  }
+                </div>
+                <app-related-postings [postings]="group.postings" />
+                <footer>
+                  <span class="status-label">{{
+                    job.user.status === 'new' ? 'Untracked' : (job.user.status | titlecase)
+                  }}</span>
+                  <span class="card-dates">
+                    <app-posted-date [timestamp]="job.details?.date_posted" />
+                    <span
+                      [title]="
+                        'First found ' + (job.firstSeenAt * 1000 | date: 'MMM d, y · h:mm a')
+                      "
+                      >Found {{ job.firstSeenAt * 1000 | date: 'MMM d' }}</span
+                    >
+                  </span>
+                  @if (job.details?.active === false) {
+                    <span class="closed">Closed</span>
+                  }
+                  @if (job.reviewReason) {
+                    <i
+                      class="pi pi-flag review-icon"
+                      title="Security challenge — review the source posting"
+                    ></i>
+                  }
+                  <span class="card-actions">
+                    <app-quick-generate [job]="job" compact />
+                    <a class="open-job" [routerLink]="['/jobs', job.id]" title="View job"
+                      ><i class="pi pi-arrow-up-right"></i
+                    ></a>
+                    <button
+                      type="button"
+                      class="delete-job"
+                      [disabled]="pendingIds().includes(job.id)"
+                      title="Delete job"
+                      (click)="deleteJob.emit(job)"
+                    >
+                      <i class="pi pi-trash"></i>
+                    </button>
+                  </span>
+                </footer>
+              </article>
+            } @empty {
+              <div class="empty-day">
+                <div class="empty-art">
+                  <span></span><span></span><i class="pi pi-calendar"></i>
+                </div>
+                <p>
+                  {{
+                    unavailable()
+                      ? 'Jobs unavailable'
+                      : partial()
+                        ? 'No jobs on this page'
+                        : dateBasis() === 'posted'
+                          ? 'No jobs posted'
+                          : 'No jobs discovered'
+                  }}
+                </p>
+                @if (unavailable() || partial()) {
+                  <span>{{
+                    unavailable() ? 'Use Retry to reconnect.' : 'More jobs may be on another page.'
+                  }}</span>
+                }
+              </div>
+            }
+          }
+        </div>
+      </section>
+    }
+  </div>
+</div>
