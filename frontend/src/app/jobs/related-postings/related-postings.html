@@ -1,0 +1,18 @@
+@if (postings().length > 1) {
+  <details class="related-postings">
+    <summary>
+      <i class="pi pi-copy"></i>
+      {{ postings().length }} postings
+    </summary>
+    <ul>
+      @for (posting of postings(); track posting.id) {
+        <li>
+          <a [routerLink]="['/jobs', posting.id]">{{
+            posting.metadata?.source || sourceLabels[posting.sourceType]
+          }}</a>
+          <span>Found {{ posting.firstSeenAt * 1000 | date: 'MMM d, h:mm a' }}</span>
+        </li>
+      }
+    </ul>
+  </details>
+}
