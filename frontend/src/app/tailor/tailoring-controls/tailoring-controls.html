@@ -1,1 +1,59 @@
 @if (confirming()) {
+  <div class="controls">
+    <span id="cancel-question" class="note">Stop this attempt? Saved drafts and reports stay.</span>
+    <button
+      type="button"
+      class="button-secondary stop"
+      (click)="send('cancel')"
+      [disabled]="busy() !== null"
+    >
+      <i class="pi pi-ban"></i>
+      {{ busy() === 'cancel' ? 'Cancelling...' : 'Yes, cancel' }}
+    </button>
+    <button
+      type="button"
+      class="button-secondary"
+      (click)="confirming.set(false)"
+      [disabled]="busy() !== null"
+    >
+      Keep going
+    </button>
+  </div>
+} @else {
+  <div class="controls">
+    @if (paused()) {
+      <span class="note">{{ held() ? 'Paused' : 'Pausing after the current step...' }}</span>
+      <button
+        type="button"
+        class="button-secondary"
+        (click)="send('resume')"
+        [disabled]="busy() !== null"
+      >
+        <i class="pi pi-play"></i>
+        {{ busy() === 'resume' ? 'Resuming...' : 'Resume' }}
+      </button>
+    } @else {
+      <button
+        type="button"
+        class="button-secondary"
+        (click)="send('pause')"
+        [disabled]="busy() !== null"
+        title="Wait before the next step. The step already running finishes first."
+      >
+        <i class="pi pi-pause"></i>
+        {{ busy() === 'pause' ? 'Pausing...' : 'Pause' }}
+      </button>
+    }
+    <button
+      type="button"
+      class="button-secondary stop"
+      (click)="confirming.set(true)"
+      [disabled]="busy() !== null"
+    >
+      <i class="pi pi-times"></i> Cancel
+    </button>
+  </div>
+}
+@if (error()) {
+  <p class="error">{{ error() }}</p>
+}
