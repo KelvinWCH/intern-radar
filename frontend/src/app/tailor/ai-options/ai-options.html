@@ -1,0 +1,124 @@
+<section class="model-controls">
+  @if (loading()) {}
+  @if (error()) {
+    <p class="hint">{{ error() }}</p>
+  }
+  <div class="model-selection">
+    <label [for]="idPrefix() + (customModel() ? '-custom-model' : '-model')">{{
+      modelLabel() ?? label()
+    }}</label>
+    @if (customModel()) {
+      <input
+        [id]="idPrefix() + '-custom-model'"
+        type="text"
+        maxlength="200"
+        placeholder="Enter provider model ID"
+        autocomplete="off"
+        spellcheck="false"
+        [disabled]="disabled() || loading()"
+        [ngModel]="options().model"
+        (ngModelChange)="choose({ field: 'model', value: $event })"
+        [ngModelOptions]="{ standalone: true }"
+      />
+    } @else {
+      <p-select
+        [inputId]="idPrefix() + '-model'"
+        [options]="modelChoices()"
+        [filter]="true"
+        filterPlaceholder="Search models"
+        [showClear]="true"
+        [disabled]="disabled() || loading()"
+        placeholder="Server default"
+        appendTo="body"
+        [fluid]="true"
+        [ngModel]="options().model"
+        (ngModelChange)="choose({ field: 'model', value: $event })"
+        [ngModelOptions]="{ standalone: true }"
+      />
+    }
+    <button
+      type="button"
+      class="text-link"
+      [disabled]="disabled() || loading()"
+      (click)="customModel.set(!customModel())"
+    >
+      {{ customModel() ? 'Choose from model list' : 'Enter a model ID' }}
+    </button>
+    @if (catalogLoading()) {
+      <span class="hint">Loading models…</span>
+    }
+    @if (catalogError()) {
+      <span class="hint">{{ catalogError() }}</span>
+      <button
+        type="button"
+        class="text-link"
+        (click)="loadModels()"
+        [disabled]="disabled() || catalogLoading()"
+      >
+        Retry model list
+      </button>
+    }
+  </div>
+  <div class="model-selection effort-selection">
+    <label [for]="idPrefix() + '-effort'">Effort</label>
+    <p-select
+      [inputId]="idPrefix() + '-effort'"
+      [options]="efforts"
+      optionLabel="label"
+      optionValue="value"
+      [showClear]="true"
+      [disabled]="disabled() || loading()"
+      placeholder="Model default"
+      appendTo="body"
+      [fluid]="true"
+      [ngModel]="options().reasoning_effort"
+      (ngModelChange)="choose({ field: 'reasoning_effort', value: $event })"
+      [ngModelOptions]="{ standalone: true }"
+    />
+  </div>
+  <details class="parameters">
+    <summary>Parameters & pricing</summary>
+    <fieldset [disabled]="disabled() || loading()">
+      <label [for]="idPrefix() + '-temperature'"
+        >Temperature
+        <p-inputnumber
+          [inputId]="idPrefix() + '-temperature'"
+          [fluid]="true"
+          [useGrouping]="false"
+          [disabled]="disabled() || loading()"
+          [min]="0"
+          [max]="2"
+          [step]="0.1"
+          [maxFractionDigits]="2"
+          placeholder="Provider default"
+          [ngModel]="options().temperature"
+          (ngModelChange)="choose({ field: 'temperature', value: $event })"
+          [ngModelOptions]="{ standalone: true }"
+        />
+      </label>
+      <label [for]="idPrefix() + '-max-tokens'"
+        >Max output tokens
+        <p-inputnumber
+          [inputId]="idPrefix() + '-max-tokens'"
+          [fluid]="true"
+          [useGrouping]="false"
+          [disabled]="disabled() || loading()"
+          [min]="1"
+          [max]="1000000"
+          [step]="1"
+          [maxFractionDigits]="0"
+          placeholder="Provider default"
+          [ngModel]="options().max_output_tokens"
+          (ngModelChange)="choose({ field: 'max_output_tokens', value: $event })"
+          [ngModelOptions]="{ standalone: true }"
+        />
+      </label>
+    </fieldset>
+    <p class="hint">Optional overrides for this request.</p>
+  </details>
+  @if (!valid(options())) {
+    <p class="error">
+      Use a valid model name, a temperature from 0–2 and a positive whole token limit.
+    </p>
+  }
+</section>

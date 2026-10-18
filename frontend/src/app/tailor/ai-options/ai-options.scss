@@ -1,0 +1,112 @@
+:host {
+  display: block;
+  min-width: 0;
+}
+.model-controls {
+  min-width: 0;
+}
+.model-selection {
+  display: grid;
+  grid-template-columns: 88px minmax(0, 1fr);
+  align-items: center;
+  gap: 10px;
+}
+.model-selection > .hint,
+.model-selection > button {
+  grid-column: 2;
+}
+.model-selection > button {
+  justify-self: start;
+  font-size: 12px;
+}
+.text-link {
+  cursor: pointer;
+  border: 0;
+  padding: 0;
+  background: none;
+  color: var(--accent);
+  font-weight: 600;
+  text-decoration: none;
+}
+.text-link:hover:not(:disabled) {
+  color: var(--accent-hover);
+  text-decoration: underline;
+}
+.model-selection > input {
+  width: 100%;
+  min-width: 0;
+}
+.effort-selection,
+.provider-selection + .model-selection {
+  margin-top: 10px;
+}
+.provider-note {
+  animation: provider-note-settle 220ms ease-out;
+}
+@keyframes provider-note-settle {
+  from {
+    opacity: 0;
+    transform: translateY(-3px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+.parameters {
+  margin: 4px 0 0 98px;
+}
+summary {
+  cursor: pointer;
+  color: var(--muted);
+  font-size: 13px;
+  min-height: 24px;
+}
+fieldset {
+  border: 0;
+  padding: 10px 0 0;
+  margin: 0;
+  min-width: 0;
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 10px;
+}
+label {
+  display: grid;
+  gap: 4px;
+  font-size: 14px;
+}
+p-select,
+p-inputnumber {
+  width: 100%;
+  min-width: 0;
+  font-size: 14px;
+}
+p-select {
+  min-height: 44px;
+  align-items: center;
+}
+:host ::ng-deep .p-inputnumber-input {
+  width: 100%;
+  min-width: 0;
+  font-size: 14px;
+}
+:host ::ng-deep .p-select-label {
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.hint,
+.error {
+  font-size: 13px;
+  line-height: 1.5;
+  color: var(--muted);
+  margin: 8px 0;
+}
+.error {
+  color: #b42318;
+}
+@media (max-width: 520px) {
+  .parameters {
+    margin-left: 0;
+  }
+}
