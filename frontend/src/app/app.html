@@ -1,0 +1,35 @@
+<app-workspace-atmosphere />
+<header class="app-header">
+  <a class="brand" routerLink="/">
+    <span class="brand-mark"><i class="pi pi-briefcase"></i></span>
+    <h1>{{ title }}</h1>
+  </a>
+  <nav [class.is-open]="menuOpen()">
+    @for (item of navigation; track item.path) {
+      <a
+        class="workspace-link"
+        [routerLink]="item.path"
+        routerLinkActive="active"
+        [routerLinkActiveOptions]="{ exact: item.path === '/' }"
+      >
+        <i [class]="'pi ' + item.icon"></i><span>{{ item.label }}</span>
+      </a>
+    }
+  </nav>
+  <div class="header-actions">
+    <a class="settings-link" routerLink="/settings" routerLinkActive="active">
+      <i class="pi pi-cog"></i>
+      <span>Settings</span>
+    </a>
+    <a class="button-primary tailor-link" routerLink="/tailor" routerLinkActive="active"
+      ><i class="pi pi-sparkles"></i> Tailor resume</a
+    >
+    <button class="menu-toggle" type="button" title="Menu" (click)="menuOpen.set(!menuOpen())">
+      <i [class]="menuOpen() ? 'pi pi-times' : 'pi pi-bars'"></i>
+    </button>
+  </div>
+  @if (navigating()) {
+    <div class="navigation-progress"><i></i></div>
+  }
+</header>
+<main><router-outlet /></main>
