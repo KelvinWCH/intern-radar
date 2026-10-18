@@ -3,10 +3,9 @@ import { Component, computed, inject, signal } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { NavigationEnd, Router, RouterLink, RouterLinkActive, RouterOutlet } from '@angular/router';
 import { navigationItems } from './shared/constants/navigation.constants';
-import { WorkspaceAtmosphere } from './shared/workspace-atmosphere/workspace-atmosphere';
 
 @Component({
-  imports: [RouterLink, RouterLinkActive, RouterOutlet, WorkspaceAtmosphere],
+  imports: [RouterLink, RouterLinkActive, RouterOutlet],
   selector: 'app-root',
   styleUrl: './app.scss',
   templateUrl: './app.html',

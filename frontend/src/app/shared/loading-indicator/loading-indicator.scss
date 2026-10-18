@@ -1,0 +1,159 @@
+:host {
+  display: block;
+}
+.loading-state {
+  display: grid;
+  grid-template-columns: 54px minmax(0, 1fr);
+  align-items: center;
+  gap: 12px 16px;
+  position: relative;
+  overflow: hidden;
+  padding: 20px;
+  border: 1px solid var(--line);
+  border-radius: 13px;
+  background: linear-gradient(115deg, #f2f8f1, #fcfefd);
+  color: var(--text);
+}
+.loading-visual {
+  position: relative;
+  width: 54px;
+  height: 54px;
+  display: grid;
+  place-items: center;
+}
+.loading-ring {
+  position: absolute;
+  inset: 0;
+  border: 2px solid #dbe9de;
+  border-top-color: var(--accent);
+  border-right-color: #8fbfa3;
+  border-radius: 50%;
+}
+.loading-bars {
+  height: 22px;
+  display: flex;
+  align-items: end;
+  gap: 3px;
+}
+.loading-bars i {
+  width: 3px;
+  height: 15px;
+  border-radius: 3px;
+  background: var(--accent);
+  transform-origin: bottom;
+}
+.loading-bars i:nth-child(2) {
+  height: 21px;
+  animation-delay: -0.6s;
+  background: #79ad8c;
+}
+.loading-bars i:nth-child(3) {
+  height: 12px;
+  animation-delay: -0.3s;
+}
+.loading-bars i:nth-child(4) {
+  height: 18px;
+  animation-delay: -0.8s;
+  background: #79ad8c;
+}
+.loading-bars i:nth-child(5) {
+  height: 10px;
+  animation-delay: -0.4s;
+}
+.loading-copy {
+  min-width: 0;
+}
+.loading-copy strong {
+  display: block;
+  font-size: 14px;
+  font-weight: 600;
+  line-height: 1.5;
+}
+.loading-copy > span {
+  display: block;
+  margin-top: 4px;
+  color: var(--muted);
+  font-size: 12px;
+  line-height: 1.6;
+}
+.loading-track {
+  height: 3px;
+  background: #e3eee5;
+  grid-column: 1 / -1;
+  border-radius: 5px;
+  overflow: hidden;
+}
+.loading-track i {
+  display: block;
+  height: 100%;
+  width: 35%;
+  background: #83b398;
+  border-radius: inherit;
+}
+:host(.is-compact) .loading-state {
+  display: flex;
+  padding: 6px 0;
+  border: 0;
+  border-radius: 0;
+  background: none;
+  gap: 9px;
+}
+:host(.is-compact) .loading-visual {
+  width: 23px;
+  height: 23px;
+  flex-shrink: 0;
+}
+:host(.is-compact) .loading-bars {
+  height: 11px;
+  gap: 2px;
+}
+:host(.is-compact) .loading-bars i {
+  width: 2px;
+  height: 9px;
+}
+:host(.is-compact) .loading-bars i:nth-child(2n) {
+  height: 6px;
+}
+:host(.is-compact) .loading-ring {
+  display: none;
+}
+:host(.is-compact) .loading-copy strong {
+  font-size: 12px;
+  color: var(--muted);
+  font-weight: 500;
+}
+.loading-ring {
+  animation: orbit 1.8s linear infinite;
+}
+.loading-bars i {
+  animation: equalize 950ms ease-in-out infinite alternate;
+}
+.loading-track i {
+  animation: scan 1.8s ease-in-out infinite alternate;
+}
+:host(.is-paused) .loading-ring,
+:host(.is-paused) .loading-bars i,
+:host(.is-paused) .loading-track i {
+  animation-play-state: paused;
+}
+@keyframes orbit {
+  to {
+    transform: rotate(360deg);
+  }
+}
+@keyframes equalize {
+  from {
+    transform: scaleY(0.35);
+  }
+  to {
+    transform: scaleY(1);
+  }
+}
+@keyframes scan {
+  from {
+    transform: translateX(-100%);
+  }
+  to {
+    transform: translateX(380%);
+  }
+}
