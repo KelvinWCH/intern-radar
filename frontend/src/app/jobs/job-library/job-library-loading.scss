@@ -1,1 +1,33 @@
 .job-workspace .stage-count {
+  display: inline-block;
+  width: 4ch;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  text-align: center;
+  font-variant-numeric: tabular-nums;
+}
+.result-summary {
+  width: 150px;
+  height: 1.5em;
+  line-height: 1.5;
+}
+.job-workspace .job-list {
+  max-height: max(320px, calc(100dvh - 450px));
+  overflow: auto;
+  align-content: start;
+  scrollbar-gutter: stable;
+}
+.list-skeleton {
+  min-height: 96px;
+}
+.list-skeleton > div {
+  display: grid;
+  gap: 14px;
+}
+.pagination > span {
+  min-width: 160px;
+  height: 20px;
+  line-height: 20px;
+  text-align: center;
+}
