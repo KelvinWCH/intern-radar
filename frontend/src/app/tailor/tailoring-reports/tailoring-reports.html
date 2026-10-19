@@ -1,0 +1,265 @@
+<details class="panel detail-panel reports" [open]="expanded()">
+  <summary class="detail-heading">
+    <h3 class="detail-title">
+      <span class="detail-mark"><i class="pi pi-check-circle"></i></span>Review & reports
+    </h3>
+    @if (statusNote(); as note) {
+      <span class="workspace-state" [attr.data-status]="document().status">{{ note }}</span>
+    }
+    <i class="pi pi-chevron-down toggle-chevron"></i>
+  </summary>
+  <nav class="report-nav">
+    <button type="button" [class.active]="section() === 'review'" (click)="section.set('review')">
+      Review
+      @if (findingCount()) {
+        <span>{{ findingCount() }}</span>
+      }
+    </button>
+    <button type="button" [class.active]="section() === 'fit'" (click)="section.set('fit')">
+      Job fit
+    </button>
+    <button type="button" [class.active]="section() === 'pdf'" (click)="section.set('pdf')">
+      PDF checks
+    </button>
+    <button
+      type="button"
+      [class.active]="section() === 'research'"
+      (click)="section.set('research')"
+    >
+      Research
+    </button>
+    <button type="button" [class.active]="section() === 'technical'" (click)="showTechnical()">
+      Technical details
+    </button>
+  </nav>
+  <div class="report-content">
+    @if (error()) {
+      <p class="notice error">{{ error() }}</p>
+      <button class="button-secondary" type="button" [disabled]="saving()" (click)="reload()">
+        Reload saved progress
+      </button>
+    }
+    <div [hidden]="section() !== 'review'">
+      @if (failureExplanation()) {
+        <p class="failure-summary">{{ failureExplanation() }}</p>
+      }
+      @if (document().review; as review) {
+        <app-application-review
+          [report]="review"
+          [canDecide]="canDecide()"
+          [saving]="saving()"
+          [documentId]="document().id"
+          [aiOptions]="document().reviewer_ai_options ?? document().ai_options ?? {}"
+          (decision)="resolve($event)"
+        />
+      } @else if (document().status === 'awaiting_review') {
+        <app-research-review [document]="document()" (updated)="updated.emit($event)" />
+      } @else {
+        <div class="empty-report">
+          <h4>
+            {{
+              document().status === 'failed' || document().status === 'cancelled'
+                ? 'The documents are not ready for review'
+                : 'The independent review will appear here'
+            }}
+          </h4>
+          <p>
+            Research and document writing come first. Saved sources and progress are available in
+            the other reports.
+          </p>
+        </div>
+      }
+    </div>
+    @if (section() === 'fit') {
+      <app-job-fit
+        [coverage]="document().resume?.requirement_coverage ?? []"
+        [checks]="resumeChecks()"
+      />
+    } @else if (section() === 'pdf') {
+      <app-pdf-diagnostics [reports]="document().pdf_diagnostics ?? []" />
+    } @else if (section() === 'research') {
+      <app-research-review [document]="document()" (updated)="updated.emit($event)" />
+      @if (document().research; as research) {
+        <app-ai-usage-summary [usage]="research.ai_usage" />
+        @if (research.mode === 'generic') {
+          <h4>Generic company & role report</h4>
+          <p class="hint">
+            Based on the company and role. Typical expectations are guidance, not confirmed
+            requirements for this opening.
+          </p>
+        }
+        @for (warning of research.warnings; track $index) {
+          <p class="notice">{{ warning }}</p>
+        }
+        @if (research.analysis.mission; as mission) {
+          <h4>Company mission</h4>
+          <p>{{ mission.finding }}</p>
+          <blockquote>
+            {{ mission.quote }} <small>— Source {{ mission.source_index + 1 }}</small>
+          </blockquote>
+        }
+        @for (
+          section of [
+            { title: 'Company context', items: research.analysis.company_context },
+            { title: 'Role priorities', items: research.analysis.role_priorities },
+            { title: 'Requirements', items: research.analysis.requirements },
+            {
+              title: 'Preferred qualifications',
+              items: research.analysis.preferred_qualifications,
+            },
+          ];
+          track section.title
+        ) {
+          @if (section.items.length) {
+            <h4>{{ section.title }}</h4>
+          }
+          @for (finding of section.items; track $index) {
+            <p>{{ finding.finding }}</p>
+            <blockquote>
+              {{ finding.quote }} <small>— Source {{ finding.source_index + 1 }}</small>
+            </blockquote>
+          }
+        }
+        @if (research.scraped_skills; as skills) {
+          <h4>Skills from the saved posting</h4>
+          <p class="hint">Scraped when the job was saved and given to research.</p>
+          <dl class="scraped-skills">
+            @for (
+              group of [
+                { label: 'Required', items: skills.required_skills },
+                { label: 'Preferred', items: skills.preferred_skills },
+                { label: 'Tech stack', items: skills.tech_stack },
+              ];
+              track group.label
+            ) {
+              @if (group.items.length) {
+                <dt>{{ group.label }}</dt>
+                <dd>{{ group.items.join(', ') }}</dd>
+              }
+            }
+          </dl>
+        }
+        @if (research.analysis.company_knowledge.length) {
+          <h4>What the model knows about the company</h4>
+          <p class="hint">From the model's own knowledge, not these sources · may be outdated.</p>
+          <ul class="company-knowledge">
+            @for (item of research.analysis.company_knowledge; track $index) {
+              <li>{{ item }}</li>
+            }
+          </ul>
+        }
+        @if (research.analysis.general_role_guidance.length) {
+          <h4>Typical responsibilities, skills & projects</h4>
+          <p class="hint">
+            AI-generated guidance · confirm these expectations against the actual posting.
+          </p>
+          <ul>
+            @for (item of research.analysis.general_role_guidance; track $index) {
+              <li>{{ item }}</li>
+            }
+          </ul>
+        }
+        @if (research.analysis.keywords.length) {
+          <h4>Search keywords</h4>
+          <p class="hint">The posting's exact terms, most important first.</p>
+          <ul class="keyword-list">
+            @for (keyword of research.analysis.keywords; track $index) {
+              <li>{{ keyword }}</li>
+            }
+          </ul>
+        }
+        <h4>Guidance shared with both writers</h4>
+        <ul>
+          @for (item of research.analysis.tailoring_guidance; track $index) {
+            <li>{{ item }}</li>
+          }
+        </ul>
+        <h4>Unknowns</h4>
+        <ul>
+          @for (item of research.analysis.unknowns; track $index) {
+            <li>{{ item }}</li>
+          } @empty {
+            <li>No additional unknowns reported by the research model.</li>
+          }
+        </ul>
+        <h4>Complete research sources</h4>
+        @for (source of research.sources; track $index) {
+          <details>
+            <summary>Source {{ $index + 1 }} · {{ source.title }}</summary>
+            @if (source.url) {
+              <p>
+                <a [href]="source.url" target="_blank" rel="noopener noreferrer">{{
+                  source.url
+                }}</a>
+              </p>
+            }
+            <pre>{{ source.text }}</pre>
+          </details>
+        }
+        <details>
+          <summary>Full research report JSON</summary>
+          <pre>{{ research | json }}</pre>
+        </details>
+      } @else {
+        <p class="hint">
+          The research report appears here as soon as it is saved. Older attempts may not contain
+          research.
+        </p>
+      }
+    } @else if (section() === 'technical') {
+      @if (technicalLoading()) {
+        <p>Loading saved technical details…</p>
+      }
+      @if (technicalError()) {
+        <p>{{ technicalError() }}</p>
+      }
+      <button
+        type="button"
+        class="button-secondary"
+        [disabled]="technicalLoading()"
+        (click)="loadTechnical()"
+      >
+        Reload reports
+      </button>
+      @if (technical(); as details) {
+        <h4>What happened in this attempt</h4>
+        @if (document().error) {
+          <p class="notice error">{{ document().error }}</p>
+        }
+        <h4>All model responses & revision attempts</h4>
+        <p class="hint">
+          These contain the full request, returned text, and structured output when available. A
+          saved draft may precede a validation or layout failure; the stage status identifies
+          whether a final document passed.
+        </p>
+        @for (report of details.reports; track $index) {
+          <details>
+            <summary>
+              {{
+                report.stage === 'research'
+                  ? 'Research'
+                  : report.stage === 'resume'
+                    ? 'Resume'
+                    : report.stage === 'reviewer'
+                      ? 'Independent reviewer'
+                      : 'Cover letter'
+              }}
+              · draft {{ report.attempt }}
+            </summary>
+            <pre>{{ report.content | json }}</pre>
+          </details>
+        }
+        <details>
+          <summary>
+            Complete profile snapshot used · revision {{ document().profile_revision }}
+          </summary>
+          <pre>{{ details.profile_snapshot | json }}</pre>
+        </details>
+        <details>
+          <summary>Model configuration, usage, progress, and all saved outputs</summary>
+          <pre>{{ technicalDocument() | json }}</pre>
+        </details>
+      }
+    }
+  </div>
+</details>
