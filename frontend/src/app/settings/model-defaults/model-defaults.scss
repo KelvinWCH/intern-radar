@@ -1,0 +1,236 @@
+:host {
+  display: block;
+}
+.model-defaults {
+  border: 1px solid var(--line);
+  border-radius: 16px;
+  background: var(--surface);
+  box-shadow: var(--shadow-soft);
+  overflow: hidden;
+}
+.section-heading {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  min-height: 54px;
+  padding: 10px 16px;
+  border-bottom: 1px solid var(--line);
+}
+.section-icon,
+.task-icon {
+  display: grid;
+  place-items: center;
+  flex-shrink: 0;
+  color: var(--accent);
+  background: var(--accent-soft);
+  border-radius: 9px;
+  width: 28px;
+  height: 28px;
+  font-size: 13px;
+}
+.section-heading > div {
+  flex: 1;
+}
+h3,
+h4,
+h5,
+p {
+  margin: 0;
+}
+h3 {
+  font-size: 17px;
+  font-weight: 600;
+  letter-spacing: -0.025em;
+}
+form {
+  padding: 12px 16px 16px;
+}
+.shared-default {
+  display: grid;
+  grid-template-columns: 1fr minmax(220px, 40%);
+  align-items: center;
+  gap: 16px;
+  padding: 12px 14px;
+  border: 1px solid #c8dfd0;
+  border-radius: 12px;
+  background: linear-gradient(120deg, var(--accent-soft), #f8fbf7);
+}
+label {
+  display: block;
+  font-weight: 600;
+  font-size: 14px;
+}
+.default-description > label {
+  font-size: 15px;
+}
+.default-description p {
+  color: var(--muted);
+  font-size: 12px;
+  margin-top: 4px;
+}
+.backend-default,
+.field-hint {
+  display: block;
+  color: var(--muted);
+  font-size: 12px;
+  margin-top: 4px;
+  overflow-wrap: anywhere;
+}
+.backend-default strong {
+  font-weight: 500;
+}
+.model-field,
+p-select {
+  min-width: 0;
+}
+.overrides-heading {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 16px;
+  margin: 16px 0 8px;
+}
+.overrides-heading > div {
+  display: flex;
+  align-items: baseline;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+h4 {
+  font-size: 14px;
+  font-weight: 600;
+}
+.overrides-heading span {
+  font-size: 12px;
+  color: var(--muted);
+}
+.refresh-button,
+.reset-button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  border: 0;
+  background: transparent;
+  color: var(--accent);
+  padding: 6px 10px;
+  min-height: 34px;
+  border-radius: 8px;
+  cursor: pointer;
+  font-size: 13px;
+  font-weight: 600;
+  white-space: nowrap;
+}
+.refresh-button:hover,
+.reset-button:hover {
+  color: var(--accent-hover);
+  background: var(--accent-soft);
+}
+.catalog-notice {
+  display: flex;
+  align-items: baseline;
+  gap: 8px;
+  border: 1px solid #eadab6;
+  border-radius: 8px;
+  background: #fffaf0;
+  padding: 10px 12px;
+  color: #76551e;
+  font-size: 12px;
+  margin-bottom: 18px;
+}
+.task-group + .task-group {
+  margin-top: 12px;
+}
+h5 {
+  color: var(--muted);
+  font-size: 13px;
+  font-weight: 600;
+  padding: 0 0 4px;
+}
+.task-row {
+  display: grid;
+  grid-template-columns: 28px 1fr minmax(220px, 50%);
+  align-items: center;
+  gap: 10px;
+  padding: 6px 0;
+  border-top: 1px solid var(--line);
+}
+.task-icon {
+  width: 28px;
+  height: 28px;
+  font-size: 13px;
+  background: #f3f6f1;
+  color: var(--muted);
+  border-radius: 9px;
+}
+.customized .task-icon {
+  color: var(--accent);
+  background: var(--accent-soft);
+}
+.task-description {
+  min-width: 0;
+}
+.model-save-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 14px;
+  border-top: 1px solid var(--line);
+  padding-top: 12px;
+  margin-top: 8px;
+}
+.save-note {
+  flex: 1;
+  min-width: 180px;
+  color: var(--muted);
+  font-size: 12px;
+}
+.save-actions {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+.saved-message {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  color: var(--accent);
+}
+.pending-message {
+  color: #846020;
+}
+.save-error {
+  color: #a12525;
+  font-size: 13px;
+  margin-top: 12px;
+}
+@media (max-width: 680px) {
+  .section-heading {
+    flex-wrap: wrap;
+    padding: 18px;
+    gap: 10px;
+  }
+  form {
+    padding: 18px;
+  }
+  .shared-default {
+    grid-template-columns: 1fr;
+    padding: 16px;
+    gap: 14px;
+  }
+  .task-row {
+    grid-template-columns: 32px 1fr;
+    gap: 10px;
+  }
+  .task-row p-select {
+    grid-column: 2;
+  }
+  .overrides-heading {
+    align-items: flex-start;
+  }
+  .save-actions {
+    width: 100%;
+    justify-content: space-between;
+  }
+}
