@@ -1,0 +1,69 @@
+.resume-paper {
+  background: white;
+  border: 1px solid var(--line);
+  padding: 32px;
+  color: #282126;
+  font-family: Georgia, 'Times New Roman', serif;
+  font-size: 13px;
+  line-height: 1.5;
+  overflow-wrap: anywhere;
+}
+header {
+  text-align: center;
+  margin-bottom: 22px;
+}
+h2 {
+  margin: 0 0 6px;
+  font-size: 23px;
+}
+header p {
+  font-size: 12px;
+  margin: 3px 0;
+}
+h3 {
+  font-size: 14px;
+  font-variant: small-caps;
+  border-bottom: 1px solid #6c7570;
+  padding-bottom: 3px;
+  margin: 20px 0 10px;
+}
+h4 {
+  font-size: 13px;
+  margin: 0;
+}
+.entry {
+  margin: 12px 0;
+}
+.entry-heading {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+}
+.entry-heading span {
+  font-size: 12px;
+  flex-shrink: 0;
+}
+.entry-detail {
+  font-style: italic;
+  margin: 3px 0;
+  font-size: 12px;
+}
+p {
+  margin: 6px 0;
+}
+ul {
+  padding-left: 18px;
+  margin: 6px 0;
+}
+li {
+  margin: 4px 0;
+}
+@media (max-width: 540px) {
+  .resume-paper {
+    padding: 20px;
+  }
+  .entry-heading {
+    flex-wrap: wrap;
+    gap: 2px;
+  }
+}
