@@ -95,7 +95,7 @@
           <h4>Company mission</h4>
           <p>{{ mission.finding }}</p>
           <blockquote>
-            {{ mission.quote }} <small>— Source {{ mission.source_index + 1 }}</small>
+            {{ mission.quote }} <small>(source {{ mission.source_index + 1 }})</small>
           </blockquote>
         }
         @for (
@@ -116,7 +116,7 @@
           @for (finding of section.items; track $index) {
             <p>{{ finding.finding }}</p>
             <blockquote>
-              {{ finding.quote }} <small>— Source {{ finding.source_index + 1 }}</small>
+              {{ finding.quote }} <small>(source {{ finding.source_index + 1 }})</small>
             </blockquote>
           }
         }
@@ -141,7 +141,9 @@
         }
         @if (research.analysis.company_knowledge.length) {
           <h4>What the model knows about the company</h4>
-          <p class="hint">From the model's own knowledge, not these sources · may be outdated.</p>
+          <p class="hint">
+            From the model's own knowledge, not these sources, so it may be outdated.
+          </p>
           <ul class="company-knowledge">
             @for (item of research.analysis.company_knowledge; track $index) {
               <li>{{ item }}</li>
@@ -151,7 +153,7 @@
         @if (research.analysis.general_role_guidance.length) {
           <h4>Typical responsibilities, skills & projects</h4>
           <p class="hint">
-            AI-generated guidance · confirm these expectations against the actual posting.
+            AI-generated guidance. Check these expectations against the actual posting.
           </p>
           <ul>
             @for (item of research.analysis.general_role_guidance; track $index) {
@@ -185,7 +187,7 @@
         <h4>Complete research sources</h4>
         @for (source of research.sources; track $index) {
           <details>
-            <summary>Source {{ $index + 1 }} · {{ source.title }}</summary>
+            <summary>Source {{ $index + 1 }}: {{ source.title }}</summary>
             @if (source.url) {
               <p>
                 <a [href]="source.url" target="_blank" rel="noopener noreferrer">{{
@@ -208,7 +210,7 @@
       }
     } @else if (section() === 'technical') {
       @if (technicalLoading()) {
-        <p>Loading saved technical details…</p>
+        <p>Loading saved technical details...</p>
       }
       @if (technicalError()) {
         <p>{{ technicalError() }}</p>
@@ -244,15 +246,13 @@
                       ? 'Independent reviewer'
                       : 'Cover letter'
               }}
-              · draft {{ report.attempt }}
+              (draft {{ report.attempt }})
             </summary>
             <pre>{{ report.content | json }}</pre>
           </details>
         }
         <details>
-          <summary>
-            Complete profile snapshot used · revision {{ document().profile_revision }}
-          </summary>
+          <summary>Profile snapshot used, revision {{ document().profile_revision }}</summary>
           <pre>{{ details.profile_snapshot | json }}</pre>
         </details>
         <details>

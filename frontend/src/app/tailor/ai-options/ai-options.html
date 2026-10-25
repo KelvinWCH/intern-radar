@@ -45,7 +45,7 @@
       {{ customModel() ? 'Choose from model list' : 'Enter a model ID' }}
     </button>
     @if (catalogLoading()) {
-      <span class="hint">Loading models…</span>
+      <span class="hint">Loading models...</span>
     }
     @if (catalogError()) {
       <span class="hint">{{ catalogError() }}</span>
@@ -118,7 +118,7 @@
   </details>
   @if (!valid(options())) {
     <p class="error">
-      Use a valid model name, a temperature from 0–2 and a positive whole token limit.
+      Use a valid model name, a temperature from 0 to 2 and a positive whole token limit.
     </p>
   }
 </section>

@@ -1,0 +1,74 @@
+[build-system]
+requires = ["setuptools>=77"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "intern-radar-backend"
+version = "0.1.0"
+description = "API and worker for the Intern Radar internship scraper and resume tailor."
+requires-python = ">=3.11,<3.15"
+dependencies = [
+    "fastapi>=0.115,<1",
+    "uvicorn>=0.34,<1",
+    "pydantic>=2.10,<3",
+    "psycopg[binary,pool]>=3.2,<4",
+    "httpx2>=2.13,<3",
+    "filelock>=3.18,<4",
+    "playwright>=1.55,<2",
+    "python-dotenv>=1.1,<2",
+    "python-multipart>=0.0.20,<1",
+    "pypdf>=6,<7",
+    "tzdata>=2025.2",
+    "numpy>=1.26,<3",
+    "onnxruntime>=1.20,<2",
+    "tokenizers>=0.20,<1",
+    "websockets>=15,<18",
+]
+
+[project.scripts]
+job-import = "job_backend.cli:main"
+job-worker = "job_backend.scrape.worker.worker:main"
+
+[project.optional-dependencies]
+dev = [
+    "pytest>=8,<10",
+    "pyright>=1.1.400,<2",
+    "ruff>=0.11,<1",
+]
+
+[tool.setuptools.package-data]
+job_backend = [
+    "persistence/sql/*.sql",
+    "scrape/companies/companies.json",
+    "scrape/worker/schedules.json",
+    "resumes/render_latex/templates/*.tex",
+    "resumes/render_latex/templates/*.txt",
+    "resumes/render_cover_letter/templates/*.tex",
+]
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
+[tool.pyright]
+include = ["src", "tests", "../scripts"]
+extraPaths = ["src"]
+venvPath = "."
+venv = ".venv"
+pythonVersion = "3.11"
+typeCheckingMode = "strict"
+enableTypeIgnoreComments = false
+reportMissingTypeStubs = "error"
+reportUnnecessaryTypeIgnoreComment = "error"
+
+[tool.ruff]
+target-version = "py311"
+line-length = 100
+src = ["src"]
+
+[tool.ruff.lint]
+select = ["E", "F", "I", "UP", "B", "ANN", "ASYNC", "FAST", "PGH", "RUF"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+addopts = "--strict-config --strict-markers"
+

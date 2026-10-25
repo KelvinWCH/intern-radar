@@ -118,9 +118,10 @@ pre {
   border-radius: 8px;
 }
 blockquote {
-  border-left: 3px solid var(--line);
-  padding-left: 1rem;
   margin: 0.5rem 0 1.2rem;
+  padding: 0.6rem 0.9rem;
+  border-radius: 8px;
+  background: #f5f7f3;
 }
 small {
   display: block;
