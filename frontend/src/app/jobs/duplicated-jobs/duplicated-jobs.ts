@@ -51,13 +51,13 @@ export class DuplicatedJobsPanel {
   protected reason(reason: DuplicateReason): string {
     switch (reason) {
       case 'identical_extraction_input':
-        return 'Identical content and extraction context · AI result can be reused';
+        return 'Identical content and extraction context. The AI result can be reused';
       case 'same_url':
-        return 'Same normalized posting URL · verify the descriptions';
+        return 'Same normalized posting URL. Check the descriptions';
       case 'same_employer_id':
-        return 'Same employer ID, company, and job site · verify this match';
+        return 'Same employer ID, company and job site. Check this match';
       case 'conflicting_employer_ids':
-        return 'Same URL, different employer IDs · may be different jobs';
+        return 'Same URL, different employer IDs. These may be different jobs';
     }
   }
 }

@@ -7,7 +7,7 @@
           <div class="day-label">
             <h3 [id]="'day-' + day.key">{{ day.date | date: 'EEEE' }}</h3>
             @if (day.today) {
-              <span class="today-label"><i></i>Today · {{ day.date | date: 'MMM' }}</span>
+              <span class="today-label"><i></i>Today</span>
             } @else {
               <span>{{ day.date | date: 'MMM y' }}</span>
             }
@@ -16,12 +16,9 @@
             @if (loading()) {
               <app-skeleton width="28px" height="16px" />
             } @else {
-              {{ unavailable() ? '—' : day.groups.length }}
+              {{ unavailable() ? '-' : day.groups.length }}
             }
           </span>
-          <span class="day-meter"
-            ><span [style.transform]="'scaleX(' + day.groups.length / busiestDay() + ')'"></span
-          ></span>
         </header>
         <div class="day-jobs">
           @if (loading()) {
@@ -85,10 +82,10 @@
                   <app-match-badge [match]="job.match" />
                   <span class="location"
                     ><i class="pi pi-map-marker"></i>
-                    {{ job.locations.join(' · ') || 'Location not specified' }}</span
+                    {{ job.locations.join(', ') || 'Location not specified' }}</span
                   >
                   @if (job.terms.length) {
-                    <span>{{ job.terms.join(' · ') }}</span>
+                    <span>{{ job.terms.join(', ') }}</span>
                   }
                 </div>
                 <app-related-postings [postings]="group.postings" />
@@ -99,9 +96,7 @@
                   <span class="card-dates">
                     <app-posted-date [timestamp]="job.details?.date_posted" />
                     <span
-                      [title]="
-                        'First found ' + (job.firstSeenAt * 1000 | date: 'MMM d, y · h:mm a')
-                      "
+                      [title]="'First found ' + (job.firstSeenAt * 1000 | date: 'MMM d, y, h:mm a')"
                       >Found {{ job.firstSeenAt * 1000 | date: 'MMM d' }}</span
                     >
                   </span>
@@ -111,7 +106,7 @@
                   @if (job.reviewReason) {
                     <i
                       class="pi pi-flag review-icon"
-                      title="Security challenge — review the source posting"
+                      title="Security challenge, review the source posting"
                     ></i>
                   }
                   <span class="card-actions">
