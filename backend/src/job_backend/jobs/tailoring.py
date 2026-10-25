@@ -231,10 +231,10 @@ def prepare_tailoring(
                     _event(
                         1,
                         "queued",
-                        "One-shot tailoring accepted · one call researches, drafts, reviews "
+                        "One-shot tailoring accepted. One call researches, drafts, reviews "
                         "and revises"
                         if request.mode == "one_shot"
-                        else "Tailoring job accepted · waiting to start",
+                        else "Tailoring job accepted, waiting to start",
                     )
                 ],
             )
@@ -342,7 +342,7 @@ def run_tailoring(
                 event_id = len(row.events) + 1
                 output_events[output.request_id] = event_id
                 row.events.append(
-                    _event(event_id, "output", f"{key.replace('_', ' ').title()} · AI draft output")
+                    _event(event_id, "output", f"{key.replace('_', ' ').title()}: AI draft output")
                 )
             event = row.events[event_id - 1]
             event["output"] = output.text
@@ -367,7 +367,7 @@ def run_tailoring(
                 for item in row.stages:
                     if item.get("key") == "research":
                         item["message"] = message
-                row.events.append(_event(len(row.events) + 1, "ai", f"Research · {message}"))
+                row.events.append(_event(len(row.events) + 1, "ai", f"Research: {message}"))
         save_output("one_shot", output)
 
     def usage_snapshot() -> dict[str, JsonValue]:
@@ -395,7 +395,7 @@ def run_tailoring(
                 _event(
                     len(row.events) + 1,
                     stage,
-                    f"{key.replace('_', ' ').title()} · {message}",
+                    f"{key.replace('_', ' ').title()}: {message}",
                     details=details,
                 )
             )
@@ -471,7 +471,7 @@ def run_tailoring(
         stage_progress(
             key,
             "validate",
-            "Revision did not fit one page · kept the earlier one-page draft",
+            "Revision did not fit on one page, kept the earlier draft",
             "completed",
             details="".join(traceback.format_exception(error)),
         )
@@ -573,7 +573,7 @@ def run_tailoring(
                     _event(
                         len(row.events) + 1,
                         "validate",
-                        "Research needs more context · generate a generic company and role report",
+                        "Research needs more context. Generate a generic company and role report",
                     )
                 )
                 user = session.get(JobUserRecord, job_id)
@@ -801,7 +801,7 @@ def run_tailoring(
             stage_progress(
                 "resume",
                 "validate",
-                f"Flagged bullets fixed · {remaining} still to adjust by hand"
+                f"Flagged bullets fixed, {remaining} still to adjust by hand"
                 if remaining
                 else "Flagged bullets fixed; PDF layout rechecked",
                 "completed",
@@ -879,9 +879,9 @@ def run_tailoring(
         stage_progress(
             "reviewer",
             "validate",
-            "Review complete · remaining findings need your attention"
+            "Review complete. The remaining findings need your attention"
             if review.status == "needs_attention"
-            else f"Self-review in the one-shot call · "
+            else f"Self-review in the one-shot call, "
             f"{len(one_shot.output.review.findings)} finding(s) addressed in the final drafts"
             if one_shot is not None
             else "Independent review complete",
@@ -900,7 +900,7 @@ def run_tailoring(
         stage_progress(
             "pdf_diagnostics",
             "validate",
-            f"{len(diagnostics)} PDF report(s) saved · {warning_count} warning(s) to inspect",
+            f"{len(diagnostics)} PDF report(s) saved, {warning_count} warning(s) to inspect",
             "completed",
         )
         with write_lock, Session(engine) as session, session.begin():
@@ -917,7 +917,7 @@ def run_tailoring(
                 _event(
                     len(row.events) + 1,
                     "done",
-                    "Documents and reports saved · ready for your review",
+                    "Documents and reports saved and ready for review",
                 )
             )
             if user.status == "new":
@@ -951,7 +951,7 @@ def run_tailoring(
                     _event(
                         len(failed.events) + 1,
                         "error",
-                        "Tailoring did not complete · reports and any completed document "
+                        "Tailoring did not complete. Reports and any completed document "
                         "are preserved",
                         details="".join(traceback.format_exception(error)),
                     )

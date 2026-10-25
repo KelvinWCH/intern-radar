@@ -45,8 +45,8 @@ ONE_SHOT_STEP_KEYS = {
 ONE_SHOT_STEP_ORDER = ("research", "draft", "review", "revise")
 ONE_SHOT_KEY = re.compile(r'"(' + "|".join(ONE_SHOT_STEP_KEYS) + r')"\s*:')
 ONE_SHOT_STEP_MESSAGES = {
-    "research": "One call · researching the company and role",
-    "draft": "One call · drafting the documents",
-    "review": "One call · reviewing its own drafts",
-    "revise": "One call · revising into the final documents",
+    "research": "One call researching the company and role",
+    "draft": "One call drafting the documents",
+    "review": "One call reviewing its own drafts",
+    "revise": "One call revising into the final documents",
 }
