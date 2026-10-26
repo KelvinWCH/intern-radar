@@ -1,0 +1,9 @@
+API_ROOT = "https://api.smartrecruiters.com/v1/companies"
+PUBLIC_POSTING_ROOT = "https://jobs.smartrecruiters.com"
+COUNTRY = "ca"
+PAGE_SIZE = 100
+MAX_LISTING_PAGES = 50
+MAX_RESPONSE_BYTES = 8 * 1024 * 1024
+MAX_SNAPSHOT_BYTES = 64 * 1024 * 1024
+DETAIL_WORKERS = 3
+DETAIL_BATCH_DELAY_SECONDS = 1.0
