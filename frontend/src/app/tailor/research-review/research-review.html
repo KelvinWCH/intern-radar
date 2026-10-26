@@ -1,0 +1,251 @@
+@if (document().research; as report) {
+  @if (reviewable()) {
+    <section class="review-panel">
+      <div class="eyebrow">
+        {{ missingRoleDetails() ? 'More context needed' : 'Research check' }}
+      </div>
+      <h4>
+        {{
+          report.validated
+            ? 'Your report is ready'
+            : missingRoleDetails()
+              ? 'Not enough detail in this job description'
+              : 'Let’s build a more useful report'
+        }}
+      </h4>
+      <p>
+        @if (report.validated) {
+          The edited citations now match the saved sources. Continue when you are ready.
+        } @else {
+          @if (missingRoleDetails()) {
+            The saved page is missing useful responsibilities or requirements. It may be incomplete
+            or a security-check page.
+          } @else {
+            The current report has claims that could not be checked against its sources.
+          }
+          Writing is paused. Generate a fresh report from the company and role instead.
+        }
+      </p>
+      @if (draft(); as analysis) {
+        <form #reviewForm="ngForm" (ngSubmit)="submit('save')">
+          <fieldset [disabled]="saving()">
+            <legend>Edit research</legend>
+            @if (analysis.mission; as mission) {
+              <label
+                >Company mission<textarea
+                  name="mission"
+                  [(ngModel)]="mission.finding"
+                  required
+                ></textarea>
+              </label>
+              <label
+                >Supporting quote<textarea
+                  name="missionQuote"
+                  [(ngModel)]="mission.quote"
+                ></textarea>
+              </label>
+              <label
+                >Source<select name="missionSource" [(ngModel)]="mission.source_index">
+                  @for (source of report.sources; track $index) {
+                    <option [ngValue]="$index">{{ $index + 1 }} · {{ source.title }}</option>
+                  }
+                </select></label
+              >
+              <button type="button" class="button-secondary" (click)="analysis.mission = null">
+                Remove mission
+              </button>
+            } @else {
+              <button
+                type="button"
+                class="button-secondary"
+                (click)="analysis.mission = newFinding()"
+              >
+                Add mission
+              </button>
+            }
+            @for (
+              section of [
+                { key: 'context', label: 'Company context', items: analysis.company_context },
+                { key: 'priorities', label: 'Role priorities', items: analysis.role_priorities },
+                { key: 'requirements', label: 'Requirements', items: analysis.requirements },
+                {
+                  key: 'preferred',
+                  label: 'Preferred qualifications',
+                  items: analysis.preferred_qualifications,
+                },
+              ];
+              track section.key
+            ) {
+              <h5>{{ section.label }}</h5>
+              @for (finding of section.items; track $index; let index = $index) {
+                <div class="finding">
+                  <label
+                    >Finding {{ index + 1
+                    }}<textarea
+                      [name]="section.key + index"
+                      [(ngModel)]="finding.finding"
+                      required
+                    ></textarea>
+                  </label>
+                  <label
+                    >Supporting quote<textarea
+                      [name]="section.key + index + 'quote'"
+                      [(ngModel)]="finding.quote"
+                    ></textarea>
+                  </label>
+                  <label
+                    >Source<select
+                      [name]="section.key + index + 'source'"
+                      [(ngModel)]="finding.source_index"
+                    >
+                      @for (source of report.sources; track $index) {
+                        <option [ngValue]="$index">{{ $index + 1 }} · {{ source.title }}</option>
+                      }
+                    </select></label
+                  >
+                  <button
+                    type="button"
+                    class="button-secondary"
+                    (click)="section.items.splice(index, 1)"
+                  >
+                    Remove finding
+                  </button>
+                </div>
+              }
+              <button
+                type="button"
+                class="button-secondary"
+                (click)="section.items.push(newFinding())"
+              >
+                Add finding to {{ section.label }}
+              </button>
+            }
+            <label
+              >Writing guidance (one per line)<textarea
+                name="guidance"
+                [(ngModel)]="guidance"
+                rows="4"
+              ></textarea>
+            </label>
+            <label
+              >Unknowns (one per line)<textarea
+                name="unknowns"
+                [(ngModel)]="unknowns"
+                rows="3"
+              ></textarea>
+            </label>
+            <label
+              >What the model knows about the company (one per line, not checked)<textarea
+                name="companyKnowledge"
+                [(ngModel)]="companyKnowledge"
+                rows="3"
+              ></textarea>
+            </label>
+            @if (report.mode === 'generic') {
+              <label
+                >Typical role guidance (not confirmed requirements)<textarea
+                  name="generalGuidance"
+                  [(ngModel)]="generalGuidance"
+                  rows="4"
+                ></textarea>
+              </label>
+            }
+            <div class="review-actions">
+              <button type="submit" class="button-primary" [disabled]="reviewForm.invalid">
+                Save edits & check citations
+              </button>
+              <button type="button" class="button-secondary" (click)="draft.set(null)">
+                Cancel edits
+              </button>
+            </div>
+          </fieldset>
+        </form>
+      } @else {
+        @if (!report.validated) {
+          <div class="generic-research">
+            <h5>Research the company & typical role</h5>
+            <p>
+              AI will suggest public company pages, read the available sources, and explain typical
+              work, skills, and projects for this role. General expectations will be labeled
+              separately from verified facts.
+            </p>
+            <label for="generic-research-prompt">What should the report cover?</label>
+            <textarea
+              id="generic-research-prompt"
+              [ngModel]="researchPrompt()"
+              (ngModelChange)="customPrompt.set($event)"
+              [disabled]="saving()"
+              rows="5"
+              maxlength="2000"
+            ></textarea>
+            <p id="generic-research-help" class="hint">
+              Edit the prompt or use it as is. Once the report is ready, your selected documents
+              will be generated using your saved profile.
+            </p>
+            <button
+              type="button"
+              class="button-primary"
+              (click)="submit('generate_generic')"
+              [disabled]="saving() || !researchPrompt().trim() || researchPrompt().length > 2000"
+            >
+              {{ saving() ? 'Starting research…' : 'Generate generic report' }}
+            </button>
+          </div>
+        } @else {
+          <button
+            type="button"
+            class="button-primary"
+            [disabled]="saving()"
+            (click)="submit('continue')"
+          >
+            Continue with this report
+          </button>
+        }
+        <details class="manual-review">
+          <summary>Review sources or edit the current report</summary>
+          <ul>
+            @for (issue of report.validation_issues; track $index) {
+              <li>{{ issue }}</li>
+            }
+          </ul>
+          <p class="hint">
+            The report and original source texts are below. Continuing with an unchecked report lets
+            the writers use its unverified claims.
+          </p>
+          <div class="review-actions">
+            <button type="button" class="button-secondary" [disabled]="saving()" (click)="edit()">
+              Edit report
+            </button>
+            @if (!report.validated) {
+              <button
+                type="button"
+                class="button-secondary"
+                [disabled]="saving()"
+                (click)="submit('continue')"
+              >
+                Continue with unverified research
+              </button>
+            }
+          </div>
+        </details>
+      }
+      @if (saving()) {
+        <p>Saving your request…</p>
+      }
+      @if (error()) {
+        <p class="notice error">{{ error() }}</p>
+        <button type="button" class="button-secondary" [disabled]="saving()" (click)="reload()">
+          {{ draft() ? 'Discard edits & reload saved report' : 'Reload saved progress' }}
+        </button>
+      }
+    </section>
+  } @else if (!report.validated) {
+    <p class="notice">
+      {{
+        report.approved_at !== null
+          ? 'You chose to continue with unverified research. Review its claims before using the documents.'
+          : 'Research citations have not passed validation. Review the saved report before using these claims.'
+      }}
+    </p>
+  }
+}

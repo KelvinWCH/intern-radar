@@ -1,0 +1,221 @@
+@let fields = draft();
+<div class="field-grid">
+  <div class="field">
+    <label for="new-company">Company</label
+    ><input
+      id="new-company"
+      name="company"
+      [(ngModel)]="fields.company"
+      [required]="editing()"
+      pattern=".*\S.*"
+      maxlength="2000"
+    />
+  </div>
+  <div class="field">
+    <label for="new-title">Role</label
+    ><input
+      id="new-title"
+      name="title"
+      [(ngModel)]="fields.title"
+      [required]="editing()"
+      pattern=".*\S.*"
+      maxlength="2000"
+    />
+  </div>
+</div>
+<div class="field">
+  <label for="new-url">Job URL</label
+  ><input
+    id="new-url"
+    name="application_url"
+    type="url"
+    pattern="https?://.+"
+    [(ngModel)]="fields.application_url"
+    placeholder="https://…"
+  />
+</div>
+<div class="field">
+  <label for="new-description">Raw job description</label
+  ><textarea
+    id="new-description"
+    name="raw_description"
+    [(ngModel)]="fields.raw_description"
+    rows="10"
+    [required]="!editing()"
+    [maxlength]="storedDescriptionLimit"
+    placeholder="Responsibilities, requirements, and other job details…"
+  ></textarea>
+  <app-text-count
+    id="new-raw-count"
+    [text]="fields.raw_description"
+    [limit]="storedDescriptionLimit"
+  />
+</div>
+<details>
+  <summary>More job details</summary>
+  <div class="field">
+    <label for="new-cleaned-description">Cleaned description (optional)</label>
+    <textarea
+      id="new-cleaned-description"
+      name="cleaned_description"
+      [(ngModel)]="fields.cleaned_description"
+      rows="10"
+      [maxlength]="storedDescriptionLimit"
+      placeholder="Leave blank to generate a cleaned version from the raw description…"
+    ></textarea>
+    <app-text-count
+      id="new-cleaned-count"
+      [text]="fields.cleaned_description"
+      [limit]="tailoringDescriptionLimit"
+      purpose="tailoring"
+      guidance="You can save this draft; shorten the cleaned text before tailoring."
+    />
+    <p class="hint">Used for tailoring. Maximum 200,000 characters.</p>
+  </div>
+  <p class="hint">Enter lists one item per line.</p>
+  <div class="field-grid">
+    @for (link of jobLinkFields; track link[0]) {
+      <div class="field">
+        <label [for]="'job-' + link[0]">{{ link[1] }}</label
+        ><input
+          [id]="'job-' + link[0]"
+          [name]="link[0]"
+          type="url"
+          pattern="https?://.+"
+          [(ngModel)]="fields[link[0]]"
+        />
+      </div>
+    }
+    @for (label of jobTextFields; track label[0]) {
+      <div class="field">
+        <label [for]="'job-' + label[0]">{{ label[1] }}</label
+        ><input
+          [id]="'job-' + label[0]"
+          [name]="label[0]"
+          maxlength="2000"
+          [(ngModel)]="fields[label[0]]"
+        />
+      </div>
+    }
+    <div class="field">
+      <label for="job-active">Posting status</label
+      ><select id="job-active" name="active" [(ngModel)]="fields.active">
+        <option [ngValue]="null">Unknown</option>
+        <option [ngValue]="true">Open</option>
+        <option [ngValue]="false">Closed</option>
+      </select>
+    </div>
+    <div class="field">
+      <label for="job-locations">Locations · one per line</label
+      ><textarea
+        id="job-locations"
+        name="locations"
+        [(ngModel)]="fields.locations"
+        rows="3"
+      ></textarea>
+    </div>
+    <div class="field">
+      <label for="job-terms">Terms · one per line</label
+      ><textarea id="job-terms" name="terms" [(ngModel)]="fields.terms" rows="3"></textarea>
+    </div>
+    <div class="field">
+      <label for="job-date-posted">Posted on</label
+      ><input
+        id="job-date-posted"
+        name="date_posted"
+        type="date"
+        min="1970-01-01"
+        [(ngModel)]="fields.date_posted"
+      />
+    </div>
+    <div class="field">
+      <label for="job-date-updated">Updated by employer</label
+      ><input
+        id="job-date-updated"
+        name="date_updated"
+        type="date"
+        min="1970-01-01"
+        [(ngModel)]="fields.date_updated"
+      />
+    </div>
+  </div>
+  <div class="field">
+    <label for="job-summary">Summary</label
+    ><textarea
+      id="job-summary"
+      name="summary"
+      rows="4"
+      maxlength="200000"
+      [(ngModel)]="fields.summary"
+    ></textarea>
+  </div>
+  <label class="checkbox"
+    ><input type="checkbox" name="hasQualifications" [(ngModel)]="fields.hasQualifications" />
+    Include structured qualifications</label
+  >
+  @if (fields.hasQualifications) {
+    <div class="field-grid">
+      @for (field of requirementListFields; track field[0]) {
+        <div class="field">
+          <label [for]="'job-' + field[0]">{{ field[1] }} · one per line</label
+          ><textarea
+            [id]="'job-' + field[0]"
+            [name]="field[0]"
+            rows="3"
+            [(ngModel)]="fields.requirements[field[0]]"
+          ></textarea>
+        </div>
+      }
+      @for (field of educationListFields; track field[0]) {
+        <div class="field">
+          <label [for]="'job-' + field[0]">{{ field[1] }} · one per line</label
+          ><textarea
+            [id]="'job-' + field[0]"
+            [name]="field[0]"
+            rows="2"
+            [(ngModel)]="fields.education[field[0]]"
+          ></textarea>
+        </div>
+      }
+      @for (field of qualificationNumberFields; track field[0]) {
+        <div class="field">
+          <label [for]="'job-' + field[0]">{{ field[1] }}</label
+          ><input
+            [id]="'job-' + field[0]"
+            [name]="field[0]"
+            type="number"
+            [min]="field[2]"
+            [step]="field[3]"
+            [(ngModel)]="fields[field[0]]"
+          />
+        </div>
+      }
+      @for (field of qualificationBooleanFields; track field[0]) {
+        <div class="field">
+          <label [for]="'job-' + field[0]">{{ field[1] }}</label
+          ><select [id]="'job-' + field[0]" [name]="field[0]" [(ngModel)]="fields[field[0]]">
+            <option [ngValue]="null">Unknown</option>
+            <option [ngValue]="true">Yes</option>
+            <option [ngValue]="false">No</option>
+          </select>
+        </div>
+      }
+      <div class="field">
+        <label for="job-authorization">Work authorization</label
+        ><input
+          id="job-authorization"
+          name="work_authorization"
+          [(ngModel)]="fields.work_authorization"
+        />
+      </div>
+      <div class="field">
+        <label for="job-clearance">Security clearance</label
+        ><input
+          id="job-clearance"
+          name="security_clearance"
+          [(ngModel)]="fields.security_clearance"
+        />
+      </div>
+    </div>
+  }
+</details>
