@@ -10,7 +10,7 @@
             ? 'Your report is ready'
             : missingRoleDetails()
               ? 'Not enough detail in this job description'
-              : 'Let’s build a more useful report'
+              : 'Build a more useful report'
         }}
       </h4>
       <p>
@@ -47,7 +47,7 @@
               <label
                 >Source<select name="missionSource" [(ngModel)]="mission.source_index">
                   @for (source of report.sources; track $index) {
-                    <option [ngValue]="$index">{{ $index + 1 }} · {{ source.title }}</option>
+                    <option [ngValue]="$index">{{ $index + 1 }}. {{ source.title }}</option>
                   }
                 </select></label
               >
@@ -99,7 +99,7 @@
                       [(ngModel)]="finding.source_index"
                     >
                       @for (source of report.sources; track $index) {
-                        <option [ngValue]="$index">{{ $index + 1 }} · {{ source.title }}</option>
+                        <option [ngValue]="$index">{{ $index + 1 }}. {{ source.title }}</option>
                       }
                     </select></label
                   >
@@ -188,7 +188,7 @@
               (click)="submit('generate_generic')"
               [disabled]="saving() || !researchPrompt().trim() || researchPrompt().length > 2000"
             >
-              {{ saving() ? 'Starting research…' : 'Generate generic report' }}
+              {{ saving() ? 'Starting research...' : 'Generate generic report' }}
             </button>
           </div>
         } @else {
@@ -230,7 +230,7 @@
         </details>
       }
       @if (saving()) {
-        <p>Saving your request…</p>
+        <p>Saving your request...</p>
       }
       @if (error()) {
         <p class="notice error">{{ error() }}</p>

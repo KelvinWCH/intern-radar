@@ -31,7 +31,7 @@
     type="url"
     pattern="https?://.+"
     [(ngModel)]="fields.application_url"
-    placeholder="https://…"
+    placeholder="https://..."
   />
 </div>
 <div class="field">
@@ -43,7 +43,7 @@
     rows="10"
     [required]="!editing()"
     [maxlength]="storedDescriptionLimit"
-    placeholder="Responsibilities, requirements, and other job details…"
+    placeholder="Responsibilities, requirements, and other job details..."
   ></textarea>
   <app-text-count
     id="new-raw-count"
@@ -61,7 +61,7 @@
       [(ngModel)]="fields.cleaned_description"
       rows="10"
       [maxlength]="storedDescriptionLimit"
-      placeholder="Leave blank to generate a cleaned version from the raw description…"
+      placeholder="Leave blank to generate a cleaned version from the raw description..."
     ></textarea>
     <app-text-count
       id="new-cleaned-count"
@@ -106,7 +106,7 @@
       </select>
     </div>
     <div class="field">
-      <label for="job-locations">Locations · one per line</label
+      <label for="job-locations">Locations (one per line)</label
       ><textarea
         id="job-locations"
         name="locations"
@@ -115,7 +115,7 @@
       ></textarea>
     </div>
     <div class="field">
-      <label for="job-terms">Terms · one per line</label
+      <label for="job-terms">Terms (one per line)</label
       ><textarea id="job-terms" name="terms" [(ngModel)]="fields.terms" rows="3"></textarea>
     </div>
     <div class="field">
@@ -157,7 +157,7 @@
     <div class="field-grid">
       @for (field of requirementListFields; track field[0]) {
         <div class="field">
-          <label [for]="'job-' + field[0]">{{ field[1] }} · one per line</label
+          <label [for]="'job-' + field[0]">{{ field[1] }} (one per line)</label
           ><textarea
             [id]="'job-' + field[0]"
             [name]="field[0]"
@@ -168,7 +168,7 @@
       }
       @for (field of educationListFields; track field[0]) {
         <div class="field">
-          <label [for]="'job-' + field[0]">{{ field[1] }} · one per line</label
+          <label [for]="'job-' + field[0]">{{ field[1] }} (one per line)</label
           ><textarea
             [id]="'job-' + field[0]"
             [name]="field[0]"
