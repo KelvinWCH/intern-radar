@@ -17,10 +17,10 @@ The api and worker are the same Python package and the same Docker image.
 ## Deployment
 
 Everything runs on one machine with Docker Compose. `docker compose up -d --build` in `backend/`
-builds two images and starts four containers. The GPU embedder is a fifth, added by
+builds two images and starts four containers. The GPU embedder is a fifth one, added by
 `compose.gpu.yaml`.
 
-### Components
+### Inside the api and worker
 
 The api and the worker never call each other. They share PostgreSQL, and lock files on the data
 volume make sure only one scrape batch runs at a time, whether the schedule or you started it.
@@ -43,7 +43,7 @@ flowchart LR
 
     control -->|spawns| importer["importer<br/>one process per source"]
     scheduler -->|spawns| importer
-    tailoring --> llm["OpenAI compatible API"]
+    tailoring --> llm["OpenAI-compatible API"]
     importer --> sites["GitHub lists,<br/>job boards"]
     records --> pg[("PostgreSQL")]
     tailoring --> pg
@@ -63,7 +63,7 @@ flowchart LR
     style worker fill:none,stroke:#8b9a93,stroke-dasharray:5 5
 ```
 
-### Containers
+### Docker services
 
 The api and worker run the same image, with Python, headless Chromium and Tectonic in it. Only
 `web` is published on every interface. The api and Postgres are only published on 127.0.0.1, so
@@ -113,9 +113,9 @@ flowchart LR
 ### Starting up
 
 Compose starts the api and the worker once Postgres passes its health check, and `web` once the
-api container is up. Migrations take a Postgres advisory lock, so two processes starting at the
-same moment can't both apply them. If the api can't reach Postgres, it stays up, answers 503 and
-tries again every 5 seconds.
+api container is up. Migrations take a Postgres advisory lock, which stops two processes that
+start at the same moment from both applying them. If the api can't reach Postgres it stays up,
+answers 503 and tries again every 5 seconds.
 
 ```mermaid
 flowchart LR
@@ -159,14 +159,14 @@ flowchart LR
 
 While nothing is due, the worker scores new matches and, once a day, posts the health report to
 Discord if a webhook is set. When not a single source in a batch could be reached, the worker
-treats the internet as down and retries the group in 15 minutes instead of waiting for its next
+treats the internet as down and retries the group in 15 minutes rather than waiting for its next
 slot. The groups and their times are in [Scraping](#scraping).
 
 ## Tailoring
 
 Clicking "Research and tailor" sends a request id that the browser makes up. The api saves the
-attempt under that id and answers right away, so a double click or a retried request returns the
-run that already exists instead of paying for a second one. The work runs as a background task and
+attempt under that id and answers right away. A double click or a retried request gets back the
+run that already exists, and you don't pay for a second one. The work runs as a background task and
 the page polls `GET /documents/{id}`, which returns the stages, events and the model's streamed
 output. Everything is saved, so you can close the tab and come back.
 
@@ -191,7 +191,7 @@ The steps:
    you to approve, edit, or ask for a generic report.
 2. **Writers** run at the same time. The resume writer picks entries and bullets by index from your
    profile and says which original bullet or saved detail each line came from. Skills come from
-   your saved skill lists, so it can't add one you don't have.
+   your saved skill lists and it can't add one you don't have.
 3. **Render and checks.** Drafts go through a LaTeX template and Tectonic. Long bullets get
    shortened until the resume fits on one page, then the text is read back out of the PDF to check
    what an applicant tracking system will see (contact info, dates, headings, skills).
@@ -256,7 +256,7 @@ flowchart LR
 - Every page, redirect and browser visit is checked against the site's robots.txt first
   ([RFC 9309](https://www.rfc-editor.org/rfc/rfc9309)). A page it rules out is never opened;
   the job is flagged for you to open, like a LinkedIn posting. Board feeds and published job
-  board APIs are read as data, not crawled, so they don't get this check.
+  board APIs skip this check because they're put out for programs to read.
 - Every request sends `intern-radar-importer/0.1 (+https://github.com/KelvinWCH/intern-radar)`
   as its user agent. The browser keeps its own and adds that to the end.
 - Every import, manual or scheduled, waits 2 to 5 seconds between requests to the same host,
@@ -298,8 +298,8 @@ Every record is a typed Python dataclass stored as JSONB in one PostgreSQL table
 | `import_runs`, `scrape_events`  | one run per source per batch, and its log lines                  |
 | `job_embeddings`, `job_matches` | vectors and the latest match score with its reasons              |
 
-Edits use optimistic locking: a save with an old version number is rejected instead of quietly
-overwriting a newer one. Lists don't read the full records. A trigger keeps a small projection
+Edits use optimistic locking. A save with an old version number gets rejected and the newer copy
+stays. Lists don't read the full records. A trigger keeps a small projection
 table with just the fields list pages filter and sort on, plus normalized search text. The SQL
 migrations in `persistence/sql/` run on startup and are checksummed, so an edited migration
 refuses to start.
@@ -326,8 +326,8 @@ flowchart LR
     class jobs,profile data
 ```
 
-Raw similarity rates almost every job as a decent match, so scores are turned into percentiles
-across all saved jobs first. Non-internships, roles you're not eligible for and postings far from
+Raw similarity rated almost every job as a decent match (everything sat around 70), which is why
+scores are turned into percentiles across all saved jobs first. Non-internships, roles you're not eligible for and postings far from
 every target role get pushed down. The worker only scores while it's idle. With the GPU sidecar it
 sends batches to `JOB_EMBEDDER_URL`, and if the sidecar doesn't answer it falls back to the CPU
 and checks the sidecar again 10 minutes later.
@@ -335,25 +335,25 @@ and checks the sidecar again 10 minutes later.
 ## Why it's built this way
 
 **Only public sources.** The big job sites forbid scraping and block it, and getting around that
-means faking browsers or solving CAPTCHAs. Some postings get missed, mostly ones that only exist on
-those sites.
+means faking browsers or solving CAPTCHAs. I didn't want to do either. Some postings get missed
+because of it, mostly ones that only exist on those sites.
 
 **JSONB records instead of a table per type.** Postings come from a dozen providers and the record
-shapes kept changing. New fields are a code change, not a migration. The cost is that validation
-lives in Python, so the database itself can't stop a bad write.
+shapes kept changing. Adding a field is a code change with no migration. The downside is that
+validation lives in Python and the database can't stop a bad write by itself.
 
-**One process per source.** A crash, memory leak or stuck browser only costs one source, and
-scheduled, manual and command line imports share one code path.
+**One process per source.** A crash, a memory leak or a stuck browser only costs one source.
+Scheduled, manual and command-line imports also share one code path this way.
 
-**HTTP before a browser.** Most posting pages already have the whole description in the HTML or in
-JSON-LD. Skipping the browser keeps imports fast and light enough for a small server. The browser
-keeps its sandbox on and goes through the same public address check.
+**HTTP before a browser.** Most posting pages already have the whole description in the HTML or
+in JSON-LD. Skipping the browser keeps imports fast and light enough for a small server. When the
+browser does run, it keeps its sandbox on and goes through the same public address check.
 
-**Separate agents with checks in code.** A writer that can only pick from the profile and a
-separate reviewer catch far more made-up claims than one prompt checking itself. It costs more
-calls, which is what the one-shot mode is for.
+**Separate agents, with checks in code.** A writer that can only pick from the profile plus a
+separate reviewer catches a lot more made-up claims than one prompt checking itself. It costs
+more calls, which is what the one-shot mode is for.
 
-**Validate at every boundary.** Scraped pages, provider APIs, model output and the browser can all
-send something unexpected. The backend validates everything that crosses a boundary with Pydantic,
-and the frontend parses every API response before a component sees it. Bad data fails at the edge
-with a clear error instead of breaking a page later.
+**Validate everything that comes in.** Scraped pages, provider APIs, model output and the browser
+can all send back something unexpected. The backend runs anything crossing a boundary through
+Pydantic, and the frontend parses every API response before a component sees it. Bad data fails
+early with a clear error.

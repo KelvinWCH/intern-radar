@@ -1,0 +1,14 @@
+:host {
+  display: block;
+  flex-shrink: 0;
+  border-radius: 5px;
+  background: #e1ebe4;
+}
+:host {
+  animation: breathe 1.6s ease-in-out infinite alternate;
+}
+@keyframes breathe {
+  to {
+    opacity: 0.45;
+  }
+}
