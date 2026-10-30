@@ -1,5 +1,5 @@
 <svg xmlns="http://www.w3.org/2000/svg" width="560" height="356" viewBox="0 38 560 356" role="img" aria-labelledby="title desc">
-<title id="title">Containers</title>
+<title id="title">Docker services</title>
 <desc id="desc">Docker Compose runs web (nginx and the Angular build, published on port 80), api (FastAPI, only on 127.0.0.1:8000), worker, and postgres 18 (only on 127.0.0.1:5432). The api and worker share the job-data volume, postgres keeps its data in postgres-data, and the GPU overlay adds an embedder on port 8100 that the worker calls.</desc>
 <style>
 .t{font-family:-apple-system, BlinkMacSystemFont, 'Segoe UI', 'Noto Sans', Helvetica, Arial, sans-serif;font-weight:600}
@@ -9,11 +9,11 @@
 .c{font-family:ui-monospace, SFMono-Regular, 'SF Mono', Menlo, Consolas, 'Liberation Mono', monospace;font-size:11px}
 .g{font-family:ui-monospace, SFMono-Regular, 'SF Mono', Menlo, Consolas, 'Liberation Mono', monospace;font-size:12px;font-weight:600;fill:#7d8590}
 .n{font-family:ui-monospace, SFMono-Regular, 'SF Mono', Menlo, Consolas, 'Liberation Mono', monospace;font-size:11px;fill:#7d8590}
-.l{font-family:ui-monospace, SFMono-Regular, 'SF Mono', Menlo, Consolas, 'Liberation Mono', monospace;font-size:11px;fill:#ffffff}
+.k{font-family:-apple-system, BlinkMacSystemFont, 'Segoe UI', 'Noto Sans', Helvetica, Arial, sans-serif;font-size:12px;fill:#57606a}
 .e{fill:none;stroke:#8b949e;stroke-width:1.5;stroke-linejoin:round}
 </style>
 <defs><marker id="arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path d="M0.5,1 L9.5,5 L0.5,9 z" fill="#8b949e"/></marker></defs>
-<rect x="122" y="50" width="426" height="338" rx="10" fill="none" stroke="#8b949e" stroke-dasharray="5 5"/>
+<rect x="122" y="50" width="426" height="338" rx="10" fill="none" stroke="#8b949e"/>
 <text x="536" y="70" class="g" text-anchor="end">docker host</text>
 <path d="M104,123 H140" class="e" marker-end="url(#arrow)"/>
 <path d="M256,123 H290" class="e" marker-end="url(#arrow)"/>
@@ -29,15 +29,11 @@
 <rect x="140" y="96" width="116" height="54" rx="5" fill="#eaf1fc" stroke="#345e91" stroke-width="1.5"/>
 <text x="198" y="121" class="t" font-size="14" text-anchor="middle" fill="#345e91">web</text>
 <text x="198" y="136" class="s" text-anchor="middle" fill="#345e91">nginx, Angular</text>
-<rect x="158" y="87" width="80" height="18" rx="9" fill="#ffffff" stroke="#345e91"/>
-<text x="165" y="99.8" class="c" text-anchor="start" fill="#345e91">0.0.0.0:80</text>
+<text x="198" y="91" class="n" text-anchor="middle">0.0.0.0:80</text>
 <rect x="290" y="96" width="120" height="54" rx="5" fill="#e4f3e8" stroke="#236746" stroke-width="1.5"/>
 <text x="350" y="121" class="t" font-size="14" text-anchor="middle" fill="#236746">api</text>
 <text x="350" y="136" class="s" text-anchor="middle" fill="#236746">FastAPI</text>
-<rect x="290.8" y="87" width="118.4" height="18" rx="9" fill="#ffffff" stroke="#66625a"/>
-<path d="M299.6,94.5 v-1.5 a2.7,2.7 0 0 1 5.4,0 v1.5" fill="none" stroke="#66625a" stroke-width="1.3"/>
-<rect x="297.8" y="94.5" width="9" height="6.5" rx="1.4" fill="#66625a"/>
-<text x="310.8" y="99.8" class="c" text-anchor="start" fill="#66625a">127.0.0.1:8000</text>
+<text x="350" y="91" class="n" text-anchor="middle">127.0.0.1:8000</text>
 <path d="M305,193 A45,7 0 0 0 395,193 V241 A45,7 0 0 1 305,241 Z" fill="#f1efeb" stroke="#66625a" stroke-width="1.5"/>
 <ellipse cx="350" cy="193" rx="45" ry="7" fill="#f1efeb" stroke="#66625a" stroke-width="1.5"/>
 <text x="350" y="224.5" class="m" text-anchor="middle" fill="#66625a">job-data</text>
@@ -51,21 +47,17 @@
 <rect x="140" y="290" width="116" height="54" rx="5" fill="#f1efeb" stroke="#66625a" stroke-width="1.5" stroke-dasharray="5 4"/>
 <text x="198" y="315" class="t" font-size="14" text-anchor="middle" fill="#66625a">embedder</text>
 <text x="198" y="330" class="s" text-anchor="middle" fill="#66625a">GPU, :8100</text>
-<rect x="154.7" y="281" width="86.6" height="18" rx="9" fill="#ffffff" stroke="#66625a" stroke-dasharray="3 2.5"/>
-<text x="161.7" y="293.8" class="c" text-anchor="start" fill="#66625a">gpu overlay</text>
+<text x="198" y="285" class="n" text-anchor="middle">gpu overlay</text>
 <path d="M440,157 A48,7 0 0 0 536,157 V227 A48,7 0 0 1 440,227 Z" fill="#f1efeb" stroke="#66625a" stroke-width="1.5"/>
 <ellipse cx="488" cy="157" rx="48" ry="7" fill="#f1efeb" stroke="#66625a" stroke-width="1.5"/>
 <text x="488" y="193.5" class="t" font-size="14" text-anchor="middle" fill="#66625a">postgres</text>
 <text x="488" y="208.5" class="s" text-anchor="middle" fill="#66625a">18</text>
-<rect x="428.8" y="141" width="118.4" height="18" rx="9" fill="#ffffff" stroke="#66625a"/>
-<path d="M437.6,148.5 v-1.5 a2.7,2.7 0 0 1 5.4,0 v1.5" fill="none" stroke="#66625a" stroke-width="1.3"/>
-<rect x="435.8" y="148.5" width="9" height="6.5" rx="1.4" fill="#66625a"/>
-<text x="448.8" y="153.8" class="c" text-anchor="start" fill="#66625a">127.0.0.1:5432</text>
+<text x="488" y="145" class="n" text-anchor="middle">127.0.0.1:5432</text>
 <path d="M442,297 A46,7 0 0 0 534,297 V337 A46,7 0 0 1 442,337 Z" fill="#f1efeb" stroke="#66625a" stroke-width="1.5"/>
 <ellipse cx="488" cy="297" rx="46" ry="7" fill="#f1efeb" stroke="#66625a" stroke-width="1.5"/>
 <text x="488" y="324.5" class="m" text-anchor="middle" fill="#66625a">postgres-data</text>
-<rect x="108.1" y="103.5" width="27.8" height="17" rx="3" fill="#57606a"/>
-<text x="122" y="115.8" class="l" text-anchor="middle">:80</text>
-<rect x="255.8" y="103.5" width="34.4" height="17" rx="3" fill="#57606a"/>
-<text x="273" y="115.8" class="l" text-anchor="middle">/api</text>
+<rect x="108.5" y="103.5" width="26.9" height="17" rx="2" fill="#eff1f3"/>
+<text x="122" y="116" class="k" text-anchor="middle">:80</text>
+<rect x="256.4" y="103.5" width="33.2" height="17" rx="2" fill="#eff1f3"/>
+<text x="273" y="116" class="k" text-anchor="middle">/api</text>
 </svg>
