@@ -150,9 +150,7 @@ flowchart TD
 
 ### Match scoring
 
-Scoring uses a small embedding model that runs locally, which means no API bill per job. My first
-version gave almost every job a score around 70, which isn't much of a ranking. Now the cosine
-similarities get turned into percentiles across all jobs before they're weighted.
+Scoring uses a small embedding model that runs locally, which means no API bill per job.
 
 ```mermaid
 flowchart LR
