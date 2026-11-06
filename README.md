@@ -1,16 +1,10 @@
 # Intern Radar
-
-I'm looking for a 2027 internship in Canada, and checking a few dozen GitHub lists and a pile of
-career pages every morning got old fast. So I automated it. Intern Radar pulls new postings from
-public GitHub lists and 186 company job boards every few hours, ranks them against my profile,
+Intern Radar pulls new postings from public GitHub lists and 186 company job boards every few hours, ranks them against my profile,
 keeps track of where I've applied, and writes a tailored one-page resume and cover letter for a
 posting when I ask. I built it for myself, but it should work for anyone hunting for internships
 in Canada.
 
 ![A tailoring run from start to finish](docs/screenshots/tailoring.gif)
-
-A tailoring run at about 2x speed. The companies, the student and the model's replies are all fake
-here; the quote checks, the LaTeX build and the page-fit check are the real code.
 
 ## What it does
 
